@@ -5,19 +5,19 @@ from typing import Annotated
 from fastapi import Depends, FastAPI, Path
 from pydantic import BaseModel, Field, ConfigDict
 
-from sqlalchemy import select, insert
+from sqlalchemy import select, insert, update, delete
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from db.engine import get_async_session
-from db.models import Project
+from db.models import Project, Issue
 
 app = FastAPI()
 
 
 class ProjectType(Enum):
-    FULLSTACK = "Fullstack"
-    FRONTEND = "Front-end"
-    BACKEND = "Back-end"
+    fullstack = "Fullstack"
+    frontend = "Front-end"
+    backend = "Back-end"
 
 
 class ProjectSchema(BaseModel):
@@ -46,12 +46,14 @@ class IssuePriority(Enum):
 
 
 class IssueStatus(Enum):
-    TO_DO = "To do"
-    IN_PROGRESS = "In progress"
-    DONE = "Done"
+    to_do = "To do"
+    in_progress = "In progress"
+    done = "Done"
 
 
-class Issue(BaseModel):
+class IssueSchema(BaseModel):
+    model_config = ConfigDict(from_attributes=True, use_enum_values=True)
+
     id: int = Field(ge=1)
     project_id: int
     key: int = Field(default=1)
@@ -68,7 +70,7 @@ class Issue(BaseModel):
 @app.get("/projects", tags=["Projects"])
 async def projects(
         session: AsyncSession = Depends(get_async_session)
-        ):
+        ) -> list[ProjectSchema]:
     """ Return all user projects with pagination = 10 projects/page. """
 
     query = select(Project)
@@ -81,7 +83,7 @@ async def projects(
 async def create_project(
         project: ProjectSchema,
         session: AsyncSession = Depends(get_async_session)
-        ):
+        ) -> ProjectSchema:
     """ Create a new project. """
 
     stmt = insert(Project).values(**project.model_dump())
@@ -105,68 +107,119 @@ async def get_project(
 
 
 @app.put("/projects/{project_id}", tags=["Projects"])
-async def update_project_put(
+async def update_project(
         project_id: Annotated[int, Path(ge=1)],
-        project: ProjectSchema
-        ):
+        project: ProjectSchema,
+        session: AsyncSession = Depends(get_async_session)
+        ) -> ProjectSchema:
     """ Update already exists project via PUT request. """
 
-    pass
+    stmt = update(Project).where(
+        Project.id == project_id
+        ).values(**project.model_dump())
+    await session.execute(stmt)
+    await session.commit()
+
+    return project
 
 
 @app.delete("/projects/{project_id}", tags=["Projects"])
-async def delete_project(project_id: Annotated[int, Path(ge=1)]):
+async def delete_project(
+        project_id: Annotated[int, Path(ge=1)],
+        session: AsyncSession = Depends(get_async_session)
+        ):
     """ Delete specified project. """
 
-    return {"message": "delete project"}
+    stmt = delete(Project).where(Project.id == project_id)
+    await session.execute(stmt)
+    await session.commit()
+
+    return {"results": "success"}
 
 
 @app.get("/projects/{project_id}/issues", tags=["Issues"])
-async def get_issues(project_id: Annotated[int, Path(ge=1)]) -> list[Issue]:
+async def get_issues(
+        project_id: Annotated[int, Path(ge=1)],
+        session: AsyncSession = Depends(get_async_session)
+        ) -> list[IssueSchema]:
     """ Return all issues related with specified project. """
 
-    return {"message": "get issues for project"}
+    query = select(Issue).where(Issue.project_id == project_id)
+    results = await session.execute(query)
+
+    return results.scalars().all()
 
 
 @app.post("/projects/{project_id}/issues", status_code=201, tags=["Issues"])
-async def create_issue(project_id: Annotated[int, Path(ge=1)]) -> Issue:
+async def create_issue(
+        project_id: Annotated[int, Path(ge=1)],
+        issue: IssueSchema,
+        session: AsyncSession = Depends(get_async_session)
+        ) -> IssueSchema:
     """ Create a new task related to the specified project """
 
-    return {"message": "create issue for project"}
+    stmt = insert(Issue).values(**issue.model_dump())
+    await session.execute(stmt)
+    await session.commit()
+
+    return issue
 
 
 @app.get("/projects/{project_id}/issues/{issue_id}", tags=["Issues"])
 async def get_issue(
         project_id: Annotated[int, Path(ge=1)],
-        issue_id: Annotated[int, Path(ge=1)]
-        ) -> Issue:
+        issue_id: Annotated[int, Path(ge=1)],
+        session: AsyncSession = Depends(get_async_session)
+        ) -> IssueSchema:
     """ Return an issue related to the specified project """
 
-    return {"message": "get issue"}
+    query = select(Issue).where(Issue.id == issue_id)
+    result = await session.execute(query)
+
+    return result.scalar()
 
 
 @app.put("/projects/{project_id}/issues/{issue_id}", tags=["Issues"])
 async def update_issue(
         project_id: Annotated[int, Path(ge=1)],
-        issue_id: Annotated[int, Path(ge=1)]
-        ):
+        issue_id: Annotated[int, Path(ge=1)],
+        issue: IssueSchema,
+        session: AsyncSession = Depends(get_async_session)
+        ) -> IssueSchema:
     """ Update an issue related to the specified project """
 
-    return {"message": "update issue"}
+    stmt = update(Issue).where(
+        Issue.id == issue_id
+        ).values(**issue.model_dump())
+    await session.execute(stmt)
+    await session.commit()
+
+    return issue
 
 
 @app.delete("/projects/{project_id}/issues/{issue_id}", tags=["Issues"])
 async def delete_issue(
         project_id: Annotated[int, Path(ge=1)],
-        issue_id: Annotated[int, Path(ge=1)]
+        issue_id: Annotated[int, Path(ge=1)],
+        session: AsyncSession = Depends(get_async_session)
         ):
     """ Delete specified issue from specified project """
 
-    return {"message": "delete issue"}
+    stmt = delete(Issue).where(
+        Issue.id == issue_id,
+        Issue.project_id == project_id
+        ).returning(Issue.id)
+    result = await session.execute(stmt)
+
+    if result.scalar() is None:
+        await session.rollback()
+        return {"result": "issue isn't exist"}
+    else:
+        await session.commit()
+        return {"result": "success"}
 
 
 # TODO: revert last changes for bugtracker (finally find more elegant solution)
-# TODO: get all necessary data from real db
 # TODO: change structure (replace files, add dirs, add routing, etc...)
 # TODO: add try/except blocks
 # TODO: implement authentication

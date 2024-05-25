@@ -1,6 +1,6 @@
 from sqlalchemy import (
     Column, INTEGER, VARCHAR, BIGINT,
-    BOOLEAN, Enum, DateTime, ForeignKey
+    BOOLEAN, DateTime, ForeignKey
     )
 from sqlalchemy import CheckConstraint
 from enum import Enum as enum
@@ -8,10 +8,10 @@ from enum import Enum as enum
 from .engine import Base
 
 
-class ProjectType(Enum):
-    FULLSTACK = "Fullstack"
-    FRONTEND = "Front-end"
-    BACKEND = "Back-end"
+class ProjectType(enum):
+    fullstack = "Fullstack"
+    frontend = "Front-end"
+    backend = "Back-end"
 
 
 class IssueType(enum):
@@ -28,9 +28,9 @@ class IssuePriority(enum):
 
 
 class IssueStatus(enum):
-    TO_DO = "To do"
-    IN_PROGRESS = "In progress"
-    DONE = "Done"
+    to_do = "To do"
+    in_progress = "In progress"
+    done = "Done"
 
 
 class User(Base):
@@ -67,27 +67,15 @@ class Project(Base):
     starred = Column(BOOLEAN, default=False, nullable=False)
     created = Column(DateTime(timezone="UTC"), nullable=False)
 
-    # __table_args__ = (
-    #     CheckConstraint(
-    #         sqltext=type.in_(
-    #             [
-    #                 ProjectType.FULLSTACK,
-    #                 ProjectType.FRONTEND,
-    #                 ProjectType.BACKEND
-    #                 ]
-    #             ),
-    #         name='type_check'
-    #         ),
-    #     )
     CheckConstraint(
         sqltext=type.in_(
             [
-                ProjectType.FULLSTACK,
-                ProjectType.FRONTEND,
-                ProjectType.BACKEND
+                ProjectType.fullstack,
+                ProjectType.frontend,
+                ProjectType.backend
                 ]
             ),
-        name='type_check'
+        name='project_type_check'
         )
 
 
@@ -101,11 +89,42 @@ class Issue(Base):
     key = Column(INTEGER, default=1, nullable=False)
     title = Column(VARCHAR(255), unique=True, nullable=False)
     description = Column(VARCHAR(255), default="")
-    type = Column(Enum(IssueType), nullable=False)
-    priority = Column(Enum(IssuePriority), nullable=False)
-    status = Column(Enum(IssueStatus), nullable=False)
+    type = Column(VARCHAR, nullable=False)
+    priority = Column(VARCHAR, nullable=False)
+    status = Column(VARCHAR, nullable=False)
     author_id = Column(INTEGER, ForeignKey(User.id), nullable=False)
     project_id = Column(BIGINT, ForeignKey(Project.id), nullable=False)
-    starred = Column(BOOLEAN, default=False, nullable=False)
     created = Column(DateTime(timezone=True), nullable=False)
     updated = Column(DateTime(timezone=True), nullable=False)
+
+    CheckConstraint(
+        sqltext=type.in_(
+            [
+                IssueType.bug,
+                IssueType.feature
+                ]
+            ),
+        name='issue_type_check'
+        )
+    CheckConstraint(
+        sqltext=priority.in_(
+            [
+                IssuePriority.lowest,
+                IssuePriority.low,
+                IssuePriority.medium,
+                IssuePriority.high,
+                IssuePriority.highest
+                ]
+            ),
+        name='issue_priority_check'
+        )
+    CheckConstraint(
+        sqltext=status.in_(
+            [
+                IssueStatus.to_do,
+                IssueStatus.in_progress,
+                IssueStatus.done
+                ]
+            ),
+        name='issue_status_check'
+        )
