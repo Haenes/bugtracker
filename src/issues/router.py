@@ -5,7 +5,7 @@ from fastapi import APIRouter, Depends, Path
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from db import get_async_session
-from pagination import PaginatedResponse, paginate
+from pagination import PaginatedResponse, NoItemsResponse, paginate
 from issues.shemas import IssueSchema
 from issues.models import (
     Issue, create_issue_db, get_issue_db,
@@ -25,7 +25,7 @@ async def get_issues(
         session: AsyncSession = Depends(get_async_session),
         page: int = 1,
         limit: int = 10
-        ) -> PaginatedResponse:
+        ) -> PaginatedResponse | NoItemsResponse:
     """ Return all issues related with specified project with pagination. """
 
     return await paginate(session, Issue, page, limit, project_id)

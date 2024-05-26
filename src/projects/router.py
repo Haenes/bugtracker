@@ -5,7 +5,7 @@ from fastapi import APIRouter, Depends, Path
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from db import get_async_session
-from pagination import paginate, PaginatedResponse
+from pagination import PaginatedResponse, NoItemsResponse, paginate
 from projects.shemas import ProjectSchema
 from projects.models import (
     Project, get_project_db, create_project_db,
@@ -24,7 +24,7 @@ async def projects(
         session: AsyncSession = Depends(get_async_session),
         page: int = 1,
         limit: int = 10
-        ) -> PaginatedResponse:
+        ) -> PaginatedResponse | NoItemsResponse:
     """ Return all user projects with pagination. """
 
     return await paginate(session, Project, page, limit)
