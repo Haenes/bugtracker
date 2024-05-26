@@ -1,9 +1,9 @@
 from fastapi import HTTPException
 
-from sqlalchemy import Column, VARCHAR, BOOLEAN
-from sqlalchemy import CheckConstraint
-
-from sqlalchemy import select, insert, update, delete
+from sqlalchemy import (
+    Column, VARCHAR, BOOLEAN, CheckConstraint,
+    select, insert, update, delete
+    )
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from models import BaseClass
@@ -50,10 +50,10 @@ async def get_project_db(
     query = select(Project).where(Project.id == project_id)
     project = await session.scalar(query)
 
-    if project is not None:
-        return project
-    else:
+    if project is None:
         raise HTTPException(404, "Project not found!")
+    else:
+        return project
 
 
 async def update_project_db(
@@ -65,11 +65,12 @@ async def update_project_db(
     stmt = update(Project).where(
         Project.id == project_id
         ).values(**project.model_dump()).returning(Project)
+
     updated_project = await session.scalar(stmt)
 
     if updated_project is None:
         await session.rollback()
-        raise HTTPException(404, "Project not found!")
+        raise HTTPException(400, "The project for the update doesn't exist!")
     else:
         await session.commit()
         return updated_project
@@ -85,7 +86,7 @@ async def delete_project_db(
 
     if result is None:
         await session.rollback()
-        raise HTTPException(404, "Project not found!")
+        raise HTTPException(400, "The project to delete doesn't exist!")
     else:
         await session.commit()
         return {"results": "Success"}
