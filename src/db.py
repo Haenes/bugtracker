@@ -1,11 +1,16 @@
 from typing import AsyncGenerator
 
+from sqlalchemy.orm import DeclarativeBase
 from sqlalchemy.ext.asyncio import (
     AsyncSession,
     async_sessionmaker, create_async_engine
 )
 
 from config import DB_URI
+
+
+class Base(DeclarativeBase):
+    pass
 
 
 engine = create_async_engine(url=DB_URI)

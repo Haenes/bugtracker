@@ -1,58 +1,64 @@
+from datetime import datetime
+
 from fastapi import HTTPException
 
 from sqlalchemy import (
-    Column, INTEGER, VARCHAR, BIGINT,
-    DateTime, ForeignKey, CheckConstraint,
+    VARCHAR, DateTime, ForeignKey, CheckConstraint,
     select, insert, update, delete
     )
+from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from models import BaseClass
 from projects.models import Project
-from issues.shemas import IssueType, IssueStatus, IssuePriority, IssueSchema
+from .shemas import IssueType, IssueStatus, IssuePriority, IssueSchema
 
 
 class Issue(BaseClass):
-    __tablename__ = "bugtracker_issue"
+    __tablename__ = "issue"
 
-    key = Column(INTEGER, default=1, nullable=False)
-    title = Column(VARCHAR(255), unique=True, nullable=False)
-    type = Column(VARCHAR, nullable=False)
-    priority = Column(VARCHAR, nullable=False)
-    status = Column(VARCHAR, nullable=False)
-    project_id = Column(BIGINT, ForeignKey(Project.id), nullable=False)
-    updated = Column(DateTime(timezone=True), nullable=False)
+    project_id: Mapped[int] = mapped_column(
+        ForeignKey("project.id", ondelete="CASCADE")
+        )
+    key: Mapped[int] = mapped_column(default=1)
+    title: Mapped[str] = mapped_column(VARCHAR(255), unique=True)
+    type: Mapped[str] = mapped_column(VARCHAR)
+    priority: Mapped[str] = mapped_column(VARCHAR)
+    status: Mapped[str] = mapped_column(VARCHAR)
+    updated: Mapped[datetime] = mapped_column(DateTime(timezone=True))
 
-    CheckConstraint(
-        sqltext=type.in_(
-            [
-                IssueType.bug,
-                IssueType.feature
-                ]
+    __table_args__ = (
+        CheckConstraint(
+            sqltext=type.in_(
+                [
+                    IssueType.bug.value,
+                    IssueType.feature.value
+                    ]
+                ),
+            name='issue_type_check'
             ),
-        name='issue_type_check'
-        )
-    CheckConstraint(
-        sqltext=priority.in_(
-            [
-                IssuePriority.lowest,
-                IssuePriority.low,
-                IssuePriority.medium,
-                IssuePriority.high,
-                IssuePriority.highest
-                ]
+        CheckConstraint(
+            sqltext=priority.in_(
+                [
+                    IssuePriority.lowest.value,
+                    IssuePriority.low.value,
+                    IssuePriority.medium.value,
+                    IssuePriority.high.value,
+                    IssuePriority.highest.value
+                    ]
+                ),
+            name='issue_priority_check'
             ),
-        name='issue_priority_check'
-        )
-    CheckConstraint(
-        sqltext=status.in_(
-            [
-                IssueStatus.to_do,
-                IssueStatus.in_progress,
-                IssueStatus.done
-                ]
-            ),
-        name='issue_status_check'
+        CheckConstraint(
+            sqltext=status.in_(
+                [
+                    IssueStatus.to_do.value,
+                    IssueStatus.in_progress.value,
+                    IssueStatus.done.value
+                    ]
+                ),
+            name='issue_status_check'
+            )
         )
 
 

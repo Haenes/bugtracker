@@ -1,32 +1,35 @@
 from fastapi import HTTPException
 
 from sqlalchemy import (
-    Column, VARCHAR, BOOLEAN, CheckConstraint,
+    VARCHAR, CheckConstraint,
     select, insert, update, delete
     )
+from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from models import BaseClass
-from projects.shemas import ProjectType, ProjectSchema
+from .shemas import ProjectType, ProjectSchema
 
 
 class Project(BaseClass):
-    __tablename__ = "bugtracker_project"
+    __tablename__ = "project"
 
-    name = Column(VARCHAR(255), unique=True, nullable=False)
-    key = Column(VARCHAR(10), unique=True, nullable=False)
-    type = Column(VARCHAR, nullable=False)
-    starred = Column(BOOLEAN, default=False, nullable=False)
+    name: Mapped[str] = mapped_column(VARCHAR(255), unique=True)
+    key: Mapped[str] = mapped_column(VARCHAR(10), unique=True)
+    type: Mapped[str] = mapped_column(VARCHAR)
+    starred: Mapped[bool | None] = mapped_column(default=False)
 
-    CheckConstraint(
-        sqltext=type.in_(
-            [
-                ProjectType.fullstack,
-                ProjectType.frontend,
-                ProjectType.backend
-                ]
+    __table_args__ = (
+        CheckConstraint(
+            sqltext=type.in_(
+                [
+                    ProjectType.fullstack.value,
+                    ProjectType.frontend.value,
+                    ProjectType.backend.value
+                    ]
+                ),
+            name='project_type_check'
             ),
-        name='project_type_check'
         )
 
 

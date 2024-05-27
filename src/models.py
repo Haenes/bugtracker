@@ -1,39 +1,33 @@
-from sqlalchemy.orm import declarative_base
-from sqlalchemy import (
-    Column, INTEGER, VARCHAR,
-    BOOLEAN, DateTime, BIGINT, ForeignKey
-    )
+from datetime import datetime
 
+from sqlalchemy import VARCHAR, DateTime, ForeignKey
+from sqlalchemy.orm import Mapped, mapped_column
 
-Base = declarative_base()
+from db import Base
 
 
 class User(Base):
     __tablename__ = "auth_user"
 
-    id = Column(
-        INTEGER, autoincrement=True, unique=True,
-        nullable=False, primary_key=True
-        )
-    password = Column(VARCHAR(128), nullable=False)
-    last_login = Column(DateTime(timezone=True), nullable=False)
-    is_superuser = Column(BOOLEAN, default=False, nullable=False)
-    username = Column(VARCHAR(150), nullable=False, unique=True)
-    first_name = Column(VARCHAR(length=150), nullable=False)
-    last_name = Column(VARCHAR(length=150), nullable=False)
-    email = Column(VARCHAR(254), nullable=False, unique=True)
-    is_staff = Column(BOOLEAN, default=False, nullable=False)
-    is_active = Column(BOOLEAN, default=False, nullable=False)
-    date_joined = Column(DateTime(timezone=True), nullable=False)
+    id: Mapped[int] = mapped_column(primary_key=True)
+    password: Mapped[str] = mapped_column(VARCHAR(128))
+    last_login: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    is_superuser: Mapped[bool] = mapped_column(default=False)
+    username: Mapped[str] = mapped_column(VARCHAR(150), unique=True)
+    first_name: Mapped[str] = mapped_column(VARCHAR(length=150))
+    last_name: Mapped[str] = mapped_column(VARCHAR(length=150))
+    email: Mapped[str] = mapped_column(VARCHAR(254), unique=True)
+    is_staff: Mapped[bool] = mapped_column(default=False)
+    is_active: Mapped[bool] = mapped_column(default=False)
+    date_joined: Mapped[datetime] = mapped_column(DateTime(timezone=True))
 
 
 class BaseClass(Base):
     __abstract__ = True
 
-    id = Column(
-        BIGINT, autoincrement=True,
-        unique=True, nullable=False, primary_key=True
+    id: Mapped[int] = mapped_column(primary_key=True)
+    description: Mapped[str | None] = mapped_column(VARCHAR(255), default="")
+    author_id: Mapped[int] = mapped_column(
+        ForeignKey("auth_user.id", ondelete="CASCADE")
         )
-    description = Column(VARCHAR(255), default="")
-    author_id = Column(INTEGER, ForeignKey(User.id), nullable=False)
-    created = Column(DateTime(timezone="UTC"), nullable=False)
+    created: Mapped[datetime] = mapped_column(DateTime(timezone=True))

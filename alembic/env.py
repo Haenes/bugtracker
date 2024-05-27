@@ -1,3 +1,5 @@
+import os
+import sys
 import asyncio
 from logging.config import fileConfig
 
@@ -7,8 +9,10 @@ from sqlalchemy.ext.asyncio import async_engine_from_config
 
 from alembic import context
 
+sys.path.append(os.path.join(sys.path[0], 'src'))
+
 from src.config import DB_URI
-from src.models import Base
+from src.issues.models import BaseClass
 
 
 # this is the Alembic Config object, which provides
@@ -23,11 +27,8 @@ if config.config_file_name is not None:
 
 # add your model's MetaData object here
 # for 'autogenerate' support
-# from myapp import mymodel
-# target_metadata = mymodel.Base.metadata
-# target_metadata = None
-target_metadata = Base.metadata
-target_tables_list = ["auth_user", "bugtracker_issue", "bugtracker_project"]
+target_metadata = [BaseClass.metadata]
+target_tables_list = ["issue", "project", "auth_user"]
 
 
 def include_object(object, name, type_, reflected, compare_to):
