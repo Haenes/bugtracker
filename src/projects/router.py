@@ -6,9 +6,10 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from db import get_async_session
 from pagination import PaginatedResponse, NoItemsResponse, paginate
-from projects.shemas import ProjectSchema
-from projects.models import (
-    Project, get_project_db, create_project_db,
+from .shemas import ProjectSchema
+from .models import Project
+from .crud import (
+    get_project_db, create_project_db,
     update_project_db, delete_project_db
     )
 

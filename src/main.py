@@ -7,9 +7,3 @@ app = FastAPI()
 
 app.include_router(projects_router)
 app.include_router(issues_router)
-
-
-# TODO: revert last changes for bugtracker (finally find more elegant solution)
-# TODO: add try/except blocks
-# TODO: implement authentication
-# TODO: add tests

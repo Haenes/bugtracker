@@ -12,6 +12,7 @@ from alembic import context
 sys.path.append(os.path.join(sys.path[0], 'src'))
 
 from src.config import DB_URI
+from src.projects.models import BaseClass as projects
 from src.issues.models import BaseClass
 
 
