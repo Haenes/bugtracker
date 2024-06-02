@@ -23,7 +23,7 @@ class IssueStatus(Enum):
     done = "Done"
 
 
-class IssueSchema(BaseModel):
+class CreateUpdateIssueSchema(BaseModel):
     model_config = ConfigDict(from_attributes=True, use_enum_values=True)
 
     id: int = Field(ge=1)
@@ -35,5 +35,8 @@ class IssueSchema(BaseModel):
     priority: IssuePriority
     status: IssueStatus
     author_id: int
+
+
+class IssueSchema(CreateUpdateIssueSchema):
     created: datetime
     updated: datetime

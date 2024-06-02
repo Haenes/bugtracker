@@ -1,7 +1,7 @@
 from datetime import datetime
 
 from sqlalchemy import (
-    VARCHAR, DateTime, ForeignKey, CheckConstraint,
+    VARCHAR, DateTime, ForeignKey, CheckConstraint, text
     )
 from sqlalchemy.orm import Mapped, mapped_column
 
@@ -20,7 +20,11 @@ class Issue(BaseClass):
     type: Mapped[str] = mapped_column(VARCHAR)
     priority: Mapped[str] = mapped_column(VARCHAR)
     status: Mapped[str] = mapped_column(VARCHAR)
-    updated: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    updated: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        onupdate=text("CURRENT_TIMESTAMP"),
+        server_default=text("CURRENT_TIMESTAMP")
+        )
 
     __table_args__ = (
         CheckConstraint(

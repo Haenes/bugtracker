@@ -5,8 +5,9 @@ from fastapi import APIRouter, Depends, Path
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from db import get_async_session
+from auth.users import User, current_active_user
 from pagination import PaginatedResponse, NoItemsResponse, paginate
-from .shemas import ProjectSchema
+from .shemas import CreateUpdateProjectSchema, ProjectSchema
 from .models import Project
 from .crud import (
     get_project_db, create_project_db,
@@ -23,6 +24,7 @@ router = APIRouter(
 @router.get("/")
 async def projects(
         session: AsyncSession = Depends(get_async_session),
+        user: User = Depends(current_active_user),
         page: int = 1,
         limit: int = 10
         ) -> PaginatedResponse | NoItemsResponse:
@@ -33,9 +35,10 @@ async def projects(
 
 @router.post("/", status_code=201)
 async def create_project(
-        project: ProjectSchema,
-        session: AsyncSession = Depends(get_async_session)
-        ) -> ProjectSchema:
+        project: CreateUpdateProjectSchema,
+        session: AsyncSession = Depends(get_async_session),
+        user: User = Depends(current_active_user)
+        ) -> CreateUpdateProjectSchema:
     """ Create a new project. """
 
     return await create_project_db(session, project)
@@ -44,7 +47,8 @@ async def create_project(
 @router.get("/{project_id}")
 async def get_project(
         project_id: Annotated[int, Path(ge=1)],
-        session: AsyncSession = Depends(get_async_session)
+        session: AsyncSession = Depends(get_async_session),
+        user: User = Depends(current_active_user)
         ) -> ProjectSchema:
     """ Return specified project. """
 
@@ -54,9 +58,10 @@ async def get_project(
 @router.put("/{project_id}")
 async def update_project(
         project_id: Annotated[int, Path(ge=1)],
-        project: ProjectSchema,
-        session: AsyncSession = Depends(get_async_session)
-        ) -> ProjectSchema:
+        project: CreateUpdateProjectSchema,
+        session: AsyncSession = Depends(get_async_session),
+        user: User = Depends(current_active_user)
+        ) -> CreateUpdateProjectSchema:
     """ Update already exists project via PUT request. """
 
     return await update_project_db(session, project_id, project)
@@ -65,7 +70,8 @@ async def update_project(
 @router.delete("/{project_id}")
 async def delete_project(
         project_id: Annotated[int, Path(ge=1)],
-        session: AsyncSession = Depends(get_async_session)
+        session: AsyncSession = Depends(get_async_session),
+        user: User = Depends(current_active_user)
         ) -> dict[str, str]:
     """ Delete specified project. """
 

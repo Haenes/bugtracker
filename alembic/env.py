@@ -12,6 +12,7 @@ from alembic import context
 sys.path.append(os.path.join(sys.path[0], 'src'))
 
 from src.config import DB_URI
+from src.auth.models import User
 from src.projects.models import BaseClass as projects
 from src.issues.models import BaseClass
 
@@ -60,6 +61,7 @@ def run_migrations_offline() -> None:
     context.configure(
         url=url,
         target_metadata=target_metadata,
+        compare_server_default=True,
         literal_binds=True,
         dialect_opts={"paramstyle": "named"},
     )
@@ -73,7 +75,8 @@ def do_run_migrations(connection: Connection) -> None:
         connection=connection,
         target_metadata=target_metadata,
         include_object=include_object,
-        include_schemas=False
+        include_schemas=False,
+        compare_server_default=True
         )
 
     with context.begin_transaction():

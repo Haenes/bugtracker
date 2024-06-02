@@ -10,7 +10,7 @@ class ProjectType(Enum):
     backend = "Back-end"
 
 
-class ProjectSchema(BaseModel):
+class CreateUpdateProjectSchema(BaseModel):
     model_config = ConfigDict(from_attributes=True, use_enum_values=True)
 
     id: int = Field(ge=1)
@@ -19,4 +19,7 @@ class ProjectSchema(BaseModel):
     type: ProjectType
     author_id: int
     starred: bool = Field(default=False)
+
+
+class ProjectSchema(CreateUpdateProjectSchema):
     created: datetime
