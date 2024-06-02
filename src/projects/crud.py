@@ -3,7 +3,7 @@ from fastapi import HTTPException
 from sqlalchemy import select, insert, update, delete
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from .shemas import ProjectSchema
+from .schemas import ProjectSchema
 from .models import Project
 
 

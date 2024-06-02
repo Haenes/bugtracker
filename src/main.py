@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 
-from auth.users import auth_router, register_router
+from auth.manager import auth_router, register_router
 from projects.router import router as projects_router
 from issues.router import router as issues_router
 

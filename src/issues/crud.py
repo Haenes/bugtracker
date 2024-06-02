@@ -5,7 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from projects.models import Project
 from .models import Issue
-from .shemas import IssueSchema
+from .schemas import IssueSchema
 
 
 async def create_issue_db(

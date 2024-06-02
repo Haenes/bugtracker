@@ -1,12 +1,21 @@
-from fastapi import HTTPException
+from typing import Annotated
+
+from fastapi import Depends, HTTPException
 
 from sqlalchemy import select, func
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from pydantic import BaseModel
 
-from projects.shemas import ProjectSchema
-from issues.shemas import IssueSchema
+from projects.schemas import ProjectSchema
+from issues.schemas import IssueSchema
+
+
+async def pagination_query_params(page: int = 1, limit: int = 10):
+    return {"page": page, "limit": limit}
+
+
+pagination_params = Annotated[dict, Depends(pagination_query_params)]
 
 
 class PaginatedResponse(BaseModel):
@@ -57,10 +66,11 @@ def _helper(count: int, limit: int, page: int, project_id: int | None = None):
 async def paginate(
         session: AsyncSession,
         model: ProjectSchema | IssueSchema,
-        page: int,
-        limit: int,
+        pagination_params: pagination_params,
         project_id: int | None = None
         ) -> PaginatedResponse | NoItemsResponse:
+
+    page, limit = pagination_params["page"], pagination_params["limit"]
 
     if page < 0 or limit < 0:
         raise HTTPException(

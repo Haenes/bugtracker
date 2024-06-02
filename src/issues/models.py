@@ -6,7 +6,7 @@ from sqlalchemy import (
 from sqlalchemy.orm import Mapped, mapped_column
 
 from models import BaseClass
-from .shemas import IssueType, IssueStatus, IssuePriority
+from .schemas import IssueType, IssueStatus, IssuePriority
 
 
 class Issue(BaseClass):

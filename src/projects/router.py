@@ -5,9 +5,11 @@ from fastapi import APIRouter, Depends, Path
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from db import get_async_session
-from auth.users import User, current_active_user
-from pagination import PaginatedResponse, NoItemsResponse, paginate
-from .shemas import CreateUpdateProjectSchema, ProjectSchema
+from auth.manager import User, current_active_user
+from pagination import (
+    PaginatedResponse, NoItemsResponse, paginate, pagination_params
+    )
+from .schemas import CreateUpdateProjectSchema, ProjectSchema
 from .models import Project
 from .crud import (
     get_project_db, create_project_db,
@@ -23,14 +25,13 @@ router = APIRouter(
 
 @router.get("/")
 async def projects(
+        pagination_params: pagination_params,
         session: AsyncSession = Depends(get_async_session),
-        user: User = Depends(current_active_user),
-        page: int = 1,
-        limit: int = 10
+        user: User = Depends(current_active_user)
         ) -> PaginatedResponse | NoItemsResponse:
     """ Return all user projects with pagination. """
 
-    return await paginate(session, Project, page, limit)
+    return await paginate(session, Project, pagination_params)
 
 
 @router.post("/", status_code=201)

@@ -4,7 +4,7 @@ from sqlalchemy import (
 from sqlalchemy.orm import Mapped, mapped_column
 
 from models import BaseClass
-from .shemas import ProjectType
+from .schemas import ProjectType
 
 
 class Project(BaseClass):
