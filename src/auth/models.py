@@ -30,7 +30,7 @@ class User(Base):
     hashed_password: Mapped[str] = mapped_column(VARCHAR(128))
     first_name: Mapped[user]
     last_name: Mapped[user]
-    email: Mapped[str] = mapped_column(VARCHAR(254), index=True, unique=True)
+    email: Mapped[str] = mapped_column(VARCHAR(254), unique=True, index=True)
     date_joined: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=text("CURRENT_TIMESTAMP")
         )

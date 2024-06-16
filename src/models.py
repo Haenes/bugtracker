@@ -17,3 +17,8 @@ class BaseClass(Base):
     created: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=text("CURRENT_TIMESTAMP")
         )
+    updated: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        onupdate=text("CURRENT_TIMESTAMP"),
+        server_default=text("CURRENT_TIMESTAMP")
+        )

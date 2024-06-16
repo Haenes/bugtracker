@@ -7,8 +7,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from pydantic import BaseModel
 
-from projects.schemas import ProjectSchema
-from issues.schemas import IssueSchema
+from projects.schemas import ProjectSchema, PaginationProject
+from issues.schemas import IssueSchema, PaginationIssue
 
 
 async def pagination_query_params(page: int = 1, limit: int = 10):
@@ -26,7 +26,7 @@ class PaginatedResponse(BaseModel):
     next_page: int | None
     prev_page: int | None
     total_pages: int | float
-    results: list[ProjectSchema] | list[IssueSchema]
+    results: list[PaginationProject] | list[PaginationIssue]
 
 
 class NoItemsResponse(BaseModel):
@@ -67,6 +67,7 @@ async def paginate(
         session: AsyncSession,
         model: ProjectSchema | IssueSchema,
         pagination_params: pagination_params,
+        user_id: int,
         project_id: int | None = None
         ) -> PaginatedResponse | NoItemsResponse:
 
@@ -86,7 +87,7 @@ async def paginate(
         count_query = (
             select(func.count()).
             select_from(model).
-            where(model.project_id == project_id)
+            where(model.author_id == user_id, model.project_id == project_id)
             )
         count = await session.scalar(count_query)
 
@@ -102,15 +103,20 @@ async def paginate(
         # Second quary to get issues with specified limit and offset.
         query2 = (
             select(model).
-            where(model.project_id == project_id).
+            where(model.author_id == user_id, model.project_id == project_id).
             order_by(model.id).
-            offset(offset).limit(limit)
+            offset(offset).
+            limit(limit)
             )
 
     # Block for projects pagination
     else:
         # First quary to get count of all projects.
-        count_query = select(func.count()).select_from(model)
+        count_query = (
+            select(func.count()).
+            select_from(model).
+            where(model.author_id == user_id)
+            )
         count = await session.scalar(count_query)
 
         if count == 0:
@@ -119,7 +125,13 @@ async def paginate(
         total_pages, next_page, previous_page = _helper(count, limit, page)
 
         # Second quary to get projects with specified limit and offset.
-        query2 = select(model).order_by(model.id).offset(offset).limit(limit)
+        query2 = (
+            select(model).
+            where(model.author_id == user_id).
+            order_by(model.id).
+            offset(offset).
+            limit(limit)
+            )
 
     results = await session.scalars(query2)
 

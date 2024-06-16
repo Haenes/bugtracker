@@ -9,7 +9,10 @@ from auth.manager import User, current_active_user
 from pagination import (
     PaginatedResponse, NoItemsResponse, paginate, pagination_params
     )
-from .schemas import CreateUpdateIssueSchema, IssueSchema
+from .schemas import (
+    CreateUpdateIssueSchema,
+    CreatedIssueSchema, IssueSchema
+    )
 from .models import Issue
 from .crud import (
     create_issue_db, get_issue_db,
@@ -32,7 +35,10 @@ async def get_issues(
         ) -> PaginatedResponse | NoItemsResponse:
     """ Return all issues related with specified project with pagination. """
 
-    return await paginate(session, Issue, pagination_params, project_id)
+    return await paginate(
+        session, Issue,
+        pagination_params, user.id, project_id
+        )
 
 
 @router.post("/", status_code=201)
@@ -41,10 +47,10 @@ async def create_issue(
         issue: CreateUpdateIssueSchema,
         session: AsyncSession = Depends(get_async_session),
         user: User = Depends(current_active_user)
-        ) -> CreateUpdateIssueSchema:
+        ) -> CreatedIssueSchema:
     """ Create a new issue related to the specified project """
 
-    return await create_issue_db(session, project_id, issue)
+    return await create_issue_db(session, user.id, project_id, issue)
 
 
 @router.get("/{issue_id}")
@@ -56,7 +62,7 @@ async def get_issue(
         ) -> IssueSchema:
     """ Return an issue related to the specified project """
 
-    return await get_issue_db(session, project_id, issue_id)
+    return await get_issue_db(session, user.id, project_id, issue_id)
 
 
 @router.put("/{issue_id}")
@@ -66,10 +72,10 @@ async def update_issue(
         issue: CreateUpdateIssueSchema,
         session: AsyncSession = Depends(get_async_session),
         user: User = Depends(current_active_user)
-        ) -> CreateUpdateIssueSchema:
+        ) -> IssueSchema:
     """ Update an issue related to the specified project """
 
-    return await update_issue_db(session, project_id, issue_id, issue)
+    return await update_issue_db(session, user.id, project_id, issue_id, issue)
 
 
 @router.delete("/{issue_id}")
@@ -81,4 +87,4 @@ async def delete_issue(
         ):
     """ Delete specified issue from specified project """
 
-    return await delete_issue_db(session, project_id, issue_id)
+    return await delete_issue_db(session, user.id, project_id, issue_id)

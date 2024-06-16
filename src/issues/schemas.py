@@ -26,17 +26,22 @@ class IssueStatus(Enum):
 class CreateUpdateIssueSchema(BaseModel):
     model_config = ConfigDict(from_attributes=True, use_enum_values=True)
 
-    id: int = Field(ge=1)
-    project_id: int
-    key: int = Field(default=1)
     title: str = Field(max_length=255)
     description: str | None = Field(default="")
     type: IssueType
     priority: IssuePriority
     status: IssueStatus
-    author_id: int
 
 
 class IssueSchema(CreateUpdateIssueSchema):
+    key: int
     created: datetime
     updated: datetime
+
+
+class PaginationIssue(IssueSchema):
+    id: int
+
+
+class CreatedIssueSchema(PaginationIssue):
+    project_id: int

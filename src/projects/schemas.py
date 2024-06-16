@@ -13,13 +13,20 @@ class ProjectType(Enum):
 class CreateUpdateProjectSchema(BaseModel):
     model_config = ConfigDict(from_attributes=True, use_enum_values=True)
 
-    id: int = Field(ge=1)
     name: str = Field(min_length=3, max_length=255)
     key: str = Field(min_length=3, max_length=10)
     type: ProjectType
-    author_id: int
     starred: bool = Field(default=False)
 
 
 class ProjectSchema(CreateUpdateProjectSchema):
     created: datetime
+    updated: datetime
+
+
+class PaginationProject(ProjectSchema):
+    id: int
+
+
+class CreatedProjectSchema(PaginationProject):
+    pass

@@ -9,7 +9,7 @@ from sqlalchemy.ext.asyncio import (
 from config import DB_URI
 
 
-intpk = Annotated[int, mapped_column(primary_key=True)]
+intpk = Annotated[int, mapped_column(primary_key=True, index=True)]
 
 
 class Base(DeclarativeBase):
