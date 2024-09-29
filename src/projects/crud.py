@@ -3,7 +3,7 @@ from fastapi import HTTPException
 from sqlalchemy import select, insert, update, delete
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from .schemas import ProjectSchema, CreatedProjectSchema
+from .schemas import ProjectSchema, CreatedProjectSchema, UpdateProjectSchema
 from .models import Project
 
 
@@ -46,13 +46,13 @@ async def update_project_db(
         session: AsyncSession,
         user_id: int,
         project_id: int,
-        project: ProjectSchema
+        project: UpdateProjectSchema
         ) -> ProjectSchema:
 
     stmt = (
         update(Project).
         where(Project.author_id == user_id, Project.id == project_id).
-        values(**project.model_dump()).
+        values(**project.model_dump(exclude_none=True)).
         returning(Project)
         )
 

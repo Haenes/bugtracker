@@ -13,6 +13,7 @@ class Issue(BaseClass):
         )
     key: Mapped[int]
     title: Mapped[str] = mapped_column(VARCHAR(255), unique=True)
+    description: Mapped[str | None] = mapped_column(VARCHAR(255), default="")
     type: Mapped[str] = mapped_column(VARCHAR)
     priority: Mapped[str] = mapped_column(VARCHAR)
     status: Mapped[str] = mapped_column(VARCHAR)

@@ -10,7 +10,7 @@ from pagination import (
     PaginatedResponse, NoItemsResponse, paginate, pagination_params
     )
 from .schemas import (
-    CreateUpdateIssueSchema,
+    CreateIssueSchema,  UpdateIssueSchema,
     CreatedIssueSchema, IssueSchema
     )
 from .models import Issue
@@ -44,7 +44,7 @@ async def get_issues(
 @router.post("/", status_code=201)
 async def create_issue(
         project_id: Annotated[int, Path(ge=1)],
-        issue: CreateUpdateIssueSchema,
+        issue: CreateIssueSchema,
         session: AsyncSession = Depends(get_async_session),
         user: User = Depends(current_active_user)
         ) -> CreatedIssueSchema:
@@ -65,11 +65,11 @@ async def get_issue(
     return await get_issue_db(session, user.id, project_id, issue_id)
 
 
-@router.put("/{issue_id}")
+@router.patch("/{issue_id}")
 async def update_issue(
         project_id: Annotated[int, Path(ge=1)],
         issue_id: Annotated[int, Path(ge=1)],
-        issue: CreateUpdateIssueSchema,
+        issue: UpdateIssueSchema,
         session: AsyncSession = Depends(get_async_session),
         user: User = Depends(current_active_user)
         ) -> IssueSchema:

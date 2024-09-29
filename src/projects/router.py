@@ -10,8 +10,9 @@ from pagination import (
     PaginatedResponse, NoItemsResponse, paginate, pagination_params
     )
 from .schemas import (
-    CreateUpdateProjectSchema,
-    ProjectSchema, CreatedProjectSchema
+    CreateProjectSchema,
+    ProjectSchema, CreatedProjectSchema,
+    UpdateProjectSchema
     )
 from .models import Project
 from .crud import (
@@ -39,7 +40,7 @@ async def projects(
 
 @router.post("/", status_code=201)
 async def create_project(
-        project: CreateUpdateProjectSchema,
+        project: CreateProjectSchema,
         session: AsyncSession = Depends(get_async_session),
         user: User = Depends(current_active_user)
         ) -> CreatedProjectSchema:
@@ -59,14 +60,14 @@ async def get_project(
     return await get_project_db(session, user.id, project_id)
 
 
-@router.put("/{project_id}")
+@router.patch("/{project_id}")
 async def update_project(
         project_id: Annotated[int, Path(ge=1)],
-        project: CreateUpdateProjectSchema,
+        project: UpdateProjectSchema,
         session: AsyncSession = Depends(get_async_session),
         user: User = Depends(current_active_user)
-        ) -> CreateUpdateProjectSchema:
-    """ Update already exists project via PUT request. """
+        ) -> ProjectSchema:
+    """ Update already exists project via PATCH request. """
 
     return await update_project_db(session, user.id, project_id, project)
 

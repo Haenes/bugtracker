@@ -101,7 +101,7 @@ async def update_issue_db(
             Issue.author_id == user_id,
             Issue.project_id == project_id
             ).
-        values(**issue.model_dump()).
+        values(**issue.model_dump(exclude_none=True)).
         returning(Issue)
         )
 
