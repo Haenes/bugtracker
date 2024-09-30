@@ -9,8 +9,7 @@ The main changes compared to the previous version (written in DRF), in addition 
 3) Authentication via JWT.
 
 <b>Immediate plans:</b>
-1) Wrap everything in docker compose;
-2) Add caching;
+1) Add caching;
 3) Add React or similar to the front-end.
 
 <h2>License</h2>
