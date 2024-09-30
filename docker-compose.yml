@@ -1,0 +1,45 @@
+services:
+  api:
+    container_name: api
+    build: .
+    entrypoint: sh ./entrypoint.sh
+    volumes:
+      - .:/api
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    deploy:
+      resources:
+        limits:
+          memory: 300M
+        reservations:
+          memory: 100M
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+
+  db:
+    container_name: api-db
+    build: ./deploy/db
+    env_file:
+      - .env
+    deploy:
+      resources:
+        limits:
+          memory: 200M
+        reservations:
+          memory: 50M
+    volumes:
+      - ./deploy/db/data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U$$POSTGRES_USER -d$$POSTGRES_DB"]
+      interval: 1s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+volumes:
+  data:
+    name: "api-db-data"
