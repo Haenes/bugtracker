@@ -4,7 +4,6 @@ from fastapi_users import schemas
 
 
 class UserRead(schemas.BaseUser[int]):
-    is_staff: bool = False
     username: str
     first_name: str
     last_name: str
@@ -12,14 +11,12 @@ class UserRead(schemas.BaseUser[int]):
 
 
 class UserCreate(schemas.BaseUserCreate):
-    is_staff: bool | None = False
     username: str
     first_name: str
     last_name: str
 
 
 class UserUpdate(schemas.BaseUserUpdate):
-    is_staff: bool | None = None
-    username: str
-    first_name: str
-    last_name: str
+    username: str | None = None
+    first_name: str | None = None
+    last_name: str | None = None

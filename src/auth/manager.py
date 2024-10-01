@@ -1,10 +1,11 @@
 from fastapi import Depends, Request
-from fastapi_users import FastAPIUsers, BaseUserManager, IntegerIDMixin
+from fastapi_users import BaseUserManager, IntegerIDMixin
 
 from .config import MANAGER_SECRET, MAX_AGE
 from .cookie_jwt import auth_backend
+from .custom import CustomFastAPIUsers
 from .models import User, get_user_db
-from .schemas import UserCreate, UserRead
+from .schemas import UserCreate, UserRead, UserUpdate
 
 
 class UserManager(IntegerIDMixin, BaseUserManager[User, int]):
@@ -24,9 +25,10 @@ async def get_user_manager(user_db=Depends(get_user_db)):
     yield UserManager(user_db)
 
 
-fastapi_users = FastAPIUsers[User, int](get_user_manager, [auth_backend])
+fastapi_users = CustomFastAPIUsers[User, int](get_user_manager, [auth_backend])
 
 current_active_user = fastapi_users.current_user(active=True)
 
 auth_router = fastapi_users.get_auth_router(auth_backend)
 register_router = fastapi_users.get_register_router(UserRead, UserCreate)
+users_router = fastapi_users.get_users_router(UserRead, UserUpdate)

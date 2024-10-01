@@ -23,7 +23,6 @@ class User(Base):
 
     id: Mapped[intpk]
     is_superuser: Mapped[user_status]
-    is_staff: Mapped[user_status]
     is_active: Mapped[user_status] = mapped_column(server_default=true())
     is_verified: Mapped[user_status]
     username: Mapped[user] = mapped_column(unique=True)
