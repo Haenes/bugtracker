@@ -135,11 +135,11 @@ async def paginate(
 
     results = await session.scalars(query2)
 
-    return {
-        "count": count,
-        "page": page,
-        "next_page": next_page,
-        "prev_page": previous_page,
-        "total_pages": total_pages,
-        "results": results.all()
-    }
+    return PaginatedResponse(
+        count=count,
+        page=page,
+        next_page=next_page,
+        prev_page=previous_page,
+        total_pages=total_pages,
+        results=results.all()
+    )

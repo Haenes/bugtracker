@@ -5,6 +5,7 @@ from fastapi import APIRouter, Depends, Path
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from db import get_async_session
+from cache import Redis, get_redis_client, cache_get_or_set
 from auth.manager import User, current_active_user
 from pagination import (
     PaginatedResponse, NoItemsResponse, paginate, pagination_params
@@ -31,21 +32,29 @@ router = APIRouter(
 async def projects(
         pagination_params: pagination_params,
         session: AsyncSession = Depends(get_async_session),
-        user: User = Depends(current_active_user)
+        user: User = Depends(current_active_user),
+        cache: Redis = Depends(get_redis_client)
         ) -> PaginatedResponse | NoItemsResponse:
     """ Return all user projects with pagination. """
 
-    return await paginate(session, Project, pagination_params, user.id)
+    return await cache_get_or_set(
+        cache,
+        f"projects_{user.id}",
+        paginate,
+        session, Project, pagination_params, user.id
+        )
 
 
 @router.post("/", status_code=201)
 async def create_project(
         project: CreateProjectSchema,
         session: AsyncSession = Depends(get_async_session),
-        user: User = Depends(current_active_user)
+        user: User = Depends(current_active_user),
+        cache: Redis = Depends(get_redis_client)
         ) -> CreatedProjectSchema:
     """ Create a new project. """
 
+    await cache.delete(f"projects_{user.id}")
     return await create_project_db(session, user.id, project)
 
 
@@ -65,10 +74,12 @@ async def update_project(
         project_id: Annotated[int, Path(ge=1)],
         project: UpdateProjectSchema,
         session: AsyncSession = Depends(get_async_session),
-        user: User = Depends(current_active_user)
+        user: User = Depends(current_active_user),
+        cache: Redis = Depends(get_redis_client)
         ) -> ProjectSchema:
     """ Update already exists project via PATCH request. """
 
+    await cache.delete(f"projects_{user.id}")
     return await update_project_db(session, user.id, project_id, project)
 
 
@@ -76,8 +87,10 @@ async def update_project(
 async def delete_project(
         project_id: Annotated[int, Path(ge=1)],
         session: AsyncSession = Depends(get_async_session),
-        user: User = Depends(current_active_user)
+        user: User = Depends(current_active_user),
+        cache: Redis = Depends(get_redis_client)
         ) -> dict[str, str]:
     """ Delete specified project. """
 
+    await cache.delete(f"projects_{user.id}")
     return await delete_project_db(session, user.id, project_id)

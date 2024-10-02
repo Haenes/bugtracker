@@ -8,6 +8,15 @@ async def test_pagination_zero_projects(user_client: httpx.AsyncClient):
     assert r.status_code == 200
 
 
+async def test_create_project(user_client: httpx.AsyncClient):
+    r = await user_client.post("projects/", json={
+        "name": "test_name",
+        "key": "test_key",
+        "type": "Fullstack",
+        })
+    assert r.status_code == 201
+
+
 async def test_pagination_page_less_then_zero(user_client: httpx.AsyncClient):
     r = await user_client.get("projects/?page=-1")
     results = r.json()["detail"]
@@ -32,15 +41,6 @@ async def test_pagination_page_and_limit_less_then_zero(
 
     assert results == "The page and/or limit cannot be less than zero!"
     assert r.status_code == 400
-
-
-async def test_create_project(user_client: httpx.AsyncClient):
-    r = await user_client.post("projects/", json={
-        "name": "test_name",
-        "key": "test_key",
-        "type": "Fullstack",
-        })
-    assert r.status_code == 201
 
 
 async def test_pagination_zero_issues(user_client: httpx.AsyncClient):

@@ -5,6 +5,7 @@ from fastapi import APIRouter, Depends, Path
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from db import get_async_session
+from cache import Redis, get_redis_client, cache_get_or_set
 from auth.manager import User, current_active_user
 from pagination import (
     PaginatedResponse, NoItemsResponse, paginate, pagination_params
@@ -31,13 +32,16 @@ async def get_issues(
         project_id: Annotated[int, Path(ge=1)],
         pagination_params: pagination_params,
         session: AsyncSession = Depends(get_async_session),
-        user: User = Depends(current_active_user)
+        user: User = Depends(current_active_user),
+        cache: Redis = Depends(get_redis_client)
         ) -> PaginatedResponse | NoItemsResponse:
     """ Return all issues related with specified project with pagination. """
 
-    return await paginate(
-        session, Issue,
-        pagination_params, user.id, project_id
+    return await cache_get_or_set(
+        cache,
+        f"issues_project_{project_id}",
+        paginate,
+        session, Issue, pagination_params, user.id, project_id
         )
 
 
@@ -46,10 +50,12 @@ async def create_issue(
         project_id: Annotated[int, Path(ge=1)],
         issue: CreateIssueSchema,
         session: AsyncSession = Depends(get_async_session),
-        user: User = Depends(current_active_user)
+        user: User = Depends(current_active_user),
+        cache: Redis = Depends(get_redis_client)
         ) -> CreatedIssueSchema:
     """ Create a new issue related to the specified project """
 
+    await cache.delete(f"issues_project_{project_id}")
     return await create_issue_db(session, user.id, project_id, issue)
 
 
@@ -71,10 +77,12 @@ async def update_issue(
         issue_id: Annotated[int, Path(ge=1)],
         issue: UpdateIssueSchema,
         session: AsyncSession = Depends(get_async_session),
-        user: User = Depends(current_active_user)
+        user: User = Depends(current_active_user),
+        cache: Redis = Depends(get_redis_client)
         ) -> IssueSchema:
     """ Update an issue related to the specified project """
 
+    await cache.delete(f"issues_project_{project_id}")
     return await update_issue_db(session, user.id, project_id, issue_id, issue)
 
 
@@ -83,8 +91,10 @@ async def delete_issue(
         project_id: Annotated[int, Path(ge=1)],
         issue_id: Annotated[int, Path(ge=1)],
         session: AsyncSession = Depends(get_async_session),
-        user: User = Depends(current_active_user)
+        user: User = Depends(current_active_user),
+        cache: Redis = Depends(get_redis_client)
         ):
     """ Delete specified issue from specified project """
 
+    await cache.delete(f"issues_project_{project_id}")
     return await delete_issue_db(session, user.id, project_id, issue_id)

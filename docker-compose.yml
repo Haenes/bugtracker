@@ -40,6 +40,24 @@ services:
       retries: 10
     restart: unless-stopped
 
-volumes:
-  data:
-    name: "api-db-data"
+  redis:
+    container_name: api-redis
+    build: ./deploy/redis
+    command: redis-server redis.conf
+    env_file:
+      - .env
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+        reservations:
+          memory: 10M
+    volumes:
+      - ./deploy/redis:/data
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli -a ${REDIS_PASSWORD} ping | grep PONG"]
+      interval: 1s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
