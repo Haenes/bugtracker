@@ -1,6 +1,7 @@
 from fastapi import Depends, Request
 from fastapi_users import BaseUserManager, IntegerIDMixin
 
+from utils.mail import EmailVerification
 from .config import MANAGER_SECRET, MAX_AGE
 from .cookie_jwt import auth_backend
 from .custom import CustomFastAPIUsers
@@ -16,9 +17,19 @@ class UserManager(IntegerIDMixin, BaseUserManager[User, int]):
     verification_token_lifetime_seconds = MAX_AGE
 
     async def on_after_register(
-            self, user: User, request: Request | None = None
+        self,
+        user: User,
+        request: Request | None = None
     ):
-        print(f"User {user.id} has registered.")
+        await BaseUserManager.request_verify(self, user=user, request=request)
+
+    async def on_after_request_verify(
+        self,
+        user: User,
+        token: str,
+        request: Request | None = None
+    ):
+        EmailVerification.send_email(user=user, token=token)
 
 
 async def get_user_manager(user_db=Depends(get_user_db)):
@@ -32,3 +43,4 @@ current_active_user = fastapi_users.current_user(active=True)
 auth_router = fastapi_users.get_auth_router(auth_backend)
 register_router = fastapi_users.get_register_router(UserRead, UserCreate)
 users_router = fastapi_users.get_users_router(UserRead, UserUpdate)
+auth_verify_router = fastapi_users.get_verify_router(UserRead)

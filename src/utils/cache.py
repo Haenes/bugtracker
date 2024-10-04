@@ -4,8 +4,8 @@ from typing import AsyncGenerator
 
 from redis.asyncio import ConnectionPool, Redis
 
-from pagination import PaginatedResponse, NoItemsResponse
 from config import REDIS_USER, REDIS_PASSWORD, REDIS_EXPIRE_TIME
+from .pagination import PaginatedResponse, NoItemsResponse
 
 
 pool = ConnectionPool.from_url(

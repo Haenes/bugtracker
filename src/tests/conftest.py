@@ -9,11 +9,11 @@ from sqlalchemy.ext.asyncio import (
     AsyncSession, async_sessionmaker, create_async_engine
     )
 
+from config import TEST_DB_URI
 from main import app
 from auth.models import User
 from auth.manager import current_active_user
-from db import get_async_session, Base
-from config import TEST_DB_URI
+from utils.db import get_async_session, Base
 
 
 engine_test = create_async_engine(TEST_DB_URI, poolclass=NullPool)

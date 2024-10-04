@@ -4,11 +4,12 @@ from fastapi import APIRouter, Depends, Path
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from db import get_async_session
-from cache import Redis, get_redis_client, cache_get_or_set
+from utils.db import get_async_session
+from utils.cache import Redis, get_redis_client, cache_get_or_set
 from auth.manager import User, current_active_user
-from pagination import (
-    PaginatedResponse, NoItemsResponse, paginate, pagination_params
+from utils.pagination import (
+    PaginatedResponse, NoItemsResponse,
+    paginate, pagination_params
     )
 from .schemas import (
     CreateIssueSchema,  UpdateIssueSchema,

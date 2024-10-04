@@ -9,7 +9,7 @@ from sqlalchemy import VARCHAR, DateTime, false, true, text
 from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from db import Base, get_async_session, intpk
+from utils.db import Base, get_async_session, intpk
 
 
 user = Annotated[str, mapped_column(VARCHAR(length=150))]
