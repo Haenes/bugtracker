@@ -28,7 +28,7 @@ router = APIRouter(
 )
 
 
-@router.get("/")
+@router.get("")
 async def projects(
         pagination_params: pagination_params,
         session: AsyncSession = Depends(get_async_session),
@@ -45,7 +45,7 @@ async def projects(
         )
 
 
-@router.post("/", status_code=201)
+@router.post("", status_code=201)
 async def create_project(
         project: CreateProjectSchema,
         session: AsyncSession = Depends(get_async_session),

@@ -2,14 +2,14 @@ import httpx
 
 
 async def test_pagination_zero_projects(user_client: httpx.AsyncClient):
-    r = await user_client.get("projects/")
+    r = await user_client.get("projects")
 
     assert r.json()["results"] == "You don't have any project!"
     assert r.status_code == 200
 
 
 async def test_create_project(user_client: httpx.AsyncClient):
-    r = await user_client.post("projects/", json={
+    r = await user_client.post("projects", json={
         "name": "test_name",
         "key": "test_key",
         "type": "Fullstack",
@@ -18,7 +18,7 @@ async def test_create_project(user_client: httpx.AsyncClient):
 
 
 async def test_pagination_page_less_then_zero(user_client: httpx.AsyncClient):
-    r = await user_client.get("projects/?page=-1")
+    r = await user_client.get("projects?page=-1")
     results = r.json()["detail"]
 
     assert results == "The page and/or limit cannot be less than zero!"
@@ -26,7 +26,7 @@ async def test_pagination_page_less_then_zero(user_client: httpx.AsyncClient):
 
 
 async def test_pagination_limit_less_then_zero(user_client: httpx.AsyncClient):
-    r = await user_client.get("projects/?limit=-1")
+    r = await user_client.get("projects?limit=-1")
     results = r.json()["detail"]
 
     assert results == "The page and/or limit cannot be less than zero!"
@@ -36,7 +36,7 @@ async def test_pagination_limit_less_then_zero(user_client: httpx.AsyncClient):
 async def test_pagination_page_and_limit_less_then_zero(
         user_client: httpx.AsyncClient
         ):
-    r = await user_client.get("projects/?limit=-1")
+    r = await user_client.get("projects?limit=-1")
     results = r.json()["detail"]
 
     assert results == "The page and/or limit cannot be less than zero!"
@@ -44,14 +44,14 @@ async def test_pagination_page_and_limit_less_then_zero(
 
 
 async def test_pagination_zero_issues(user_client: httpx.AsyncClient):
-    r = await user_client.get("projects/1/issues/")
+    r = await user_client.get("projects/1/issues")
 
     assert r.json()["results"] == "You don't have any issues for this project!"
     assert r.status_code == 200
 
 
 async def test_get_projects(user_client: httpx.AsyncClient):
-    r = await user_client.get("projects/")
+    r = await user_client.get("projects")
     assert r.status_code == 200
 
 
@@ -75,7 +75,7 @@ async def test_update_not_exist_project(user_client: httpx.AsyncClient):
 
 
 async def test_create_issue(user_client: httpx.AsyncClient):
-    r = await user_client.post("projects/1/issues/", json={
+    r = await user_client.post("projects/1/issues", json={
         "title": "Test issue",
         "description": "Test",
         "type": "Bug",
@@ -85,7 +85,7 @@ async def test_create_issue(user_client: httpx.AsyncClient):
 
 
 async def test_create_another_issue(user_client: httpx.AsyncClient):
-    r = await user_client.post("projects/1/issues/", json={
+    r = await user_client.post("projects/1/issues", json={
         "title": "Another test issue",
         "type": "Bug"
         })
@@ -95,7 +95,7 @@ async def test_create_another_issue(user_client: httpx.AsyncClient):
 async def test_create_issue_for_not_exist_project(
         user_client: httpx.AsyncClient
         ):
-    r = await user_client.post("projects/999/issues/", json={
+    r = await user_client.post("projects/999/issues", json={
         "title": "Wrong project",
         "type": "Bug",
         })
@@ -106,7 +106,7 @@ async def test_create_issue_for_not_exist_project(
 
 
 async def test_get_issues(user_client: httpx.AsyncClient):
-    r = await user_client.get("projects/1/issues/")
+    r = await user_client.get("projects/1/issues")
     assert r.status_code == 200
 
 

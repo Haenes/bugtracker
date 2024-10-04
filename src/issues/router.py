@@ -27,7 +27,7 @@ router = APIRouter(
 )
 
 
-@router.get("/")
+@router.get("")
 async def get_issues(
         project_id: Annotated[int, Path(ge=1)],
         pagination_params: pagination_params,
@@ -45,7 +45,7 @@ async def get_issues(
         )
 
 
-@router.post("/", status_code=201)
+@router.post("", status_code=201)
 async def create_issue(
         project_id: Annotated[int, Path(ge=1)],
         issue: CreateIssueSchema,
