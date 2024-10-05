@@ -5,7 +5,8 @@ from fastapi import FastAPI
 from config import REDIS_USER, REDIS_PASSWORD, CeleryConfig
 from auth.manager import (
     auth_router, auth_verify_router,
-    register_router, users_router
+    register_router, users_router,
+    reset_password_router
     )
 from projects.router import router as projects_router
 from issues.router import router as issues_router
@@ -40,6 +41,12 @@ app.include_router(
 
 app.include_router(
     router=auth_verify_router,
+    prefix="/auth",
+    tags=["auth"]
+)
+
+app.include_router(
+    router=reset_password_router,
     prefix="/auth",
     tags=["auth"]
 )

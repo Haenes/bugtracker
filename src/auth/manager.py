@@ -29,7 +29,15 @@ class UserManager(IntegerIDMixin, BaseUserManager[User, int]):
         token: str,
         request: Request | None = None
     ):
-        celery_send_email.delay(user=user, token=token)
+        celery_send_email.delay("EmailVerification", user=user, token=token)
+
+    async def on_after_forgot_password(
+        self,
+        user: User,
+        token: str,
+        request: Request | None = None
+    ):
+        celery_send_email.delay("EmailResetPassword", user=user, token=token)
 
 
 async def get_user_manager(user_db=Depends(get_user_db)):
@@ -44,3 +52,4 @@ auth_router = fastapi_users.get_auth_router(auth_backend)
 register_router = fastapi_users.get_register_router(UserRead, UserCreate)
 users_router = fastapi_users.get_users_router(UserRead, UserUpdate)
 auth_verify_router = fastapi_users.get_verify_router(UserRead)
+reset_password_router = fastapi_users.get_reset_password_router()

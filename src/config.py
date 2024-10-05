@@ -17,6 +17,7 @@ SMTP_USER = os.environ.get("SMTP_USER")
 SMTP_PASSWORD = os.environ.get("SMTP_PASSWORD")
 
 VERIFY_URL = "127.0.0.1:8000/auth/verify"
+PASSWORD_RESET_URL = "127.0.0.1:8000/auth/reset-password"
 
 
 class CeleryConfig:
