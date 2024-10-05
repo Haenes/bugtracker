@@ -17,3 +17,9 @@ SMTP_USER = os.environ.get("SMTP_USER")
 SMTP_PASSWORD = os.environ.get("SMTP_PASSWORD")
 
 VERIFY_URL = "127.0.0.1:8000/auth/verify"
+
+
+class CeleryConfig:
+    task_serializer = "pickle"
+    accept_content = ["application/json", "application/x-python-serialize"]
+    broker_connection_retry_on_startup = False

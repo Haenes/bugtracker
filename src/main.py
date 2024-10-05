@@ -1,5 +1,8 @@
+from celery import Celery
+
 from fastapi import FastAPI
 
+from config import REDIS_USER, REDIS_PASSWORD, CeleryConfig
 from auth.manager import (
     auth_router, auth_verify_router,
     register_router, users_router
@@ -8,6 +11,10 @@ from projects.router import router as projects_router
 from issues.router import router as issues_router
 
 app = FastAPI()
+
+celery = Celery("tasks", broker=f"redis://{REDIS_USER}:{REDIS_PASSWORD}@redis")
+celery.config_from_object(CeleryConfig)
+celery.autodiscover_tasks()
 
 app.include_router(projects_router)
 app.include_router(issues_router)

@@ -1,7 +1,7 @@
 from fastapi import Depends, Request
 from fastapi_users import BaseUserManager, IntegerIDMixin
 
-from utils.mail import EmailVerification
+from utils.tasks import celery_send_email
 from .config import MANAGER_SECRET, MAX_AGE
 from .cookie_jwt import auth_backend
 from .custom import CustomFastAPIUsers
@@ -29,7 +29,7 @@ class UserManager(IntegerIDMixin, BaseUserManager[User, int]):
         token: str,
         request: Request | None = None
     ):
-        EmailVerification.send_email(user=user, token=token)
+        celery_send_email.delay(user=user, token=token)
 
 
 async def get_user_manager(user_db=Depends(get_user_db)):
