@@ -1,6 +1,6 @@
 import json
 
-from typing import AsyncGenerator
+from typing import AsyncGenerator, Callable
 
 from redis.asyncio import ConnectionPool, Redis
 
@@ -16,14 +16,6 @@ pool = ConnectionPool.from_url(
 
 
 async def get_redis_client() -> AsyncGenerator[Redis, None]:
-    # async with Redis(
-    #     host="redis",
-    #     username=REDIS_USER,
-    #     password=REDIS_PASSWORD,
-    #     decode_responses=True
-    # ) as client:
-    #     yield client
-
     async with Redis.from_pool(pool) as client:
         yield client
 
@@ -31,7 +23,7 @@ async def get_redis_client() -> AsyncGenerator[Redis, None]:
 async def cache_get_or_set(
         cache: Redis,
         key: str,
-        func,
+        func: Callable,
         *args_for_func
         ) -> PaginatedResponse | NoItemsResponse:
     """Return value for a given key if exist or set key with a func result."""
