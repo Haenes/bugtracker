@@ -5,7 +5,7 @@ FROM python:3.12-alpine
 ENV PYTHONUNBUFFERED 1
 ENV PYTHONDONTWRITEBYTECODE 1
 
-WORKDIR /api
+WORKDIR /backend
 
 COPY requirements.txt ./
 

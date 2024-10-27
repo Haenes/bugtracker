@@ -1,6 +1,6 @@
 **/__pycache__
-/.pytest_cache
-/.venv
+**/.pytest_cache
+**/.venv
 */db/data
 dump.rdb
 db.sqlite3
