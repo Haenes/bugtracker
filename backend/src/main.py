@@ -1,7 +1,7 @@
 from celery import Celery
 
 from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware 
+from fastapi.middleware.cors import CORSMiddleware
 
 from config import REDIS_USER, REDIS_PASSWORD, CeleryConfig
 from auth.manager import (
@@ -24,7 +24,7 @@ app.add_middleware(
     allow_origins=origins,
     allow_credentials=True,
     allow_methods=["GET", "POST", "PATCH", "DELETE"],
-    # allow_headers=["*"],
+    allow_headers=["*"],
 )
 
 celery = Celery("tasks", broker=f"redis://{REDIS_USER}:{REDIS_PASSWORD}@redis")
