@@ -1,49 +1,16 @@
 import { useState } from 'react';
 
 import {
-  Col, Row,
-  Button,
-  Card,
-  Form,
-  Input,
-  Popover,
+    Col,
+    Row,
+    Button,
+    Card,
+    Form,
+    Input,
+    Popover,
 } from 'antd';
 
 import { userRegistration } from '../client/auth.js';
-
-
-const tailFormItemLayout = {
-  wrapperCol: {
-    xs: {
-      span: 16,
-      offset: 8,
-    },
-    sm: {
-      span: 18,
-      offset: 9,
-    },
-  },
-};
-
-
-function validateName(value) {
-  if (/^[a-zA-Z]+$/.test(value)) {
-    return true;
-  }
-  return false;
-}
-
-
-const minLengthNameRule = () => ({
-    validator(_, value) {
-      if (value.length >= 2) {
-        if (validateName(value)) {
-          return Promise.resolve();
-        }
-        return Promise.reject(new Error('Only letters are allowed!'));
-      }
-      return Promise.reject(new Error('The min length of name is two letters'));
-    }});
 
 
 export function RegisterForm() {
@@ -196,3 +163,38 @@ export function RegisterForm() {
         </Row>
     );
 }
+
+
+const tailFormItemLayout = {
+    wrapperCol: {
+        xs: {
+            span: 16,
+            offset: 8,
+        },
+        sm: {
+            span: 18,
+            offset: 9,
+        },
+    },
+};
+
+
+function validateName(value) {
+    if (/^[a-zA-Z]+$/.test(value)) {
+        return true;
+    }
+    return false;
+}
+
+
+const minLengthNameRule = () => ({
+    validator(_, value) {
+        if (value.length >= 2) {
+            if (validateName(value)) {
+                return Promise.resolve();
+            }
+            return Promise.reject(new Error('Only letters are allowed!'));
+        }
+        return Promise.reject(new Error('The min length of name is two letters'));
+    }
+});
