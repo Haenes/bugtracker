@@ -63,7 +63,6 @@ services:
   redis:
     container_name: api-redis
     build: ./backend/deploy/redis
-    command: redis-server redis.conf
     env_file:
       - .env
     deploy:
@@ -73,11 +72,10 @@ services:
         reservations:
           memory: 10M
     volumes:
-      - ./backend/deploy/redis:/data
+      - ./backend/deploy/redis/data:/data
     healthcheck:
       test: ["CMD-SHELL", "redis-cli -a ${REDIS_PASSWORD} ping | grep PONG"]
       interval: 1s
       timeout: 5s
       retries: 10
     restart: unless-stopped
-
