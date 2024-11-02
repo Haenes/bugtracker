@@ -17,6 +17,7 @@ export async function loginAction({ request }) {
     if (results.ok) {
         return redirect("/projects");
     } else {
+        console.log(results)
         errors.auth = "Invalid email and/or password!"
         return errors;
     }

@@ -30,7 +30,7 @@ export async function userLogin(data) {
 
         return rawResponse.ok ? rawResponse : rawResponse.json();
     } catch(err) {
-        console.log(err);
+        throw new Response("Error", {status: 503, statusText: "Service Unavailable"});
     }
 }
 
