@@ -41,7 +41,9 @@ function LoginFormHelper() {
             </div>
 
             <Input
+                // It's not a mistake (auth-lib asks email in username form input...)
                 name="username"
+                autoComplete="email"
                 status={errors?.auth && "error"}
                 type="email"
                 placeholder="Email"
@@ -52,6 +54,7 @@ function LoginFormHelper() {
 
             <Input.Password
                 name="password"
+                autoComplete="current-password"
                 status={errors?.auth && "error"}
                 type="password"
                 placeholder="Password"
