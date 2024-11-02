@@ -60,6 +60,11 @@ const minLengthNameRule = () => ({
 });
 
 
+/**
+ * Checks that the name consists only of letters
+ * @param {String} value 
+ * @returns {boolean}
+ */
 function validateName(value) {
     if (/^[a-zA-Z]+$/.test(value)) {
         return true;
@@ -68,6 +73,10 @@ function validateName(value) {
 }
 
 
+/**
+ *  A function that helps reduce nesting in the RegisterForm
+ * @returns {Card}
+ */
 function RegisterCard() {
     const [form] = Form.useForm();
 

@@ -18,12 +18,6 @@ export async function userRegistration(data) {
 
 
 export async function userLogin(data) {
-    let formData = new FormData();
-
-    for (const [key, value] of Object.entries(data)) {
-        formData.append(key, value);
-    }
-
     try {
         let rawResponse = await fetch("http://127.0.0.1:8000/auth/jwt/login", {
             method: "POST",
@@ -31,10 +25,10 @@ export async function userLogin(data) {
                 "Accept": "application/json"
             },
             credentials: "include",
-            body: formData
+            body: data
         });
 
-        return rawResponse;
+        return rawResponse.ok ? rawResponse : rawResponse.json();
     } catch(err) {
         console.log(err);
     }
