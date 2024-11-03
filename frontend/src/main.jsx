@@ -11,7 +11,7 @@ import './index.css'
 
 import { Root } from "./routers/root.jsx";
 import { Login, loginAction } from "./routers/login.jsx";
-import { Registration } from "./routers/registration.jsx";
+import { registerAction, Registration } from "./routers/registration.jsx";
 
 import { ErrorPage } from "./components/ErrorPage.jsx";
 import { Projects } from "./routers/projects.jsx";
@@ -32,6 +32,8 @@ const router = createBrowserRouter([
     {
         path: "/register",
         element: <Registration />,
+        errorElement: <ErrorPage />,
+        action: registerAction,
     },
     {
         path: "/projects",

@@ -36,9 +36,11 @@ function LoginFormHelper() {
     return (
         <RouterForm  method="post" name="login" className="flex flex-col gap-y-4">
 
-            <div className='text-center text-red-500'>
-                {errors?.auth && <span>{errors.auth}</span>}
-            </div>
+            {errors?.auth &&
+                <div className='text-center text-red-500'>
+                    {errors.auth}
+                </div>
+            }
 
             <Input
                 // It's not a mistake (auth-lib asks email in username form input...)

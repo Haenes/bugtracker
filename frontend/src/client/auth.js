@@ -1,3 +1,6 @@
+const error503 = {status: 503, statusText: "Service Unavailable"};
+
+
 export async function userRegistration(data) {
     try {
         let rawResponse = await fetch("http://127.0.0.1:8000/auth/register", {
@@ -12,7 +15,7 @@ export async function userRegistration(data) {
 
         return response;
     } catch(err) {
-        console.log(err);
+        throw new Response("Error", error503);
     }
 }
 
@@ -30,7 +33,7 @@ export async function userLogin(data) {
 
         return rawResponse.ok ? rawResponse : rawResponse.json();
     } catch(err) {
-        throw new Response("Error", {status: 503, statusText: "Service Unavailable"});
+        throw new Response("Error", error503);
     }
 }
 
