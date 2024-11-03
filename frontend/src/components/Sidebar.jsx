@@ -6,7 +6,7 @@ import {
     UserOutlined,
 } from '@ant-design/icons';
 
-import { Layout, Menu } from 'antd';
+import { ConfigProvider, Layout, Menu, theme } from 'antd';
 
 const { Sider } = Layout;
 
@@ -22,7 +22,8 @@ export function Sidebar({ children }) {
         height: "100vh",
         position: "sticky",
         top: 0,
-        paddingTop: 8
+        paddingTop: 8,
+        border: 20
     };
     const [collapsed, setCollapsed] = useState(true);
 
@@ -43,8 +44,12 @@ export function Sidebar({ children }) {
                 onCollapse={() => setCollapsed(!collapsed)}
                 collapsedWidth="50"
                 width="155"
-                >
-                    <Menu mode="vertical" triggerSubMenuAction="click" items={items}/>
+            >
+                <ConfigProvider theme={{
+                    components: {Menu: {activeBarBorderWidth: 0}}
+                }}>
+                <Menu mode="vertical" triggerSubMenuAction="click" items={items}/>
+                </ConfigProvider>
             </Sider>
 
             {children}
