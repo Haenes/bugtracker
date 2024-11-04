@@ -40,7 +40,7 @@ async def projects(
 
     return await cache_get_or_set(
         cache,
-        f"projects_{user.id}",
+        f"projects_{user.id}_{pagination_params}",
         paginate,
         session, Project, pagination_params, user.id
         )
