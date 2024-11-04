@@ -37,7 +37,7 @@ class NoItemsResponse(BaseModel):
     results: str
 
 
-def _helper(count: int, limit: int, page: int, project_id: int | None = None):
+def _helper(count: int, limit: int, page: int):
     """ A function for validating and removing repetitions. """
 
     total_pages = (
@@ -96,9 +96,7 @@ async def paginate(
                 results="You don't have any issues for this project!"
                 )
 
-        total_pages, next_page, previous_page = _helper(
-            count, limit, page, project_id
-            )
+        total_pages, next_page, previous_page = _helper(count, limit, page)
 
         # Second quary to get issues with specified limit and offset.
         query2 = (
