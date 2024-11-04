@@ -1,12 +1,12 @@
 import { Sidebar } from "./Sidebar.jsx"
 import { PageContent } from "./PageContent.jsx"
-import { ProjectsTable } from "./ProjectsTable.jsx"
 
-export function Page() {
+
+export function Page({ header, children }) {
     return (
         <Sidebar>
-            <PageContent>
-                <ProjectsTable />
+            <PageContent header={header}>
+                {children}
             </PageContent>
         </Sidebar>
     )

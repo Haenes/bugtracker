@@ -4,7 +4,7 @@ import { Layout, theme } from 'antd';
 const { Content } = Layout
 
 
-export function PageContent({ children }) {
+export function PageContent({ header, children }) {
     const {token: { colorBgContainer, borderRadiusLG },} = theme.useToken();
     const contentStyle = {
         padding: 10,
@@ -13,9 +13,10 @@ export function PageContent({ children }) {
     };
 
     return (
-        <Content className="px-2 pt-3">
+        <Content className="mx-2 mt-3">
             <div style={contentStyle} className="h-full">
-                {children}
+                <span className="text-xl">{header}</span>
+                <div className="mt-3">{children}</div>
             </div>
         </Content>
     );
