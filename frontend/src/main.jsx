@@ -39,7 +39,7 @@ const router = createBrowserRouter([
         path: "/projects",
         element: <Projects />,
         errorElement: <ErrorPage />,
-        loader: projectsLoader
+        loader: projectsLoader,
     },
 ]);
 

@@ -1,4 +1,4 @@
-import { useLoaderData } from "react-router-dom";
+import { useLoaderData, useSubmit } from "react-router-dom";
 
 import { List, Card } from "antd";
 import { StarFilled, StarOutlined } from "@ant-design/icons";
@@ -6,7 +6,7 @@ import { StarFilled, StarOutlined } from "@ant-design/icons";
 
 export function ProjectsList() {
   const projects = useLoaderData();
-  console.log(projects);
+  const submit = useSubmit();
 
   const listData = Array.from(projects.results).map((_, i) => ({
     starred: isFavorite(projects.results[i].starred),
@@ -17,15 +17,14 @@ export function ProjectsList() {
   }));
 
   const paginationParams = {
+    current: projects.page,
     total: projects.count,
-    // current: projects.page,
-    position:"bottom",
-    align:"center",
+    position: "bottom",
+    align: "center",
     showSizeChanger: false,
     simple: true,
     hideOnSinglePage: true,
-    className: "items-bottom"
-    // onChange: pass
+    onChange: (page, pageSize) => submit(`?page=${page}&limit=${pageSize}`)
   }
 
   return (
@@ -40,6 +39,7 @@ export function ProjectsList() {
                 <i>KEY: {item.key}</i> 
                 <i>TYPE: {item.type}</i>
                 <i>DATE: {item.created}</i>
+                <i>FAVORITE: {item.starred}</i>
             </div>
           </Card>
         </List.Item>
@@ -52,8 +52,8 @@ export function ProjectsList() {
 function convertDate(date) {
   const dateObj = new Date(Date.parse(date));
   const dateFormat = new Intl.DateTimeFormat(
-      ["ru-RU", "en-US"],
-      {dateStyle: "short", timeStyle: "medium"}
+    ["ru-RU", "en-US"],
+    {dateStyle: "short", timeStyle: "medium"}
   )
 
   return dateFormat.format(dateObj)

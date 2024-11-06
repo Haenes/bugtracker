@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import {
     SettingOutlined,
-    // FormOutlined,
+    FormOutlined,
     HomeOutlined,
     UserOutlined,
 } from '@ant-design/icons';
@@ -27,11 +27,13 @@ export function Sidebar({ children }) {
     };
     const [collapsed, setCollapsed] = useState(true);
 
+    // isIssue ? getItem("Create issue", 4, <FormOutlined />) : 
+
     const items = [
         getItem("Account", 1, <UserOutlined />, [getItem("Log out", 2)]),
         getItem("Home", 3, <HomeOutlined />),
-        // isIssue ? getItem("Create issue", 4, <FormOutlined />) : getItem("Create project", 4, <FormOutlined />),
-        getItem("Settings", 4, <SettingOutlined />)
+        getItem("Create project", 4, <FormOutlined />),
+        getItem("Settings", 5, <SettingOutlined />)
       ];
 
     return (

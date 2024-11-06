@@ -1,5 +1,5 @@
-export async function getItems(project_id = null) {
-    const url = urlGetCreateHelper(project_id);
+export async function getItems(page, limit, project_id = null) {
+    const url = urlGetCreateHelper(project_id, page, limit);
 
     try {
         let rawResponse = await fetch(url, {credentials: "include"});
@@ -110,12 +110,18 @@ function urlSingleHelper(project_id, issue_id) {
 }
 
 
-function urlGetCreateHelper(project_id) {
+function urlGetCreateHelper(project_id, page, limit) {
     let url = "http://127.0.0.1:8000/projects";
 
-    if (project_id) {
-        url = `${url}/${project_id}/issues`
-    }
+    const pagination = new URLSearchParams([
+        ["page", page],
+        ["limit", limit]
+    ]);
 
-    return url
+    if (project_id) {
+        url = `${url}/${project_id}/issues/?${pagination}`;
+    }
+    url = `${url}?${pagination}`;
+
+    return url;
 }
