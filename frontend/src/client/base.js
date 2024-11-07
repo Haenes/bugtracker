@@ -1,5 +1,5 @@
 export async function getItems(page, limit, project_id = null) {
-    const url = urlGetCreateHelper(project_id, page, limit);
+    const url = urlGetAllHelper(page, limit, project_id);
 
     try {
         let rawResponse = await fetch(url, {credentials: "include"});
@@ -13,7 +13,7 @@ export async function getItems(page, limit, project_id = null) {
 
 
 export async function createItem(data, project_id = null) {
-    const url = urlGetCreateHelper(project_id);
+    const url = urlCreateHelper(project_id);
 
     try {
         let rawResponse = await fetch(url, {
@@ -97,20 +97,34 @@ export async function deleteItem(project_id, issue_id = null) {
 }
 
 
+/**
+ * Returns the API endpoint for the one item
+ * to get, update or delete it.
+ * @param {*} project_id 
+ * @param {*} issue_id 
+ * @returns url
+ */
 function urlSingleHelper(project_id, issue_id) {
     let url = "http://127.0.0.1:8000/projects";
 
     if (issue_id) {
-        url = `${url}/${project_id}/issues/${issue_id}`
+        url += `/${project_id}/issues/${issue_id}`
     } else {
-        url = `${url}/${project_id}`
+        url += `/${project_id}`
     }
 
     return url
 }
 
 
-function urlGetCreateHelper(project_id, page, limit) {
+/**
+ * Returns the API endpoint for getting all items (GET only).
+ * @param {*} page 
+ * @param {*} limit 
+ * @param {*} project_id 
+ * @returns url
+ */
+function urlGetAllHelper(page, limit, project_id) {
     let url = "http://127.0.0.1:8000/projects";
 
     const pagination = new URLSearchParams([
@@ -119,9 +133,25 @@ function urlGetCreateHelper(project_id, page, limit) {
     ]);
 
     if (project_id) {
-        url = `${url}/${project_id}/issues/?${pagination}`;
+        url += `/${project_id}/issues/?${pagination}`;
     }
-    url = `${url}?${pagination}`;
+    url += `?${pagination}`;
+
+    return url;
+}
+
+
+/**
+ * Returns the API endpoint for creating single item.
+ * @param {*} project_id 
+ * @returns url
+ */
+function urlCreateHelper(project_id) {
+    let url = "http://127.0.0.1:8000/projects";
+
+    if (project_id) {
+        url += `/${project_id}/issues`;
+    }
 
     return url;
 }

@@ -9,7 +9,7 @@ import {
     Input
 } from 'antd';
 
-import { Form as RouterForm, useActionData } from "react-router-dom";
+import { Form, useActionData } from "react-router-dom";
 
 
 export function LoginForm() {
@@ -27,14 +27,14 @@ export function LoginForm() {
 
 /**
  * A function that helps reduce nesting in the LoginForm
- * @returns {RouterForm}
+ * @returns {Form}
  */
 function LoginFormHelper() {
     const [passwordVisible, setPasswordVisible] = useState(false);
     const errors = useActionData();
 
     return (
-        <RouterForm  method="post" name="login" className="flex flex-col gap-y-4">
+        <Form  method="post" name="login" className="flex flex-col gap-y-4">
 
             {errors?.auth &&
                 <div className='text-center text-red-500'>
@@ -77,6 +77,6 @@ function LoginFormHelper() {
                 <a href="register">Register now!</a>
             </div>
 
-        </RouterForm>
+        </Form>
     )
 }

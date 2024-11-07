@@ -8,6 +8,8 @@ export function ProjectsList() {
   const projects = useLoaderData();
   const submit = useSubmit();
 
+  if (!projects) return "You don't have any project yet!"
+
   const listData = Array.from(projects.results).map((_, i) => ({
     starred: isFavorite(projects.results[i].starred),
     key: projects.results[i].key,

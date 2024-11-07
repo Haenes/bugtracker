@@ -1,4 +1,4 @@
-import { getItems } from "../client/base.js";
+import { createItem, getItems } from "../client/base.js";
 import { Page } from "../components/Page.jsx";
 import { ProjectsList } from "../components/ProjectsList.jsx";
 
@@ -28,4 +28,15 @@ export async function projectsLoader( {request} ) {
     } else {
         return projects;
     }
+}
+
+
+export async function projectsAction({ request }) {
+    const formData = await request.formData();
+
+    const project = await createItem(Object.fromEntries(formData));
+    const errors = {};
+
+    console.log("project", project)
+    return project
 }

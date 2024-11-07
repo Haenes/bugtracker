@@ -14,7 +14,7 @@ import { Login, loginAction } from "./routers/login.jsx";
 import { Registration, registerAction } from "./routers/registration.jsx";
 
 import { ErrorPage } from "./components/ErrorPage.jsx";
-import { Projects, projectsLoader } from "./routers/projects.jsx";
+import { Projects, projectsLoader, projectsAction } from "./routers/projects.jsx";
 
 
 const router = createBrowserRouter([
@@ -40,6 +40,7 @@ const router = createBrowserRouter([
         element: <Projects />,
         errorElement: <ErrorPage />,
         loader: projectsLoader,
+        action: projectsAction
     },
 ]);
 

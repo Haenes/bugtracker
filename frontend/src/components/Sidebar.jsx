@@ -6,17 +6,16 @@ import {
     UserOutlined,
 } from '@ant-design/icons';
 
-import { ConfigProvider, Layout, Menu, theme } from 'antd';
+import { ConfigProvider, Layout, Menu, Modal } from 'antd';
+import { ProjectForm } from './ProjectForm';
 
 const { Sider } = Layout;
 
 
-function getItem(label, key, icon, children) {
-  return {key, icon, children, label};
-}
-
-
 export function Sidebar({ children }) {
+    const [collapsed, setCollapsed] = useState(true);
+    const [modalOpen, setModalOpen] = useState(false);
+
     const siderStyle = {
         overflow: "auto",
         height: "100vh",
@@ -25,36 +24,64 @@ export function Sidebar({ children }) {
         paddingTop: 8,
         border: 20
     };
-    const [collapsed, setCollapsed] = useState(true);
-
-    // isIssue ? getItem("Create issue", 4, <FormOutlined />) : 
-
-    const items = [
-        getItem("Account", 1, <UserOutlined />, [getItem("Log out", 2)]),
-        getItem("Home", 3, <HomeOutlined />),
-        getItem("Create project", 4, <FormOutlined />),
-        getItem("Settings", 5, <SettingOutlined />)
-      ];
+    const menuItems = [
+        {
+            key: "1",
+            label: "Account",
+            icon: <UserOutlined />,
+            children: [{key: "2", label: "Log out"}]
+        },
+        {
+            key: "3",
+            label: "Home",
+            icon: <HomeOutlined />
+        },
+        {
+            key: "4",
+            label: "Create project",
+            icon: <FormOutlined />,
+            onClick: () => setModalOpen(true)
+        },
+        {
+            key: "5",
+            label: "Settings",
+            icon: <SettingOutlined />
+        },
+    ];
 
     return (
-        <Layout hasSider>
-            <Sider
-                style={siderStyle}
-                theme='light'
-                collapsible
-                collapsed={collapsed}
-                onCollapse={() => setCollapsed(!collapsed)}
-                collapsedWidth="50"
-                width="155"
-            >
-                <ConfigProvider theme={{
-                    components: {Menu: {activeBarBorderWidth: 0}}
-                }}>
-                <Menu mode="vertical" triggerSubMenuAction="click" items={items}/>
-                </ConfigProvider>
-            </Sider>
+        <>
+            <Layout hasSider>
+                <Sider
+                    style={siderStyle}
+                    theme='light'
+                    collapsible
+                    collapsed={collapsed}
+                    onCollapse={() => setCollapsed(!collapsed)}
+                    collapsedWidth="50"
+                    width="155"
+                >
+                    <ConfigProvider theme={{
+                        components: {Menu: {activeBarBorderWidth: 0}}
+                    }}>
+                        <Menu mode="vertical" items={menuItems}/>
+                    </ConfigProvider>
+                </Sider>
 
-            {children}
-        </Layout>
+                {children}
+            </Layout>
+
+            <Modal
+                title={menuItems[2].label}
+                centered
+                width={300}
+                open={modalOpen}
+                footer={null}
+                destroyOnClose={true}
+                onCancel={() => setModalOpen(false)}
+            >
+                <ProjectForm onCreate={() => setModalOpen(false)}/>
+            </Modal>
+        </>
     );
 }
