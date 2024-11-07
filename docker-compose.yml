@@ -1,11 +1,11 @@
 services:
 
-  api:
-    container_name: api
+  backend:
+    container_name: backend
     build: ./backend
     entrypoint: sh ./entrypoint.sh
     volumes:
-      - ./backend:/api
+      - ./backend:/backend
     ports:
       - "8000:8000"
     env_file:

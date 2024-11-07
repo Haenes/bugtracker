@@ -6,7 +6,10 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from auth.manager import User, current_active_user
 from utils.db import get_async_session
-from utils.cache import Redis, get_redis_client, cache_get_or_set
+from utils.cache import (
+    Redis, get_redis_client,
+    cache_get_or_set, cache_delete_all
+    )
 from utils.pagination import (
     PaginatedResponse, NoItemsResponse,
     paginate, pagination_params
@@ -55,7 +58,7 @@ async def create_project(
         ) -> CreatedProjectSchema:
     """ Create a new project. """
 
-    await cache.delete(f"projects_{user.id}")
+    await cache_delete_all(cache, f"projects_{user.id}_*")
     return await create_project_db(session, user.id, project)
 
 
@@ -80,7 +83,7 @@ async def update_project(
         ) -> ProjectSchema:
     """ Update already exists project via PATCH request. """
 
-    await cache.delete(f"projects_{user.id}")
+    await cache_delete_all(cache, f"projects_{user.id}_*")
     return await update_project_db(session, user.id, project_id, project)
 
 
@@ -93,5 +96,5 @@ async def delete_project(
         ) -> dict[str, str]:
     """ Delete specified project. """
 
-    await cache.delete(f"projects_{user.id}")
+    await cache_delete_all(cache, f"projects_{user.id}_*")
     return await delete_project_db(session, user.id, project_id)

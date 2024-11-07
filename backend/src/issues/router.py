@@ -5,7 +5,10 @@ from fastapi import APIRouter, Depends, Path
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from utils.db import get_async_session
-from utils.cache import Redis, get_redis_client, cache_get_or_set
+from utils.cache import (
+    Redis, get_redis_client,
+    cache_get_or_set, cache_delete_all
+    )
 from auth.manager import User, current_active_user
 from utils.pagination import (
     PaginatedResponse, NoItemsResponse,
@@ -40,7 +43,7 @@ async def get_issues(
 
     return await cache_get_or_set(
         cache,
-        f"issues_project_{project_id}",
+        f"issues_project_{project_id}_{pagination_params}",
         paginate,
         session, Issue, pagination_params, user.id, project_id
         )
@@ -56,7 +59,7 @@ async def create_issue(
         ) -> CreatedIssueSchema:
     """ Create a new issue related to the specified project """
 
-    await cache.delete(f"issues_project_{project_id}")
+    await cache_delete_all(cache, f"issues_project_{project_id}_*")
     return await create_issue_db(session, user.id, project_id, issue)
 
 
@@ -83,7 +86,7 @@ async def update_issue(
         ) -> IssueSchema:
     """ Update an issue related to the specified project """
 
-    await cache.delete(f"issues_project_{project_id}")
+    await cache_delete_all(cache, f"issues_project_{project_id}_*")
     return await update_issue_db(session, user.id, project_id, issue_id, issue)
 
 
@@ -97,5 +100,5 @@ async def delete_issue(
         ):
     """ Delete specified issue from specified project """
 
-    await cache.delete(f"issues_project_{project_id}")
+    await cache_delete_all(cache, f"issues_project_{project_id}_*")
     return await delete_issue_db(session, user.id, project_id, issue_id)

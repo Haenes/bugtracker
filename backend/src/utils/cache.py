@@ -26,7 +26,7 @@ async def cache_get_or_set(
         func: Callable,
         *args_for_func
         ) -> PaginatedResponse | NoItemsResponse:
-    """Return value for a given key if exist or set key with a func result."""
+    """ Return value for a given key if exist or set key with a func result. """
 
     try:
         cache_result = json.loads(await cache.get(key))
@@ -40,3 +40,11 @@ async def cache_get_or_set(
 
         await cache.set(key, result.model_dump_json(), ex=REDIS_EXPIRE_TIME)
         return result
+
+
+async def cache_delete_all(cache: Redis, pattern: str):
+    """ Delete all keys that match pattern. """
+    cache_keys = await cache.keys(pattern)
+
+    for i in range(len(cache_keys)):
+        await cache.delete(cache_keys[i])
