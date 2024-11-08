@@ -4,36 +4,46 @@ import {Button, Select, Checkbox, Input} from 'antd';
 
 import { Form, useActionData } from "react-router-dom";
 
-export function ProjectForm({ onCreate }) {
+
+/*
+Unfortunately, due to the fact that the data validation results
+becomes known only after submitting the form, it's impossible
+to make the modal close only when the project is successfully created.
+At the moment, after submitting the form, the modal is active
+and it needs to be closed independently.
+But at least it doesn't close when validation fails and
+the user understands what went wrong and how to fix it.
+*/
+
+
+export function ProjectForm() {
+    const errors = useActionData();
     const [selectedValue, setSelectedValue] = useState("");
-    // const errors = useActionData();
-    
-    // console.log("errors", errors);
 
     return (
         <Form method="post" name="createProject" className="flex flex-col my-4 gap-y-4 w-full">
 
-            {/* {errors?.auth &&
+            {errors?.errorName || errors?.errorKey ?
                 <div className='text-center text-red-500'>
-                    {errors.auth}
-                </div>
-            } */}
+                    {errors?.errorName}{errors?.errorKey}
+                </div> : <></>
+            }
 
             <Input
                 name="name"
-                // status={errors?.auth && "error"}
+                status={errors?.errorName && "error"}
                 type="text"
                 placeholder="Project name"
-                autoFocus
+                autoFocus={true}
                 required
                 minLength={3}
             />
+
             <Input
                 name="key"
-                // status={errors?.auth && "error"}
+                status={errors?.errorKey && "error"}
                 type="text"
                 placeholder="Project key"
-                autoFocus
                 required
                 minLength={3}
                 maxLength={10}
@@ -56,11 +66,10 @@ export function ProjectForm({ onCreate }) {
                 with the selected option value inside the form
                 */
             }
-            <input name="type" type="hidden" value={selectedValue}/>
+            <input name="type" type="hidden" value={selectedValue} />
 
             <Checkbox name="starred">Favorite</Checkbox>
-
-            <Button className="self-center" type="primary" htmlType="submit" onClick={onCreate}>
+            <Button className="self-center" type="primary" htmlType="submit">
                 Create project
             </Button>
         </Form>

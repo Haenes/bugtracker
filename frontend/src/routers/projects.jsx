@@ -32,11 +32,16 @@ export async function projectsLoader( {request} ) {
 
 
 export async function projectsAction({ request }) {
+    const errors = {};
     const formData = await request.formData();
 
     const project = await createItem(Object.fromEntries(formData));
-    const errors = {};
 
-    console.log("project", project)
-    return project
+    if (project.detail == "Project with this key already exist!") {
+        errors.errorKey = "Project with this key already exist!";
+    } else if (project.detail == "Project with this name already exist!") {
+        errors.errorName = "Project with this name already exist!";
+    }
+
+    return Object.keys(errors).length ? errors : project;
 }

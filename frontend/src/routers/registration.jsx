@@ -20,10 +20,10 @@ export async function registerAction({ request }) {
     
         if (results["detail"] == "REGISTER_USER_ALREADY_EXISTS") {
             // errors.email = "A user with this email already exists."
-            errors.email = "This email already taken"
+            errors.email = "This email already taken";
         } else if (results["detail"] == "USERNAME_ALREADY_EXISTS") {
             // errors.username = "A user with this username already exists."
-            errors.username = "This username already taken"
+            errors.username = "This username already taken";
         }
         
         return Object.keys(errors).length ? errors : redirect("/login");
@@ -46,17 +46,17 @@ function formValidation(formData) {
     const confirm_password = formData.get("confirm_password");
 
     if (!validateName(first_name) && !validateName(last_name)) {
-        errors.first_name = "Only letters are allowed"
+        errors.first_name = "Only letters are allowed";
     } else if (!validateName(first_name)) {
-        errors.first_name = "Only letters are allowed"
+        errors.first_name = "Only letters are allowed";
     } else if (!validateName(last_name)) {
-        errors.last_name = "Only letters are allowed"
+        errors.last_name = "Only letters are allowed";
     }
 
     if (!validatePassword(password)) {
-        errors.password = "Password doesn't meet the conditions"
+        errors.password = "Password doesn't meet the conditions";
     } else if (password != confirm_password) {
-        errors.confirm_password = "Password confirmation is wrong"
+        errors.confirm_password = "Password confirmation is wrong";
     }
 
     return errors;

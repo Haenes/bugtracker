@@ -80,7 +80,7 @@ export function Sidebar({ children }) {
                 destroyOnClose={true}
                 onCancel={() => setModalOpen(false)}
             >
-                <ProjectForm onCreate={() => setModalOpen(false)}/>
+                <ProjectForm/>
             </Modal>
         </>
     );
