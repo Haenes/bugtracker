@@ -2,6 +2,7 @@ from fastapi import HTTPException
 
 from sqlalchemy import select, insert, update, delete
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.exc import IntegrityError
 
 from .schemas import ProjectSchema, CreatedProjectSchema, UpdateProjectSchema
 from .models import Project
@@ -18,10 +19,18 @@ async def create_project_db(
         values(**project.model_dump(), author_id=user_id).
         returning(Project)
         )
-    new_project = await session.scalar(stmt)
+    try:
+        new_project = await session.scalar(stmt)
+        await session.commit()
 
-    await session.commit()
-    return new_project
+        return new_project
+    except IntegrityError as e:
+        await session.rollback()
+        error = repr(e.orig.__cause__)
+
+        if "project_key_key" in error:
+            raise HTTPException(400, "Project with this key already exist!")
+        raise HTTPException(400, "Project with this name already exist!")
 
 
 async def get_project_db(
