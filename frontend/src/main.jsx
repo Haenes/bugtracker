@@ -7,7 +7,7 @@ import {
   RouterProvider,
 } from "react-router-dom";
 
-import './index.css'
+import "./index.css"
 
 import { Root } from "./routers/root.jsx";
 import { Login, loginAction } from "./routers/login.jsx";
@@ -15,6 +15,7 @@ import { Registration, registerAction } from "./routers/registration.jsx";
 
 import { ErrorPage } from "./components/ErrorPage.jsx";
 import { Projects, projectsLoader, projectsAction } from "./routers/projects.jsx";
+import { logoutAction } from "./routers/logout.jsx";
 
 
 const router = createBrowserRouter([
@@ -24,16 +25,21 @@ const router = createBrowserRouter([
         errorElement: <ErrorPage />,
     },
     {
+        path: "/register",
+        element: <Registration />,
+        errorElement: <ErrorPage />,
+        action: registerAction,
+    },
+    {
         path: "/login",
         element: <Login />,
         errorElement: <ErrorPage />,
         action: loginAction,
     },
     {
-        path: "/register",
-        element: <Registration />,
+        path: "/logout",
         errorElement: <ErrorPage />,
-        action: registerAction,
+        action: logoutAction
     },
     {
         path: "/projects",

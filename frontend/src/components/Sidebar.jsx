@@ -1,4 +1,7 @@
 import { useState } from "react";
+
+import { useSubmit } from "react-router-dom";
+
 import {
     SettingOutlined,
     HomeOutlined,
@@ -11,8 +14,32 @@ const { Sider } = Layout;
 
 
 export function Sidebar() {
+    const submit = useSubmit();
     const [collapsed, setCollapsed] = useState(true);
     const menuCompanent = {Menu: {activeBarBorderWidth: 0}};
+
+    const handleClickLogout = () => {
+        submit(null, {method: "POST", action: "/logout"});
+    }
+
+    const menuItems = [
+        {
+            key: "1",
+            label: "Account",
+            icon: <UserOutlined />,
+            children: [{key: "2", label: "Log out", onClick: handleClickLogout}]
+        },
+        {
+            key: "3",   
+            label: "Home",
+            icon: <HomeOutlined />
+        },
+        {
+            key: "4",
+            label: "Settings",
+            icon: <SettingOutlined />
+        },
+    ];
 
     return (
         <Sider
@@ -40,22 +67,3 @@ const siderStyle = {
     paddingTop: 8,
     border: 20
 };
-
-const menuItems = [
-    {
-        key: "1",
-        label: "Account",
-        icon: <UserOutlined />,
-        children: [{key: "2", label: "Log out"}]
-    },
-    {
-        key: "3",
-        label: "Home",
-        icon: <HomeOutlined />
-    },
-    {
-        key: "4",
-        label: "Settings",
-        icon: <SettingOutlined />
-    },
-];
