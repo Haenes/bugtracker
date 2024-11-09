@@ -68,7 +68,7 @@ function isFavorite(bool) {
 
 
 const listGrid = {
-  gutter: 16,
+  gutter: 10,
   xs: 1,
   sm: 2,
   md: 3,

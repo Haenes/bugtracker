@@ -1,10 +1,15 @@
 import { createItem, getItems } from "../client/base.js";
 import { Page } from "../components/Page.jsx";
 import { ProjectsList } from "../components/ProjectsList.jsx";
+import { ProjectForm } from "../components/ProjectForm.jsx"
 
 
 export function Projects() {
-    return <Page header={"Projects"}> <ProjectsList /> </Page>
+    return (
+        <Page header={"Projects"} modalForm={<ProjectForm />}>
+            <ProjectsList />
+        </Page>
+    );
 }
 
 
