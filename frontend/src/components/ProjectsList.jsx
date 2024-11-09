@@ -1,7 +1,7 @@
 import { useLoaderData, useSubmit } from "react-router-dom";
 
 import { List, Card } from "antd";
-import { StarFilled, StarOutlined } from "@ant-design/icons";
+import { StarFilled, StarOutlined, DeleteOutlined } from "@ant-design/icons";
 
 
 export function ProjectsList() {
@@ -36,12 +36,18 @@ export function ProjectsList() {
       dataSource={listData}
       renderItem={(item) => (
         <List.Item>
-          <Card title={item.name} hoverable={true}>
+          <Card
+            title={item.name}
+            hoverable
+            actions={[
+              item.starred,
+              <DeleteOutlined key="Delete"/>
+            ]}
+          >
             <div className="flex flex-col">
                 <i>KEY: {item.key}</i> 
                 <i>TYPE: {item.type}</i>
                 <i>DATE: {item.created}</i>
-                <i>FAVORITE: {item.starred}</i>
             </div>
           </Card>
         </List.Item>
