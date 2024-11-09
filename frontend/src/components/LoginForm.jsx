@@ -78,5 +78,5 @@ function LoginFormHelper() {
             </div>
 
         </Form>
-    )
+    );
 }
