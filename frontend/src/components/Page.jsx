@@ -6,7 +6,7 @@ import { Sidebar } from "./Sidebar.jsx"
 import { PageContent } from "./PageContent.jsx"
 
 
-export function Page({ header, modalForm, children }) {
+export function Page({ header, modalTitle, modalForm, children }) {
     const [modalOpen, setModalOpen] = useState(false);
 
     return (
@@ -15,7 +15,7 @@ export function Page({ header, modalForm, children }) {
 
             <PageContent header={header} handleClick={() => setModalOpen(true)}>
                 <Modal
-                    title="Create project"
+                    title={modalTitle}
                     centered
                     width={300}
                     open={modalOpen}

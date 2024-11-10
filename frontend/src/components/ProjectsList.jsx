@@ -1,4 +1,4 @@
-import { useLoaderData, useSubmit } from "react-router-dom";
+import { Link, useLoaderData, useSubmit } from "react-router-dom";
 
 import { List, Card, Button } from "antd";
 import { StarFilled, StarOutlined, DeleteOutlined } from "@ant-design/icons";
@@ -37,20 +37,22 @@ export function ProjectsList() {
             dataSource={listData}
             renderItem={(item) => (
             <List.Item>
-                <Card
-                    title={item.name}
-                    hoverable
-                    actions={[
-                        FavoriteButton(item),
-                        DeleteButton()
-                    ]}
-                >
-                    <div className="flex flex-col">
-                        <i>KEY: {item.key}</i> 
-                        <i>TYPE: {item.type}</i>
-                        <i>DATE: {item.created}</i>
-                    </div>
-                </Card>
+                <Link to={`${item.id}/issues`}>
+                    <Card
+                        title={item.name}
+                        hoverable
+                        actions={[
+                            FavoriteButton(item),
+                            DeleteButton()
+                        ]}
+                    >
+                        <div className="flex flex-col">
+                            <i>KEY: {item.key}</i> 
+                            <i>TYPE: {item.type}</i>
+                            <i>DATE: {item.created}</i>
+                        </div>
+                    </Card>
+                </Link>
             </List.Item>
             )}
         />

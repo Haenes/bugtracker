@@ -16,7 +16,7 @@ const { Sider } = Layout;
 export function Sidebar() {
     const submit = useSubmit();
     const [collapsed, setCollapsed] = useState(true);
-    const menuCompanent = {Menu: {activeBarBorderWidth: 0}};
+    const menuCompanent = {Menu: {activeBarBorderWidth: 0, dropdownWidth: 1}};
 
     const handleClickLogout = () => {
         submit(null, {method: "POST", action: "/logout"});

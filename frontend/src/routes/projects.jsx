@@ -5,15 +5,17 @@ import { ProjectForm } from "../components/ProjectForm.jsx"
 
 
 export function Projects() {
+    const header = "Projects";
+
     return (
-        <Page header={"Projects"} modalForm={<ProjectForm />}>
+        <Page header={header} modalTitle={header.slice(0, -1)} modalForm={<ProjectForm />}>
             <ProjectsList />
         </Page>
     );
 }
 
 
-export async function projectsLoader( {request} ) {
+export async function projectsLoader({ request }) {
     const params = new URL(request.url)?.searchParams;
     let page;
     let limit;

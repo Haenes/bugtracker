@@ -7,15 +7,16 @@ import {
   RouterProvider,
 } from "react-router-dom";
 
-import "./index.css"
+import "./index.css";
 
-import { Root } from "./routers/root.jsx";
-import { Login, loginAction } from "./routers/login.jsx";
-import { Registration, registerAction } from "./routers/registration.jsx";
+import { Root } from "./routes/root.jsx";
+import { Registration, registerAction } from "./routes/registration.jsx";
+import { Login, loginAction } from "./routes/login.jsx";
+import { logoutAction } from "./routes/logout.jsx";
+import { Projects, projectsLoader, projectsAction } from "./routes/projects.jsx";
+import { Issues, issuesLoader } from "./routes/issues.jsx";
 
 import { ErrorPage } from "./components/ErrorPage.jsx";
-import { Projects, projectsLoader, projectsAction } from "./routers/projects.jsx";
-import { logoutAction } from "./routers/logout.jsx";
 
 
 const router = createBrowserRouter([
@@ -47,6 +48,11 @@ const router = createBrowserRouter([
         errorElement: <ErrorPage />,
         loader: projectsLoader,
         action: projectsAction
+    },
+    {
+        path: "/projects/:projectId/issues",
+        element: <Issues />,
+        loader: issuesLoader
     },
 ]);
 
