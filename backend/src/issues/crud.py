@@ -2,6 +2,7 @@ from fastapi import HTTPException
 
 from sqlalchemy import func, select, insert, update, delete
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.exc import IntegrityError
 
 from projects.models import Project
 from .models import Issue
@@ -54,10 +55,17 @@ async def create_issue_db(
                 ).
             returning(Issue)
             )
-        new_issue = await session.scalar(stmt)
+        try:
+            new_issue = await session.scalar(stmt)
 
-        await session.commit()
-        return new_issue
+            await session.commit()
+            return new_issue
+        except IntegrityError as e:
+            await session.rollback()
+            error = repr(e.orig.__cause__)
+
+            if "issue_title_key" in error:
+                raise HTTPException(400, "Issue with this title already exist!")
 
 
 async def get_issue_db(
