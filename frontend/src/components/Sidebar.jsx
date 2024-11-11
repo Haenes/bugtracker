@@ -49,7 +49,7 @@ export function Sidebar() {
             collapsed={collapsed}
             onCollapse={() => setCollapsed(!collapsed)}
             collapsedWidth="50"
-            width="155"
+            width="135"
         >
             <ConfigProvider theme={{components: menuCompanent}}>
                 <Menu mode="vertical" items={menuItems} />

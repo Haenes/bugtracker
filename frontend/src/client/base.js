@@ -134,8 +134,9 @@ function urlGetAllHelper(page, limit, project_id) {
 
     if (project_id) {
         url += `/${project_id}/issues/?${pagination}`;
+    } else {
+        url += `?${pagination}`;
     }
-    url += `?${pagination}`;
 
     return url;
 }

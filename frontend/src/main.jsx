@@ -14,7 +14,7 @@ import { Registration, registerAction } from "./routes/registration.jsx";
 import { Login, loginAction } from "./routes/login.jsx";
 import { logoutAction } from "./routes/logout.jsx";
 import { Projects, projectsLoader, projectsAction } from "./routes/projects.jsx";
-import { Issues, issuesLoader } from "./routes/issues.jsx";
+import { Issues, issuesLoader, issuesAction } from "./routes/issues.jsx";
 
 import { ErrorPage } from "./components/ErrorPage.jsx";
 
@@ -52,7 +52,8 @@ const router = createBrowserRouter([
     {
         path: "/projects/:projectId/issues",
         element: <Issues />,
-        loader: issuesLoader
+        loader: issuesLoader,
+        action: issuesAction
     },
 ]);
 

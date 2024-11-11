@@ -20,12 +20,18 @@ export function ProjectForm() {
     const errors = useActionData();
     const [selectedValue, setSelectedValue] = useState("");
 
+    const handleChange = () => {
+        errors?.errorType && delete errors.errorType;
+    };
+
     return (
         <Form method="post" name="createProject" className="flex flex-col my-4 gap-y-4 w-full">
 
-            {errors?.errorName || errors?.errorKey ?
+            {errors && !errors.detail ?
                 <div className='text-center text-red-500'>
-                    {errors?.errorName}{errors?.errorKey}
+                    {errors?.errorName}
+                    {errors?.errorKey}
+                    {errors?.errorType}
                 </div> : <></>
             }
 
@@ -34,7 +40,6 @@ export function ProjectForm() {
                 status={errors?.errorName && "error"}
                 type="text"
                 placeholder="Project name"
-                autoFocus={true}
                 required
                 minLength={3}
             />
@@ -51,13 +56,13 @@ export function ProjectForm() {
 
             <Select
                 placeholder="Project type"
+                status={errors?.errorType && "error"}
                 options={[
                     {label: "Fullstack", value: "Fullstack"},
                     {label: "Back-end", value: "Back-end"},
                     {label: "Front-end", value: "Front-end"}
                 ]}
-                onChange={value => setSelectedValue(value)}
-                required
+                onChange={value => {setSelectedValue(value), handleChange()}}
             />
             {
                 /*

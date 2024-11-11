@@ -8,7 +8,11 @@ export function Projects() {
     const header = "Projects";
 
     return (
-        <Page header={header} modalTitle={header.slice(0, -1)} modalForm={<ProjectForm />}>
+        <Page
+            header={header}
+            modalTitle={header.slice(0, -1)}
+            modalForm={<ProjectForm />}
+        >
             <ProjectsList />
         </Page>
     );
@@ -39,16 +43,37 @@ export async function projectsLoader({ request }) {
 
 
 export async function projectsAction({ request }) {
-    const errors = {};
     const formData = await request.formData();
+    const errors = selectValidation(formData);
+
+    if (Object.keys(errors).length) return errors;
 
     const project = await createItem(Object.fromEntries(formData));
 
     if (project.detail == "Project with this key already exist!") {
         errors.errorKey = "Project with this key already exist!";
+        return errors;
     } else if (project.detail == "Project with this name already exist!") {
         errors.errorName = "Project with this name already exist!";
+        return errors;
     }
 
-    return Object.keys(errors).length ? errors : project;
+    return project;
+}
+
+
+/**
+ * Function to validate select's from form
+ * before send fetch request.
+ * @param {*} formData 
+ * @returns {Array}
+ */
+function selectValidation(formData) {
+    const errors = {};
+    const type = formData.get("type");
+
+    if (!type) {
+        errors.errorType = "Please, select the project type!";
+    }
+    return errors;
 }
