@@ -5,7 +5,6 @@ import { Card } from "antd";
 
 export function IssuesBoard() {
     const issues = useLoaderData();
-    console.log("ISSUES", issues)
 
     if (!issues) return "You don't have any issues for this project yet!"
 
@@ -20,48 +19,47 @@ export function IssuesBoard() {
         created: convertDate(issues.results[i].created),
         updated: convertDate(issues.results[i].updated)
     }));
-    console.log("LIST DATA", listData)
+    const toDo = listData.filter(issue => issue.status === "To do");
+    const inProgress = listData.filter(issue => issue.status === "In progress");
+    const done = listData.filter(issue => issue.status === "Done");
 
-    const issueType = ["TO DO", "IN PROGRESS", "DONE"];
+    const issueCard = (issueStatus) => {
+        return (Array.from(issueStatus).map((_, i) => (
+            <Card
+                className={
+                    issueStatus[i+1] ?
+                    "text-start mb-4" :
+                    "text-start"
+                }
+                key={issueStatus[i].key}
+                type="inner"
+                hoverable
+                size="small"
+                title={issueStatus[i].title}
+            >
+                <div className="flex flex-col">
+                    <i>{issueStatus[i].type}</i>
+                    <i>{issueStatus[i].priority}</i>
+                    <i>{issueStatus[i].created}</i>
+                </div>
+            </Card>
+        )));
+    }
 
     return (
         <div className="grid grid-cols-12 gap-4 md:gap-2 h-full text-center">
             <Card className="col-span-12 md:col-span-4" title="TO DO">
-                <Card
-                    className="text-start"
-                    type="inner"
-                    hoverable
-                    size="small"
-                    title={listData[0].title}
-                    extra={<a href="#">More</a>}
-                >
-                    <div className="flex flex-col">
-                        <i>{listData[0].type}</i>
-                        <i>{listData[0].priority}</i>
-                        <i>{listData[0].created}</i>
-                    </div>
-                </Card>
-
+                {issueCard(toDo)}
             </Card>
 
             <Card className="col-span-12 md:col-span-4" title="IN PROGRESS">
-
+                {issueCard(inProgress)}
             </Card>
 
             <Card className="col-span-12 md:col-span-4" title="DONE">
-
+                {issueCard(done)}
             </Card>
         </div>
-
-        // Need to write inner loop with condition to check status of the issue and place it 
-        // OR leave status cards as above + loop for inner cards (issues)
-
-        // <div className="grid grid-cols-12 gap-4 md:gap-2 h-screen text-center">
-        //     {Array.from(issueType).map((_, i) => (
-        //         <Card className="col-span-12 md:col-span-4" title={issueType[i]}>
-        //         </Card>
-        //     ))}
-        // </div>
     );
 }
 
