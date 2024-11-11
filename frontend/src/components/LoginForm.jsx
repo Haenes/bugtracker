@@ -9,7 +9,7 @@ import {
     Input
 } from 'antd';
 
-import { Form, useActionData } from "react-router-dom";
+import { Form, Link, useActionData } from "react-router-dom";
 
 
 export function LoginForm() {
@@ -73,8 +73,8 @@ function LoginFormHelper() {
             </Button>
 
             <div className='flex flex-row gap-x-10'>
-                <a href="login/1">Forgot password</a>
-                <a href="register">Register now!</a>
+                <Link to="forgot-pasword">Forgot password</Link>
+                <Link to="/register">Register now!</Link>
             </div>
 
         </Form>

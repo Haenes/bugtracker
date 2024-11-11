@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import { Form, useActionData } from "react-router-dom";
+import { Form, Link, useActionData } from "react-router-dom";
 
 import {
     Col,
@@ -120,7 +120,7 @@ function RegisterCard() {
                 </Button>
 
                 <div className="text-center">
-                    <a href="login">Return to login page</a>
+                    <Link to="/login">Return to login page</Link>
                 </div>
 
             </Form>
