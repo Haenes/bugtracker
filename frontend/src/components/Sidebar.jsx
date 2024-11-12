@@ -1,11 +1,11 @@
 import { useState } from "react";
 
-import { useSubmit } from "react-router-dom";
+import { Link, useSubmit, useLocation } from "react-router-dom";
 
 import {
     SettingOutlined,
     HomeOutlined,
-    UserOutlined,
+    LogoutOutlined,
 } from "@ant-design/icons";
 
 import { ConfigProvider, Layout, Menu } from "antd";
@@ -15,6 +15,7 @@ const { Sider } = Layout;
 
 export function Sidebar() {
     const submit = useSubmit();
+    const location = useLocation().pathname;
     const [collapsed, setCollapsed] = useState(true);
     const menuCompanent = {Menu: {activeBarBorderWidth: 0, dropdownWidth: 1}};
 
@@ -24,21 +25,21 @@ export function Sidebar() {
 
     const menuItems = [
         {
-            key: "1",
-            label: "Account",
-            icon: <UserOutlined />,
-            children: [{key: "2", label: "Log out", onClick: handleClickLogout}]
-        },
-        {
-            key: "3",   
+            key: "1",   
             label: "Home",
-            icon: <HomeOutlined />
+            icon: <Link to="/projects"><HomeOutlined /></Link>
         },
         {
-            key: "4",
+            key: "2",
             label: "Settings",
             icon: <SettingOutlined />
         },
+        {
+            key: "3",
+            label: "Log out",
+            icon: <LogoutOutlined />,
+            onClick: handleClickLogout
+        }
     ];
 
     return (
@@ -52,7 +53,11 @@ export function Sidebar() {
             width="135"
         >
             <ConfigProvider theme={{components: menuCompanent}}>
-                <Menu mode="vertical" items={menuItems} />
+                <Menu
+                    mode="vertical"
+                    selectedKeys={location === "/projects" && "1"}
+                    items={menuItems}
+                />
             </ConfigProvider>
         </Sider>
     );
