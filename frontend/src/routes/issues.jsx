@@ -30,7 +30,7 @@ export async function issuesLoader({ request, params }) {
         limit = urlParams.get("limit");
     } else {
         page = 1;
-        limit = 10;
+        limit = 100;
     }
 
     const issues = await getItems(page, limit, params.projectId);

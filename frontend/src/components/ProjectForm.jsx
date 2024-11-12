@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import {Button, Select, Checkbox, Input} from 'antd';
+import {Button, Select, Checkbox, Input, message} from 'antd';
 
 import { Form, useActionData } from "react-router-dom";
 
@@ -25,9 +25,9 @@ export function ProjectForm() {
     };
 
     return (
-        <Form method="post" name="createProject" className="flex flex-col my-4 gap-y-4 w-full">
+        <Form method="post" name="createProject" className="flex flex-col gap-y-4 w-full">
 
-            {errors && !errors.detail ?
+            {errors?.errorName || errors?.errorKey || errors?.errorType ?
                 <div className='text-center text-red-500'>
                     {errors?.errorName}
                     {errors?.errorKey}
@@ -74,6 +74,7 @@ export function ProjectForm() {
             <input name="type" type="hidden" value={selectedValue} />
 
             <Checkbox name="starred">Favorite</Checkbox>
+
             <Button className="self-center" type="primary" htmlType="submit">
                 Create project
             </Button>

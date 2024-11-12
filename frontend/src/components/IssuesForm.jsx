@@ -27,17 +27,23 @@ export function IssuesForm() {
     const [priority, setPriority] = useState("");
 
     const handleChange = (value) => {
-        if (value === "Bug" || value === "Feature" && errors?.errorType) {
+        if (errors?.errorType && value === "Feature" || value === "Bug") {
             delete errors.errorType;
-        } else if (errors?.errorPriority) {
-            delete errors.errorPriority;
         }
+        else if (
+            errors?.errorPriority &&
+            value === "Lowest" ||
+            value === "Low" ||
+            value === "Medium" ||
+            value === "High" ||
+            value === "Highest"
+        ) delete errors.errorPriority;
     };
 
     return (
         <Form method="post" name="createProject" className="flex flex-col gap-y-4">
 
-            {errors && !errors.detail ?
+            {errors?.errorTitle || errors?.errorType || errors?.errorPriority ?
                 <div className='flex flex-col text-center text-red-500'>
                     {errors?.errorTitle && <span>{errors.errorTitle}</span>}
                     {errors?.errorType && <span>{errors.errorType}</span>}
@@ -51,8 +57,8 @@ export function IssuesForm() {
                 type="text"
                 required
                 placeholder="Issue title"
+                minLength={3}
                 maxLength={255}
-                // minLength={3}
             />
 
             <TextArea
@@ -68,7 +74,7 @@ export function IssuesForm() {
                     {label: "Feature", value: "Feature"},
                     {label: "Bug", value: "Bug"}
                 ]}
-                onChange={value => {setType(value), handleChange(value)}}
+                onChange={value => {setType(value); handleChange(value)}}
             />
             <input name="type" type="hidden" value={type} />
 
