@@ -1,7 +1,7 @@
 import { getItems, createItem } from "../client/base.js";
 
 import { IssuesBoard } from "../components/IssuesBoard.jsx";
-import { IssuesForm } from "../components/IssuesForm.jsx";
+import { CreateIssueForm } from "../components/CreateIssueForm.jsx";
 import { Page } from "../components/Page.jsx";
 
 
@@ -12,7 +12,7 @@ export function Issues() {
         <Page
             header={header}
             modalTitle={header.slice(0, -1)}
-            modalForm={<IssuesForm />}
+            modalForm={<CreateIssueForm />}
         >
             <IssuesBoard />
         </Page>

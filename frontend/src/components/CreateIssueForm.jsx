@@ -21,7 +21,7 @@ the user understands what went wrong and how to fix it.
 */
 
 
-export function IssuesForm() {
+export function CreateIssueForm() {
     const errors = useActionData();
     const [type, setType] = useState("");
     const [priority, setPriority] = useState("");

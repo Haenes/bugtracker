@@ -16,7 +16,7 @@ the user understands what went wrong and how to fix it.
 */
 
 
-export function ProjectForm() {
+export function CreateProjectForm() {
     const errors = useActionData();
     const [selectedValue, setSelectedValue] = useState("");
 

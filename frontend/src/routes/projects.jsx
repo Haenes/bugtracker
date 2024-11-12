@@ -1,7 +1,7 @@
 import { createItem, getItems } from "../client/base.js";
 import { Page } from "../components/Page.jsx";
 import { ProjectsList } from "../components/ProjectsList.jsx";
-import { ProjectForm } from "../components/ProjectForm.jsx"
+import { CreateProjectForm } from "../components/CreateProjectForm.jsx"
 
 
 export function Projects() {
@@ -11,7 +11,7 @@ export function Projects() {
         <Page
             header={header}
             modalTitle={header.slice(0, -1)}
-            modalForm={<ProjectForm />}
+            modalForm={<CreateProjectForm />}
         >
             <ProjectsList />
         </Page>
