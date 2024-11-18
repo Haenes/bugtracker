@@ -1,17 +1,22 @@
+import { useContext } from "react";
+
 import { Layout, theme, Button } from "antd";
 
 import {FormOutlined} from "@ant-design/icons";
 
+import { testContext } from "./Page";
+
 const { Content } = Layout;
 
 
-export function PageContent({ header, handleClick, children }) {
+export function PageContent({ header, children }) {
     const {token: { colorBgContainer, borderRadiusLG }} = theme.useToken();
     const contentStyle = {
         padding: 10,
         background: colorBgContainer,
         borderRadius: borderRadiusLG,
     };
+    const handleClickModal = useContext(testContext);
 
     return (
         <Content className="mx-2 mt-3">
@@ -23,7 +28,7 @@ export function PageContent({ header, handleClick, children }) {
                         title="Create new"
                         type="button"
                         icon={<FormOutlined />}
-                        onClick={handleClick}
+                        onClick={() => handleClickModal({visible: true, modalId: 1})}
                         size="small"
                     />
                 </div>

@@ -1,12 +1,18 @@
+import { useContext } from "react";
+
 import { Link, useLoaderData, useSubmit } from "react-router-dom";
 
 import { List, Card, Button } from "antd";
-import { StarFilled, StarOutlined, DeleteOutlined } from "@ant-design/icons";
+import { StarFilled, StarOutlined, SettingOutlined } from "@ant-design/icons";
+
+import { testContext, modalDataContext } from "./Page";
 
 
 export function ProjectsList() {
     const projects = useLoaderData();
     const submit = useSubmit();
+    const handleClickModal = useContext(testContext);
+    const setModalData = useContext(modalDataContext);
 
     if (!projects) return "You don't have any project yet!"
 
@@ -37,13 +43,19 @@ export function ProjectsList() {
             dataSource={listData}
             renderItem={(item) => (
             <List.Item>
-                <Link to={`${item.id}/issues`}>
                     <Card
-                        title={item.name}
+                        title={<Link to={`${item.id}/issues`}>{item.name}</Link>}
                         hoverable
                         actions={[
                             FavoriteButton(item),
-                            DeleteButton()
+                            <SettingsButton
+                                handleClickModal={handleClickModal}
+                                setModalData={setModalData}
+                                project_d={[
+                                    item.id, item.name, item.key,
+                                    item.type, item.starred, item.created
+                                ]}
+                            />
                         ]}
                     >
                         <div className="flex flex-col">
@@ -52,7 +64,6 @@ export function ProjectsList() {
                             <i>DATE: {item.created}</i>
                         </div>
                     </Card>
-                </Link>
             </List.Item>
             )}
         />
@@ -76,7 +87,7 @@ function FavoriteButton(project) {
         <Button
             htmlType="submit"
             name="starred"
-            value={!project.starred}
+            value={project.starred}
             className="border-0 shadow-none"
             icon={isFavorite(project.starred)}
         />
@@ -87,17 +98,25 @@ function FavoriteButton(project) {
 const buttonSize = {fontSize: 18}
 
 
-/**
- * At the moment, this button is a dummy, it's not a fact
- * that in the future it won't be replaced with another one.
- * @returns {Button}
- */
-function DeleteButton() {
+function SettingsButton({ handleClickModal, setModalData, project_d }) {
+    const project = {
+        id: project_d[0],
+        name: project_d[1],
+        key: project_d[2],
+        type: project_d[3],
+        starred: project_d[4],
+        created: project_d[5]
+    };
+
     return (
         <Button
-            name="starred"
+            name="settings"
             className="border-0"
-            icon={<DeleteOutlined style={buttonSize}/>}
+            icon={<SettingOutlined style={buttonSize}/>}
+            onClick={() => {
+                handleClickModal({visible: true, modalId: 2});
+                setModalData(project)
+            }}
         />
     );
 }
