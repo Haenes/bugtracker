@@ -6,7 +6,7 @@ import { Sidebar } from "./Sidebar.jsx"
 import { PageContent } from "./PageContent.jsx"
 import { UpdateProjectForm } from "./CreateProjectForm.jsx"
 
-// TODO: UPPERCASE FIRST LETTTERS
+// TODO: UPPERCASE FIRST LETTTERS AND RENAME testContext
 export const testContext = createContext(null);
 export const modalDataContext = createContext(null);
 
@@ -14,9 +14,8 @@ export const modalDataContext = createContext(null);
 export function Page({ header, modalTitle, modalForm, children }) {
     const [modalOpen, setModalOpen] = useState({visible: false, modalId: 0});
     const [modalData, setModalData] = useState(null);
-    console.log(modalOpen)
 
-    // TODO: MOVE ALL Context, States and Modals into separate component? 
+    // TODO: MOVE ALL Context, States and Modals into separate component
     return (
         <Layout hasSider>
             <Sidebar />
@@ -40,7 +39,6 @@ export function Page({ header, modalTitle, modalForm, children }) {
                         <Modal
                             title="Project details"
                             centered
-                            width={300}
                             open={modalOpen.modalId === 2 &&  modalOpen.visible}
                             footer={null}
                             focusTriggerAfterClose={false}

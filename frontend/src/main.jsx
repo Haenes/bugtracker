@@ -14,9 +14,11 @@ import { Registration, registerAction } from "./routes/registration.jsx";
 import { Login, loginAction } from "./routes/login.jsx";
 import { logoutAction } from "./routes/logout.jsx";
 import { Projects, projectsLoader, projectsAction } from "./routes/projects.jsx";
+import { deleteProjectAction } from "./routes/deleteProject.jsx";
 import { Issues, issuesLoader, issuesAction } from "./routes/issues.jsx";
 
 import { ErrorPage } from "./components/ErrorPage.jsx";
+import { updateProjectAction } from "./routes/updateProject.jsx";
 
 
 const router = createBrowserRouter([
@@ -47,7 +49,17 @@ const router = createBrowserRouter([
         element: <Projects />,
         errorElement: <ErrorPage />,
         loader: projectsLoader,
-        action: projectsAction
+        action: projectsAction,
+        children: [
+            {
+                path: ":projectId/delete",
+                action: deleteProjectAction,
+            },
+            {
+                path: ":projectId/update",
+                action: updateProjectAction
+            }
+        ]
     },
     {
         path: "/projects/:projectId/issues",

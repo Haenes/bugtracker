@@ -1,8 +1,11 @@
-import { useState } from 'react';
+import { useState, useContext } from 'react';
+
+import { useSubmit } from "react-router-dom";
 
 import { Button, Select, Checkbox, Input } from 'antd';
 
 import { Form, useActionData } from "react-router-dom";
+import { testContext } from "./Page";
 
 
 /*
@@ -83,17 +86,30 @@ export function CreateProjectForm() {
 }
 
 
-// TODO: CHANGE ACTION (NEED TO ADD NEW ROUTE FOR ABILITY TO CHANGE PROJECT)
+// Create new component for this form
+// or rename current to ProjectForms?
 export function UpdateProjectForm({ project }) {
     const errors = useActionData();
+    const submit = useSubmit();
+    const setModalOpen = useContext(testContext);
     const [selectedValue, setSelectedValue] = useState(project.type);
 
     const handleChange = () => {
         errors?.errorType && delete errors.errorType;
     };
 
+    const handleDelete = () => {
+        submit(null, {method: "POST", action: `${project.id}/delete`});
+        setModalOpen({visible: false, modalId: 2});
+    };
+
     return (
-        <Form method="post" name="createProject" className="flex flex-col gap-3">
+        <Form
+            method="post"
+            action={`${project.id}/update`}
+            name="createProject"
+            className="flex flex-col gap-3 mt-4"
+        >
 
             {errors?.errorName || errors?.errorKey || errors?.errorType ?
                 <div className='text-center text-red-500'>
@@ -103,58 +119,82 @@ export function UpdateProjectForm({ project }) {
                 </div> : <></>
             }
 
-            <Input
-            width="300"
-                name="name"
-                status={errors?.errorName && "error"}
-                type="text"
-                defaultValue={project.name}
-                required
-                minLength={3}
-            />
+            <div className="flex flex-row items-center w-2/3">
+                <span className="mr-2">Name:</span>
+                <Input
+                    name="name" 
+                    status={errors?.errorName && "error"}
+                    type="text"
+                    defaultValue={project.name}
+                    required
+                    minLength={3}
+                />
+            </div>
 
-            <Input
-                name="key"
-                status={errors?.errorKey && "error"}
-                type="text"
-                defaultValue={project.key}
-                required
-                minLength={3}
-                maxLength={10}
-            />
+            <div className="flex flex-row items-center w-1/3">
+                <span className="mr-5">Key:</span>
+                <Input
+                    name="key"
+                    status={errors?.errorKey && "error"}
+                    type="text"
+                    defaultValue={project.key}
+                    required
+                    minLength={3}
+                    maxLength={10}
+                />
+            </div>
 
-            <Select
-                placeholder="Project type"
-                status={errors?.errorType && "error"}
-                defaultValue={project.type}
-                options={[
-                    {label: "Fullstack", value: "Fullstack"},
-                    {label: "Back-end", value: "Back-end"},
-                    {label: "Front-end", value: "Front-end"}
-                ]}
-                onChange={value => {setSelectedValue(value), handleChange()}}
-            />
-            {
-                /*
-                That input field helps to circumvent the Select
-                restriction, which makes it impossible to pass the name
-                with the selected option value inside the form
-                */
-            }
-            <input name="type" type="hidden" value={selectedValue} />
+            <div className="items-center">
+                <span className="mr-3.5">Type:</span>
+                <Select
+                    status={errors?.errorType && "error"}
+                    defaultValue={project.type}
+                    options={[
+                        {label: "Fullstack", value: "Fullstack"},
+                        {label: "Back-end", value: "Back-end"},
+                        {label: "Front-end", value: "Front-end"}
+                    ]}
+                    onChange={value => {setSelectedValue(value), handleChange()}}
+                />
+                <input name="type" type="hidden" value={selectedValue} />
+            </div>
 
-            <Checkbox name="starred" defaultChecked={project.starred}>Favorite</Checkbox>
+            <div>
+                <span className="mr-3">Favorite:</span>
+                <Checkbox name="starred" defaultChecked={project.starred} />
+            </div>
 
-            <div className="flex flex-row gap-4">
-                <Button className="self-center" danger type="text" htmlType="submit">
-                    Delete project
+            <div>
+                <span className="mr-2">Created:</span>
+                {convertDate(project.created)}
+            </div>
+
+            <div>
+                <span className="mr-2">Updated:</span>
+                {convertDate(project.updated)}
+            </div>
+
+            <div className="flex flex-row gap-3 justify-end">
+                <Button danger type="text" htmlType="button" onClick={handleDelete}>
+                    Delete
                 </Button>
 
-                <Button className="self-center" type="primary" htmlType="submit">
-                    Change project
+                <Button type="primary" htmlType="submit">
+                    Change
                 </Button>
             </div>
  
         </Form>
     );
+}
+
+
+function convertDate(date) {
+    const dateObj = new Date(Date.parse(date));
+    const dateFormat = new Intl.DateTimeFormat(
+        ["ru-RU", "en-US"],
+        {dateStyle: "short", timeStyle: "medium"}
+    )
+
+    return dateFormat.format(dateObj);
 }

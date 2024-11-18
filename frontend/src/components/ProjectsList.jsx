@@ -16,15 +16,6 @@ export function ProjectsList() {
 
     if (!projects) return "You don't have any project yet!"
 
-    const listData = Array.from(projects.results).map((_, i) => ({
-        id: projects.results[i].id,
-        starred: projects.results[i].starred,
-        key: projects.results[i].key,
-        name: projects.results[i].name,
-        type: projects.results[i].type, 
-        created: convertDate(projects.results[i].created)
-    }));
-
     const paginationParams = {
         current: projects.page,
         total: projects.count,
@@ -40,78 +31,66 @@ export function ProjectsList() {
         <List
             grid={listGrid}
             pagination={paginationParams}
-            dataSource={listData}
-            renderItem={(item) => (
-            <List.Item>
-                    <Card
-                        title={<Link to={`${item.id}/issues`}>{item.name}</Link>}
-                        hoverable
-                        actions={[
-                            FavoriteButton(item),
-                            <SettingsButton
-                                handleClickModal={handleClickModal}
-                                setModalData={setModalData}
-                                project_d={[
-                                    item.id, item.name, item.key,
-                                    item.type, item.starred, item.created
-                                ]}
-                            />
-                        ]}
-                    >
-                        <div className="flex flex-col">
-                            <i>KEY: {item.key}</i> 
-                            <i>TYPE: {item.type}</i>
-                            <i>DATE: {item.created}</i>
-                        </div>
-                    </Card>
-            </List.Item>
-            )}
+            dataSource={projects.results}
+            renderItem={(item) => {
+                return (
+                    <List.Item>
+                        <Card
+                            title={<Link to={`${item.id}/issues`}>{item.name}</Link>}
+                            hoverable
+                            actions={[
+                                <FavoriteButton starred={item.starred} />,
+                                <SettingsButton
+                                    handleClickModal={handleClickModal}
+                                    setModalData={setModalData}
+                                    project={{...item}}
+                                />
+                            ]}
+                        >
+                            <div className="flex flex-col">
+                                <i>KEY: {item.key}</i>
+                                <i>TYPE: {item.type}</i>
+                            </div>
+                        </Card>
+                    </List.Item>
+                );
+            }}
         />
     );
 }
 
 
-function convertDate(date) {
-    const dateObj = new Date(Date.parse(date));
-    const dateFormat = new Intl.DateTimeFormat(
-        ["ru-RU", "en-US"],
-        {dateStyle: "short", timeStyle: "medium"}
-    )
-
-    return dateFormat.format(dateObj);
-}
-
-
-function FavoriteButton(project) {
+function FavoriteButton(starred) {
     return (
         <Button
             htmlType="submit"
             name="starred"
-            value={project.starred}
+            value={starred.starred}
             className="border-0 shadow-none"
-            icon={isFavorite(project.starred)}
+            icon={isFavorite(starred.starred)}
         />
     );
 }
 
 
-const buttonSize = {fontSize: 18}
+const listGrid = {
+    gutter: 10,
+    xs: 1,
+    sm: 2,
+    md: 3,
+    lg: 4,
+    xl: 5,
+    xxl: 4,
+};
+
+const buttonSize = {fontSize: 18};
 
 
-function SettingsButton({ handleClickModal, setModalData, project_d }) {
-    const project = {
-        id: project_d[0],
-        name: project_d[1],
-        key: project_d[2],
-        type: project_d[3],
-        starred: project_d[4],
-        created: project_d[5]
-    };
-
+function SettingsButton({ handleClickModal, setModalData, project }) {
     return (
         <Button
-            name="settings"
-            className="border-0"
+            title="Settings"
+            className="border-0 shadow-none"
             icon={<SettingOutlined style={buttonSize}/>}
             onClick={() => {
                 handleClickModal({visible: true, modalId: 2});
@@ -127,14 +106,3 @@ function isFavorite(bool) {
         <StarFilled title="Remove from favorites" style={buttonSize}/> :
         <StarOutlined title="Add to favorites" style={buttonSize}/>
 }
-
-
-const listGrid = {
-    gutter: 10,
-    xs: 1,
-    sm: 2,
-    md: 3,
-    lg: 4,
-    xl: 5,
-    xxl: 4,
-};
