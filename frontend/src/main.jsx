@@ -15,10 +15,12 @@ import { Login, loginAction } from "./routes/login.jsx";
 import { logoutAction } from "./routes/logout.jsx";
 import { Projects, projectsLoader, projectsAction } from "./routes/projects.jsx";
 import { deleteProjectAction } from "./routes/deleteProject.jsx";
+import { updateProjectAction } from "./routes/updateProject.jsx";
 import { Issues, issuesLoader, issuesAction } from "./routes/issues.jsx";
+import { deleteIssueAction } from "./routes/deleteIssue.jsx";
+import { updateIssueAction } from "./routes/updateIssue.jsx";
 
 import { ErrorPage } from "./components/ErrorPage.jsx";
-import { updateProjectAction } from "./routes/updateProject.jsx";
 
 
 const router = createBrowserRouter([
@@ -64,8 +66,19 @@ const router = createBrowserRouter([
     {
         path: "/projects/:projectId/issues",
         element: <Issues />,
+        errorElement: <ErrorPage />,
         loader: issuesLoader,
-        action: issuesAction
+        action: issuesAction,
+        children: [
+            {
+                path: ":issueId/delete",
+                action: deleteIssueAction,
+            },
+            {
+                path: ":issueId/update",
+                action: updateIssueAction
+            }
+        ]
     },
 ]);
 

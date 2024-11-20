@@ -5,10 +5,11 @@ import { Layout, Modal } from "antd"
 import { Sidebar } from "./Sidebar.jsx"
 import { PageContent } from "./PageContent.jsx"
 import { UpdateProjectForm } from "./CreateProjectForm.jsx"
+import { UpdateIssueForm } from "./CreateIssueForm.jsx"
 
-// TODO: UPPERCASE FIRST LETTTERS AND RENAME testContext
-export const testContext = createContext(null);
-export const modalDataContext = createContext(null);
+
+export const ModalContext = createContext(null);
+export const ModalDataContext = createContext(null);
 
 
 export function Page({ header, modalTitle, modalForm, children }) {
@@ -20,8 +21,8 @@ export function Page({ header, modalTitle, modalForm, children }) {
         <Layout hasSider>
             <Sidebar />
 
-            <testContext.Provider value={setModalOpen}>
-                <modalDataContext.Provider value={setModalData}>
+            <ModalContext.Provider value={setModalOpen}>
+                <ModalDataContext.Provider value={setModalData}>
                     <PageContent header={header}>
                         <Modal
                             title={modalTitle}
@@ -48,10 +49,22 @@ export function Page({ header, modalTitle, modalForm, children }) {
                             <UpdateProjectForm project={modalData} />
                         </Modal>
 
+                        <Modal
+                            title="Issue details"
+                            centered
+                            open={modalOpen.modalId === 3 &&  modalOpen.visible}
+                            footer={null}
+                            focusTriggerAfterClose={false}
+                            destroyOnClose={true}
+                            onCancel={() => setModalOpen({visible: false, modalId: 3})}
+                        >
+                            <UpdateIssueForm issue={modalData} />
+                        </Modal>
+
                         {children}
                     </PageContent>
-                </modalDataContext.Provider>
-            </testContext.Provider>
+                </ModalDataContext.Provider>
+            </ModalContext.Provider>
 
         </Layout>
     );

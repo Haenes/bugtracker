@@ -1,12 +1,14 @@
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 
 import {Button, Select, Input} from 'antd';
 
-import { Form, useActionData } from "react-router-dom";
+import { Form, useActionData, useSubmit } from "react-router-dom";
+
+import { ModalContext } from "./Page";
 
 const { TextArea } = Input;
 
-/*
+/* 
 Default input fields helps to circumvent the Select
 restriction, which makes it impossible to pass the name
 with the selected option value inside the form.
@@ -41,7 +43,7 @@ export function CreateIssueForm() {
     };
 
     return (
-        <Form method="post" name="createProject" className="flex flex-col gap-y-4">
+        <Form method="post" name="createIssue" className="flex flex-col gap-y-4">
 
             {errors?.errorTitle || errors?.errorType || errors?.errorPriority ?
                 <div className='flex flex-col text-center text-red-500'>
@@ -95,6 +97,123 @@ export function CreateIssueForm() {
             <Button className="self-center" type="primary" htmlType="submit">
                 Create issue
             </Button>
+        </Form>
+    );
+}
+
+
+export function UpdateIssueForm({ issue }) {
+    const errors = useActionData();
+    const submit = useSubmit();
+    const setModalOpen = useContext(ModalContext);
+
+    const [type, setType] = useState(issue.type);
+    const [issueStatus, setIssueStatus] = useState(issue.status);
+    const [priority, setPriority] = useState(issue.priority);
+
+    const handleDelete = () => {
+        submit(null, {method: "POST", action: `${issue.id}/delete`});
+        setModalOpen({visible: false, modalId: 3});
+    };
+
+    return (
+        <Form
+            method="post"
+            action={`${issue.id}/update`}
+            name="updateIssue"
+            className="grid grid-cols-2 gap-3 mt-4"
+        >
+            {errors?.errorTitle ?
+                <div className='flex flex-col text-center text-red-500'>
+                    <span>{errors.errorTitle}</span>
+                </div> : <></>
+            }
+
+            <div className="mr-3">
+                <Input
+                    name="title"
+                    status={errors?.errorTitle && "error"}
+                    type="text"
+                    defaultValue={issue.title}
+                    className="mb-3"
+                    required
+                    minLength={3}
+                    maxLength={255}
+                />
+
+                <TextArea
+                    name="description"
+                    rows={7}
+                    defaultValue={issue?.description && issue.description}
+                    placeholder="Description is empty."
+                    maxLength={255}
+                />
+            </div>
+
+            <div>
+
+                <span className="mr-5">Type:</span>
+                <Select
+                    defaultValue={issue.type}
+                    options={[
+                        {label: "Feature", value: "Feature"},
+                        {label: "Bug", value: "Bug"}
+                    ]}
+                    dropdownStyle={{width: 85}}
+                    onChange={value => setType(value)}
+                />
+                <input name="type" type="hidden" value={type} />
+
+                <div className="my-3">
+                    <span className="mr-3">Status:</span>
+                    <Select
+                        defaultValue={issue.status}
+                        options={[
+                            {label: "To do", value: "To do"},
+                            {label: "In progress", value: "In progress"},
+                            {label: "Done", value: "Done"}
+                        ]}
+                        dropdownStyle={{width:105}}
+                        onChange={value => setIssueStatus(value)}
+                    />
+                    <input name="status" type="hidden" value={issueStatus} />
+                </div>
+
+                <span className="mr-1.5">Priority:</span>
+                <Select
+                    defaultValue={issue.priority}
+                    options={[
+                        {label: "Lowest", value: "Lowest"},
+                        {label: "Low", value: "Low"},
+                        {label: "Medium", value: "Medium"},
+                        {label: "High", value: "High"},
+                        {label: "Highest", value: "Highest"}
+                    ]}
+                    dropdownStyle={{width: 85}}
+                    onChange={value => setPriority(value)}
+                />
+                <input name="priority" type="hidden" value={priority} />
+
+                <div className="my-3">
+                    <span className="mr-2">Created:</span>
+                    {issue.created}
+                </div>
+
+                <div className="mb-3">
+                    <span className="mr-1">Updated:</span>
+                    {issue.updated}
+                </div>
+
+                <div className="flex flex-row gap-3 justify-end">
+                    <Button danger type="text" htmlType="button" onClick={handleDelete}>
+                        Delete
+                    </Button>
+
+                    <Button type="primary" htmlType="submit">
+                        Change
+                    </Button>
+                </div>
+            </div>
         </Form>
     );
 }

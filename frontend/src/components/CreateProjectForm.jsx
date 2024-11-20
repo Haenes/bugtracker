@@ -5,7 +5,7 @@ import { useSubmit } from "react-router-dom";
 import { Button, Select, Checkbox, Input } from 'antd';
 
 import { Form, useActionData } from "react-router-dom";
-import { testContext } from "./Page";
+import { ModalContext } from "./Page";
 
 
 /*
@@ -91,12 +91,8 @@ export function CreateProjectForm() {
 export function UpdateProjectForm({ project }) {
     const errors = useActionData();
     const submit = useSubmit();
-    const setModalOpen = useContext(testContext);
+    const setModalOpen = useContext(ModalContext);
     const [selectedValue, setSelectedValue] = useState(project.type);
-
-    const handleChange = () => {
-        errors?.errorType && delete errors.errorType;
-    };
 
     const handleDelete = () => {
         submit(null, {method: "POST", action: `${project.id}/delete`});
@@ -107,15 +103,13 @@ export function UpdateProjectForm({ project }) {
         <Form
             method="post"
             action={`${project.id}/update`}
-            name="createProject"
+            name="updateProject"
             className="flex flex-col gap-3 mt-4"
         >
-
-            {errors?.errorName || errors?.errorKey || errors?.errorType ?
+            {errors?.errorName || errors?.errorKey ?
                 <div className='text-center text-red-500'>
                     {errors?.errorName}
                     {errors?.errorKey}
-                    {errors?.errorType}
                 </div> : <></>
             }
 
@@ -147,7 +141,6 @@ export function UpdateProjectForm({ project }) {
             <div className="items-center">
                 <span className="mr-3.5">Type:</span>
                 <Select
-                    status={errors?.errorType && "error"}
                     defaultValue={project.type}
                     options={[
                         {label: "Fullstack", value: "Fullstack"},
@@ -183,7 +176,6 @@ export function UpdateProjectForm({ project }) {
                     Change
                 </Button>
             </div>
- 
         </Form>
     );
 }

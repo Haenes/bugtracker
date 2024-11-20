@@ -5,14 +5,14 @@ import { Link, useLoaderData, useSubmit } from "react-router-dom";
 import { List, Card, Button } from "antd";
 import { StarFilled, StarOutlined, SettingOutlined } from "@ant-design/icons";
 
-import { testContext, modalDataContext } from "./Page";
+import { ModalContext, ModalDataContext } from "./Page";
 
 
 export function ProjectsList() {
     const projects = useLoaderData();
     const submit = useSubmit();
-    const handleClickModal = useContext(testContext);
-    const setModalData = useContext(modalDataContext);
+    const handleClickModal = useContext(ModalContext);
+    const setModalData = useContext(ModalDataContext);
 
     if (!projects) return "You don't have any project yet!"
 

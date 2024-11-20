@@ -3,8 +3,6 @@ import { updateItem } from "../client/base";
 
 
 export async function updateProjectAction({ request, params }) {
-    console.log(request)
-    const project_id = params.projectId;
     const formData = await request.formData();
 
     // Handles the case, when you want to unfavorite project,
@@ -12,7 +10,10 @@ export async function updateProjectAction({ request, params }) {
     // the project remains a favorite.
     formData.get("starred") === null && formData.set("starred", false);
 
-    const results = await updateItem(Object.fromEntries(formData), project_id);
+    const results = await updateItem(
+        Object.fromEntries(formData),
+        params.projectId
+    );
     console.log(results);
     
     return results.updated && redirect("/projects");

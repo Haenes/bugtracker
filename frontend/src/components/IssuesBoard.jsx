@@ -1,10 +1,16 @@
+import { useContext } from "react";
+
 import { useLoaderData } from "react-router-dom";
 
 import { Card } from "antd";
 
+import { ModalContext, ModalDataContext } from "./Page";
+
 
 export function IssuesBoard() {
     const issues = useLoaderData();
+    const handleClickModal = useContext(ModalContext);
+    const setModalData = useContext(ModalDataContext);
 
     if (!issues) return "You don't have any issues for this project yet!"
 
@@ -26,21 +32,24 @@ export function IssuesBoard() {
     const issueCard = (issueStatus) => {
         return (Array.from(issueStatus).map((_, i) => (
             <Card
+                title={issueStatus[i].title}
+                key={issueStatus[i].key}
+                type="inner"
+                size="small"
+                hoverable
                 className={
                     issueStatus[i+1] ?
                     "text-start mb-4" :
                     "text-start"
                 }
-                key={issueStatus[i].key}
-                type="inner"
-                hoverable
-                size="small"
-                title={issueStatus[i].title}
+                onClick={() => {
+                    handleClickModal({visible: true, modalId: 3});
+                    setModalData(issueStatus[i])
+                }}
             >
                 <div className="flex flex-col">
                     <i>{issueStatus[i].type}</i>
                     <i>{issueStatus[i].priority}</i>
-                    <i>{issueStatus[i].created}</i>
                 </div>
             </Card>
         )));

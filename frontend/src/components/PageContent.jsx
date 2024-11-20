@@ -4,7 +4,7 @@ import { Layout, theme, Button } from "antd";
 
 import {FormOutlined} from "@ant-design/icons";
 
-import { testContext } from "./Page";
+import { ModalContext } from "./Page";
 
 const { Content } = Layout;
 
@@ -16,7 +16,7 @@ export function PageContent({ header, children }) {
         background: colorBgContainer,
         borderRadius: borderRadiusLG,
     };
-    const handleClickModal = useContext(testContext);
+    const handleClickModal = useContext(ModalContext);
 
     return (
         <Content className="mx-2 mt-3">
