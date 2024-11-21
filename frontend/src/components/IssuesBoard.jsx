@@ -14,20 +14,9 @@ export function IssuesBoard() {
 
     if (!issues) return "You don't have any issues for this project yet!"
 
-    const listData = Array.from(issues.results).map((_, i) => ({
-        id: issues.results[i].id,
-        title: issues.results[i].title,
-        description: issues.results[i].description,
-        type: issues.results[i].type,
-        priority: issues.results[i].priority,
-        status: issues.results[i].status,
-        key: issues.results[i].key,
-        created: convertDate(issues.results[i].created),
-        updated: convertDate(issues.results[i].updated)
-    }));
-    const toDo = listData.filter(issue => issue.status === "To do");
-    const inProgress = listData.filter(issue => issue.status === "In progress");
-    const done = listData.filter(issue => issue.status === "Done");
+    const toDo = issues.results.filter(issue => issue.status === "To do");
+    const inProgress = issues.results.filter(issue => issue.status === "In progress");
+    const done = issues.results.filter(issue => issue.status === "Done");
 
     const issueCard = (issueStatus) => {
         return (Array.from(issueStatus).map((_, i) => (
@@ -70,15 +59,4 @@ export function IssuesBoard() {
             </Card>
         </div>
     );
-}
-
-
-function convertDate(date) {
-    const dateObj = new Date(Date.parse(date));
-    const dateFormat = new Intl.DateTimeFormat(
-        ["ru-RU", "en-US"],
-        {dateStyle: "short", timeStyle: "medium"}
-    )
-
-    return dateFormat.format(dateObj);
 }

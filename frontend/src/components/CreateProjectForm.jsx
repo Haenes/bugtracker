@@ -5,7 +5,7 @@ import { useSubmit } from "react-router-dom";
 import { Button, Select, Checkbox, Input } from 'antd';
 
 import { Form, useActionData } from "react-router-dom";
-import { ModalContext } from "./Page";
+import { ModalContext, convertDate } from "./Page";
 
 
 /*
@@ -178,15 +178,4 @@ export function UpdateProjectForm({ project }) {
             </div>
         </Form>
     );
-}
-
-
-function convertDate(date) {
-    const dateObj = new Date(Date.parse(date));
-    const dateFormat = new Intl.DateTimeFormat(
-        ["ru-RU", "en-US"],
-        {dateStyle: "short", timeStyle: "medium"}
-    )
-
-    return dateFormat.format(dateObj);
 }

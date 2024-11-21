@@ -4,7 +4,7 @@ import {Button, Select, Input} from 'antd';
 
 import { Form, useActionData, useSubmit } from "react-router-dom";
 
-import { ModalContext } from "./Page";
+import { ModalContext, convertDate } from "./Page";
 
 const { TextArea } = Input;
 
@@ -121,7 +121,7 @@ export function UpdateIssueForm({ issue }) {
             method="post"
             action={`${issue.id}/update`}
             name="updateIssue"
-            className="grid grid-cols-2 gap-3 mt-4"
+            className="grid grid-cols-2 gap-x-8 mt-4"
         >
             {errors?.errorTitle ?
                 <div className='flex flex-col text-center text-red-500'>
@@ -129,13 +129,12 @@ export function UpdateIssueForm({ issue }) {
                 </div> : <></>
             }
 
-            <div className="mr-3">
+            <div className="col-span-2">
                 <Input
                     name="title"
                     status={errors?.errorTitle && "error"}
                     type="text"
                     defaultValue={issue.title}
-                    className="mb-3"
                     required
                     minLength={3}
                     maxLength={255}
@@ -143,23 +142,21 @@ export function UpdateIssueForm({ issue }) {
 
                 <TextArea
                     name="description"
-                    rows={7}
-                    defaultValue={issue?.description && issue.description}
+                    autoSize={{ minRows: 1, maxRows: 4 }}
+                    defaultValue={issue.description}
+                    className="my-3"
                     placeholder="Description is empty."
                     maxLength={255}
                 />
-            </div>
-
-            <div>
 
                 <span className="mr-5">Type:</span>
                 <Select
                     defaultValue={issue.type}
+                    popupMatchSelectWidth={false}
                     options={[
                         {label: "Feature", value: "Feature"},
                         {label: "Bug", value: "Bug"}
                     ]}
-                    dropdownStyle={{width: 85}}
                     onChange={value => setType(value)}
                 />
                 <input name="type" type="hidden" value={type} />
@@ -168,12 +165,12 @@ export function UpdateIssueForm({ issue }) {
                     <span className="mr-3">Status:</span>
                     <Select
                         defaultValue={issue.status}
+                        popupMatchSelectWidth={false}
                         options={[
                             {label: "To do", value: "To do"},
                             {label: "In progress", value: "In progress"},
                             {label: "Done", value: "Done"}
                         ]}
-                        dropdownStyle={{width:105}}
                         onChange={value => setIssueStatus(value)}
                     />
                     <input name="status" type="hidden" value={issueStatus} />
@@ -182,6 +179,7 @@ export function UpdateIssueForm({ issue }) {
                 <span className="mr-1.5">Priority:</span>
                 <Select
                     defaultValue={issue.priority}
+                    popupMatchSelectWidth={false}
                     options={[
                         {label: "Lowest", value: "Lowest"},
                         {label: "Low", value: "Low"},
@@ -189,19 +187,18 @@ export function UpdateIssueForm({ issue }) {
                         {label: "High", value: "High"},
                         {label: "Highest", value: "Highest"}
                     ]}
-                    dropdownStyle={{width: 85}}
                     onChange={value => setPriority(value)}
                 />
                 <input name="priority" type="hidden" value={priority} />
 
                 <div className="my-3">
                     <span className="mr-2">Created:</span>
-                    {issue.created}
+                    {convertDate(issue.created)}
                 </div>
 
-                <div className="mb-3">
+                <div className="mb-4">
                     <span className="mr-1">Updated:</span>
-                    {issue.updated}
+                    {convertDate(issue.updated)}
                 </div>
 
                 <div className="flex flex-row gap-3 justify-end">
