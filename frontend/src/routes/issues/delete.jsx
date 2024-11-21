@@ -1,5 +1,5 @@
 import { redirect } from "react-router-dom";
-import { deleteItem } from "../client/base";
+import { deleteItem } from "../../client/base.js";
 
 
 export async function deleteIssueAction({ params }) {

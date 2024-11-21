@@ -1,8 +1,8 @@
 import { redirect } from "react-router-dom";
-import { updateItem } from "../client/base";
+import { updateItem } from "../../client/base.js";
 
 
-export async function updateIssueAction({ request, params }) {
+export async function editIssueAction({ request, params }) {
     const formData = await request.formData();
     const results = await updateItem(
         Object.fromEntries(formData),

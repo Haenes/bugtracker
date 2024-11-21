@@ -5,7 +5,7 @@ import { Link, useLoaderData, useSubmit } from "react-router-dom";
 import { List, Card, Button } from "antd";
 import { StarFilled, StarOutlined, SettingOutlined } from "@ant-design/icons";
 
-import { ModalContext, ModalDataContext } from "./Page";
+import { ModalContext, ModalDataContext } from "../ModalProvider.jsx";
 
 
 export function ProjectsList() {
@@ -73,19 +73,6 @@ function FavoriteButton(starred) {
 }
 
 
-const listGrid = {
-    gutter: 10,
-    xs: 1,
-    sm: 2,
-    md: 3,
-    lg: 4,
-    xl: 5,
-    xxl: 4,
-};
-
-const buttonSize = {fontSize: 18};
-
-
 function SettingsButton({ handleClickModal, setModalData, project }) {
     return (
         <Button
@@ -106,3 +93,16 @@ function isFavorite(bool) {
         <StarFilled title="Remove from favorites" style={buttonSize}/> :
         <StarOutlined title="Add to favorites" style={buttonSize}/>
 }
+
+
+const listGrid = {
+    gutter: 10,
+    xs: 1,
+    sm: 2,
+    md: 3,
+    lg: 4,
+    xl: 5,
+    xxl: 4,
+};
+
+const buttonSize = {fontSize: 18};

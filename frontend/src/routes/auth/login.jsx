@@ -1,7 +1,7 @@
 import { redirect } from "react-router-dom";
 
-import { userLogin } from "../client/auth";
-import { LoginForm } from "../components/LoginForm";
+import { userLogin } from "../../client/auth.js";
+import { LoginForm } from "../../components/Auth/LoginForm.jsx";
 
 
 export function Login() {

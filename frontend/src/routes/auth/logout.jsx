@@ -1,5 +1,5 @@
 import { redirect } from "react-router-dom";
-import { userLogout} from "../client/auth.js";
+import { userLogout } from "../../client/auth.js";
 
 
 export async function logoutAction() {

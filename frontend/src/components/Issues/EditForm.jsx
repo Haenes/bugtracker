@@ -4,105 +4,13 @@ import {Button, Select, Input} from 'antd';
 
 import { Form, useActionData, useSubmit } from "react-router-dom";
 
-import { ModalContext, convertDate } from "./Page";
+import { ModalContext } from "../ModalProvider.jsx";
+import { convertDate } from "../Page.jsx";
 
 const { TextArea } = Input;
 
-/* 
-Default input fields helps to circumvent the Select
-restriction, which makes it impossible to pass the name
-with the selected option value inside the form.
 
-Unfortunately, due to the fact that the data validation results
-becomes known only after submitting the form, it's impossible
-to make the modal close only when the project is successfully created.
-At the moment, after submitting the form, the modal is active
-and it needs to be closed independently.
-But at least it doesn't close when validation fails and
-the user understands what went wrong and how to fix it.
-*/
-
-
-export function CreateIssueForm() {
-    const errors = useActionData();
-    const [type, setType] = useState("");
-    const [priority, setPriority] = useState("");
-
-    const handleChange = (value) => {
-        if (errors?.errorType && value === "Feature" || value === "Bug") {
-            delete errors.errorType;
-        }
-        else if (
-            errors?.errorPriority &&
-            value === "Lowest" ||
-            value === "Low" ||
-            value === "Medium" ||
-            value === "High" ||
-            value === "Highest"
-        ) delete errors.errorPriority;
-    };
-
-    return (
-        <Form method="post" name="createIssue" className="flex flex-col gap-y-4">
-
-            {errors?.errorTitle || errors?.errorType || errors?.errorPriority ?
-                <div className='flex flex-col text-center text-red-500'>
-                    {errors?.errorTitle && <span>{errors.errorTitle}</span>}
-                    {errors?.errorType && <span>{errors.errorType}</span>}
-                    {errors?.errorPriority && <span>{errors.errorPriority}</span>}
-                </div> : <></>
-            }
-
-            <Input
-                name="title"
-                status={errors?.errorTitle && "error"}
-                type="text"
-                required
-                placeholder="Issue title"
-                minLength={3}
-                maxLength={255}
-            />
-
-            <TextArea
-                name="description"
-                maxLength={255}
-                placeholder="Issue description"
-            />
-
-            <Select
-                placeholder="Issue type"
-                status={errors?.errorType && "error"}
-                options={[
-                    {label: "Feature", value: "Feature"},
-                    {label: "Bug", value: "Bug"}
-                ]}
-                onChange={value => {setType(value); handleChange(value)}}
-            />
-            <input name="type" type="hidden" value={type} />
-
-            <Select
-                placeholder="Issue priority"
-                status={errors?.errorPriority && "error"}
-                options={[
-                    {label: "Lowest", value: "Lowest"},
-                    {label: "Low", value: "Low"},
-                    {label: "Medium", value: "Medium"},
-                    {label: "High", value: "High"},
-                    {label: "Highest", value: "Highest"}
-                ]}
-                onChange={value => {setPriority(value), handleChange(value)}}
-            />
-            <input name="priority" type="hidden" value={priority} />
-
-            <Button className="self-center" type="primary" htmlType="submit">
-                Create issue
-            </Button>
-        </Form>
-    );
-}
-
-
-export function UpdateIssueForm({ issue }) {
+export function EditIssueForm({ issue }) {
     const errors = useActionData();
     const submit = useSubmit();
     const setModalOpen = useContext(ModalContext);
@@ -120,7 +28,7 @@ export function UpdateIssueForm({ issue }) {
         <Form
             method="post"
             action={`${issue.id}/update`}
-            name="updateIssue"
+            name="editIssue"
             className="grid grid-cols-2 gap-x-8 mt-4"
         >
             {errors?.errorTitle ?

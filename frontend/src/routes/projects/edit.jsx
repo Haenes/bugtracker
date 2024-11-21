@@ -1,8 +1,8 @@
 import { redirect } from "react-router-dom";
-import { updateItem } from "../client/base";
+import { updateItem } from "../../client/base.js";
 
 
-export async function updateProjectAction({ request, params }) {
+export async function editProjectAction({ request, params }) {
     const formData = await request.formData();
 
     // Handles the case, when you want to unfavorite project,

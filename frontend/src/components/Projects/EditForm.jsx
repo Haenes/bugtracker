@@ -5,90 +5,12 @@ import { useSubmit } from "react-router-dom";
 import { Button, Select, Checkbox, Input } from 'antd';
 
 import { Form, useActionData } from "react-router-dom";
-import { ModalContext, convertDate } from "./Page";
+
+import { ModalContext } from "../ModalProvider.jsx";
+import { convertDate } from "../Page.jsx";
 
 
-/*
-Unfortunately, due to the fact that the data validation results
-becomes known only after submitting the form, it's impossible
-to make the modal close only when the project is successfully created.
-At the moment, after submitting the form, the modal is active
-and it needs to be closed independently.
-But at least it doesn't close when validation fails and
-the user understands what went wrong and how to fix it.
-*/
-
-
-export function CreateProjectForm() {
-    const errors = useActionData();
-    const [selectedValue, setSelectedValue] = useState("");
-
-    const handleChange = () => {
-        errors?.errorType && delete errors.errorType;
-    };
-
-    return (
-        <Form method="post" name="createProject" className="flex flex-col gap-y-4 w-full">
-
-            {errors?.errorName || errors?.errorKey || errors?.errorType ?
-                <div className='text-center text-red-500'>
-                    {errors?.errorName}
-                    {errors?.errorKey}
-                    {errors?.errorType}
-                </div> : <></>
-            }
-
-            <Input
-                name="name"
-                status={errors?.errorName && "error"}
-                type="text"
-                placeholder="Project name"
-                required
-                minLength={3}
-            />
-
-            <Input
-                name="key"
-                status={errors?.errorKey && "error"}
-                type="text"
-                placeholder="Project key"
-                required
-                minLength={3}
-                maxLength={10}
-            />
-
-            <Select
-                placeholder="Project type"
-                status={errors?.errorType && "error"}
-                options={[
-                    {label: "Fullstack", value: "Fullstack"},
-                    {label: "Back-end", value: "Back-end"},
-                    {label: "Front-end", value: "Front-end"}
-                ]}
-                onChange={value => {setSelectedValue(value), handleChange()}}
-            />
-            {
-                /*
-                That input field helps to circumvent the Select
-                restriction, which makes it impossible to pass the name
-                with the selected option value inside the form
-                */
-            }
-            <input name="type" type="hidden" value={selectedValue} />
-
-            <Checkbox name="starred">Favorite</Checkbox>
-
-            <Button className="self-center" type="primary" htmlType="submit">
-                Create project
-            </Button>
-        </Form>
-    );
-}
-
-
-// Create new component for this form
-// or rename current to ProjectForms?
-export function UpdateProjectForm({ project }) {
+export function EditProjectForm({ project }) {
     const errors = useActionData();
     const submit = useSubmit();
     const setModalOpen = useContext(ModalContext);
@@ -103,7 +25,7 @@ export function UpdateProjectForm({ project }) {
         <Form
             method="post"
             action={`${project.id}/update`}
-            name="updateProject"
+            name="editProject"
             className="flex flex-col gap-3 mt-4"
         >
             {errors?.errorName || errors?.errorKey ?
@@ -113,7 +35,7 @@ export function UpdateProjectForm({ project }) {
                 </div> : <></>
             }
 
-            <div className="flex flex-row items-center w-2/3">
+            <div className="flex flex-row items-center">
                 <span className="mr-2">Name:</span>
                 <Input
                     name="name" 
@@ -125,7 +47,7 @@ export function UpdateProjectForm({ project }) {
                 />
             </div>
 
-            <div className="flex flex-row items-center w-1/3">
+            <div className="flex flex-row items-center w-2/3">
                 <span className="mr-5">Key:</span>
                 <Input
                     name="key"

@@ -4,7 +4,7 @@ import { Layout, theme, Button } from "antd";
 
 import {FormOutlined} from "@ant-design/icons";
 
-import { ModalContext } from "./Page";
+import { ModalContext } from "./ModalProvider.jsx";
 
 const { Content } = Layout;
 

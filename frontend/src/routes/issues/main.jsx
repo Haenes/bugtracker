@@ -1,19 +1,12 @@
-import { getItems, createItem } from "../client/base.js";
+import { getItems, createItem } from "../../client/base.js";
 
-import { IssuesBoard } from "../components/IssuesBoard.jsx";
-import { CreateIssueForm } from "../components/CreateIssueForm.jsx";
-import { Page } from "../components/Page.jsx";
+import { IssuesBoard } from "../../components/Issues/IssuesBoard.jsx";
+import { Page } from "../../components/Page.jsx";
 
 
 export function Issues() {
-    const header = "Issues";
-
     return (
-        <Page
-            header={header}
-            modalTitle={header.slice(0, -1)}
-            modalForm={<CreateIssueForm />}
-        >
+        <Page header="Issues">
             <IssuesBoard />
         </Page>
     );

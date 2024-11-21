@@ -1,7 +1,7 @@
 import { redirect } from "react-router-dom";
 
-import { userRegistration } from "../client/auth";
-import { RegisterForm } from "../components/RegisterForm";
+import { userRegistration } from "../../client/auth.js";
+import { RegisterForm } from "../../components/Auth/RegisterForm.jsx";
 
 
 export function Registration() {

@@ -1,18 +1,11 @@
-import { createItem, getItems } from "../client/base.js";
-import { Page } from "../components/Page.jsx";
-import { ProjectsList } from "../components/ProjectsList.jsx";
-import { CreateProjectForm } from "../components/CreateProjectForm.jsx"
+import { createItem, getItems } from "../../client/base.js";
+import { Page } from "../../components/Page.jsx";
+import { ProjectsList } from "../../components/Projects/ProjectsList.jsx";
 
 
 export function Projects() {
-    const header = "Projects";
-
     return (
-        <Page
-            header={header}
-            modalTitle={header.slice(0, -1)}
-            modalForm={<CreateProjectForm />}
-        >
+        <Page header="Projects">
             <ProjectsList />
         </Page>
     );

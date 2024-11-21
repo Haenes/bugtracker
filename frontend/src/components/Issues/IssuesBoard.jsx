@@ -4,7 +4,7 @@ import { useLoaderData } from "react-router-dom";
 
 import { Card } from "antd";
 
-import { ModalContext, ModalDataContext } from "./Page";
+import { ModalContext, ModalDataContext } from "../ModalProvider.jsx";
 
 
 export function IssuesBoard() {
@@ -32,7 +32,7 @@ export function IssuesBoard() {
                     "text-start"
                 }
                 onClick={() => {
-                    handleClickModal({visible: true, modalId: 3});
+                    handleClickModal({visible: true, modalId: 2});
                     setModalData(issueStatus[i])
                 }}
             >
