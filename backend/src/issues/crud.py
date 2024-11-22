@@ -2,9 +2,9 @@ from fastapi import HTTPException
 
 from sqlalchemy import func, select, insert, update, delete
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.exc import IntegrityError
 
 from projects.models import Project
+from utils.db import handleDbUniqueError
 from .models import Issue
 from .schemas import IssueSchema, CreatedIssueSchema
 
@@ -55,17 +55,8 @@ async def create_issue_db(
                 ).
             returning(Issue)
             )
-        try:
-            new_issue = await session.scalar(stmt)
 
-            await session.commit()
-            return new_issue
-        except IntegrityError as e:
-            await session.rollback()
-            error = repr(e.orig.__cause__)
-
-            if "issue_title_key" in error:
-                raise HTTPException(400, "Issue with this title already exist!")
+        return await handleDbUniqueError(session, stmt)
 
 
 async def get_issue_db(
@@ -113,7 +104,7 @@ async def update_issue_db(
         returning(Issue)
         )
 
-    updated_issue = await session.scalar(stmt)
+    updated_issue = await handleDbUniqueError(session, stmt)
 
     if updated_issue is None:
         await session.rollback()
