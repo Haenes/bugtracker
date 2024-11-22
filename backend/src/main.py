@@ -12,7 +12,17 @@ from auth.manager import (
 from projects.router import router as projects_router
 from issues.router import router as issues_router
 
-app = FastAPI()
+app = FastAPI(
+    title="BugTracker",
+    contact={
+        "name": "Kirill",
+        "email": "Physeex@gmail.com"
+    },
+    license_info={
+        "name": "MIT",
+        "url": "https://github.com/Haenes/api/blob/main/LICENSE"
+    }
+)
 
 origins = [
     "http://127.0.0.1:5173",
