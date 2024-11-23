@@ -2,7 +2,7 @@ import { useState } from 'react';
 
 import { Button, Select, Checkbox, Input } from 'antd';
 
-import { Form, useActionData } from "react-router-dom";
+import { Form, useActionData } from "react-router";
 
 
 /*
@@ -21,23 +21,23 @@ export function CreateProjectForm() {
     const [type, setType] = useState("");
 
     const handleChange = () => {
-        errors?.errorType && delete errors.errorType;
+        errors?.createType && delete errors.createType;
     };
 
     return (
         <Form method="post" name="createProject" className="flex flex-col gap-y-4 w-full">
 
-            {errors?.errorName || errors?.errorKey || errors?.errorType ?
+            {errors?.createName || errors?.createKey || errors?.createType ?
                 <div className='text-center text-red-500'>
-                    {errors?.errorName}
-                    {errors?.errorKey}
-                    {errors?.errorType}
+                    {errors?.createName}
+                    {errors?.createKey}
+                    {errors?.createType}
                 </div> : <></>
             }
 
             <Input
                 name="name"
-                status={errors?.errorName && "error"}
+                status={errors?.createName && "error"}
                 type="text"
                 placeholder="Project name"
                 required
@@ -46,7 +46,7 @@ export function CreateProjectForm() {
 
             <Input
                 name="key"
-                status={errors?.errorKey && "error"}
+                status={errors?.createKey && "error"}
                 type="text"
                 placeholder="Project key"
                 required
@@ -56,7 +56,7 @@ export function CreateProjectForm() {
 
             <Select
                 placeholder="Project type"
-                status={errors?.errorType && "error"}
+                status={errors?.createType && "error"}
                 options={[
                     {label: "Fullstack", value: "Fullstack"},
                     {label: "Back-end", value: "Back-end"},
@@ -75,7 +75,7 @@ export function CreateProjectForm() {
 
             <Checkbox name="starred">Favorite</Checkbox>
 
-            <Button className="self-center" type="primary" htmlType="submit">
+            <Button name="intent" value="create" className="self-center" type="primary" htmlType="submit">
                 Create new
             </Button>
         </Form>

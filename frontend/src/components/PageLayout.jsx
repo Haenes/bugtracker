@@ -1,19 +1,18 @@
+import { Outlet } from "react-router"
+
 import { Layout } from "antd"
 
 import { Sidebar } from "./Sidebar.jsx"
-import { PageContent } from "./PageContent.jsx"
 import { ModalProvider } from "./ModalProvider.jsx"
 
 
-export function Page({ header, children }) {
+export function PageLayout() {
     return (
         <Layout hasSider>
             <Sidebar />
 
             <ModalProvider>
-                <PageContent header={header}>
-                    {children}
-                </PageContent>
+                <Outlet />
             </ModalProvider>
 
         </Layout>

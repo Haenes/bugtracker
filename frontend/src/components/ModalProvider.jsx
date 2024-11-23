@@ -2,7 +2,7 @@ import { createContext, useContext, useState } from "react";
 
 import { Modal } from "antd";
 
-import { useLocation } from 'react-router-dom';
+import { Outlet, useLocation } from 'react-router';
 
 import { CreateProjectForm } from "./Projects/CreateForm.jsx"
 import { EditProjectForm } from "./Projects/EditForm.jsx";
@@ -14,26 +14,23 @@ export const ModalContext = createContext(null);
 export const ModalDataContext = createContext(null);
 
 
-export function ModalProvider({ children }) {
+export function ModalProvider() {
     const [modalOpen, setModalOpen] = useState({visible: false, modalId: 0});
     const [modalData, setModalData] = useState(null);
 
     return (
-        <ModalContext.Provider value={setModalOpen}>
-            <ModalDataContext.Provider value={setModalData}>
-                <CreateModal modalOpen={modalOpen} modalId={1} />
-                <CreateModal modalOpen={modalOpen} modalId={2} data={modalData} />
-
-                {children}
+        <ModalContext.Provider value={[modalOpen, setModalOpen]}>
+            <ModalDataContext.Provider value={[modalData, setModalData]}>
+                <Outlet />
             </ModalDataContext.Provider>
         </ModalContext.Provider>
     );
 }
 
 
-function CreateModal({ modalOpen, modalId, data = null}) {
+export function CreateModal({ modalId, data = null }) {
     const location = useLocation();
-    const setModalOpen = useContext(ModalContext);
+    const [modalOpen, setModalOpen] = useModalContext();
 
     let title;
     let modalForm;
@@ -61,3 +58,7 @@ function CreateModal({ modalOpen, modalId, data = null}) {
         </Modal>
     );
 }
+
+
+export const useModalContext = () => useContext(ModalContext);
+export const useModalDataContext = () => useContext(ModalDataContext);

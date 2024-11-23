@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import { Link, useSubmit, useLocation } from "react-router-dom";
+import { Link, useSubmit, useLocation } from "react-router";
 
 import {
     SettingOutlined,

@@ -2,10 +2,8 @@
 // TODO: Change so that only what is needed is imported, if possible
 import * as ReactDOM from "react-dom/client";
 
-import {
-  createBrowserRouter,
-  RouterProvider,
-} from "react-router-dom";
+import { createBrowserRouter } from "react-router";
+import { RouterProvider } from "react-router/dom";
 
 import "./index.css";
 
@@ -14,15 +12,11 @@ import { Registration, registerAction } from "./routes/auth/registration.jsx";
 import { Login, loginAction } from "./routes/auth/login.jsx";
 import { logoutAction } from "./routes/auth/logout.jsx";
 
-import { Projects, projectsLoader, projectsAction } from "./routes/projects/main.jsx";
-import { deleteProjectAction } from "./routes/projects/delete.jsx";
-import { editProjectAction } from "./routes/projects/edit.jsx";
-
-import { Issues, issuesLoader, issuesAction } from "./routes/issues/main.jsx";
-import { deleteIssueAction } from "./routes/issues/delete.jsx";
-import { editIssueAction } from "./routes/issues/edit.jsx";
+import { Projects, projectsLoader, projectsAction } from "./routes/projects.jsx";
+import { Issues, issuesLoader, issuesAction } from "./routes/issues.jsx";
 
 import { ErrorPage } from "./components/ErrorPage.jsx";
+import { PageLayout } from "./components/PageLayout.jsx";
 
 
 const router = createBrowserRouter([
@@ -49,42 +43,28 @@ const router = createBrowserRouter([
         action: logoutAction
     },
     {
-        path: "/projects",
-        element: <Projects />,
+        element: <PageLayout />,
         errorElement: <ErrorPage />,
-        loader: projectsLoader,
-        action: projectsAction,
         children: [
             {
-                path: ":projectId/delete",
-                action: deleteProjectAction,
+                path: "/projects",
+                element: <Projects />,
+                loader: projectsLoader,
+                action: projectsAction,
             },
             {
-                path: ":projectId/update",
-                action: editProjectAction
-            }
-        ]
-    },
-    {
-        path: "/projects/:projectId/issues",
-        element: <Issues />,
-        errorElement: <ErrorPage />,
-        loader: issuesLoader,
-        action: issuesAction,
-        children: [
-            {
-                path: ":issueId/delete",
-                action: deleteIssueAction,
+                path: "/projects/:projectId/issues",
+                element: <Issues />,
+                loader: issuesLoader,
+                action: issuesAction,
             },
-            {
-                path: ":issueId/update",
-                action: editIssueAction
-            }
         ]
     },
 ]);
 
 
 ReactDOM.createRoot(document.getElementById("root")).render(
-    <RouterProvider router={router} />
+    <RouterProvider
+        router={router}
+    />
 );

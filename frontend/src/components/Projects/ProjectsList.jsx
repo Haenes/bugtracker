@@ -1,18 +1,16 @@
-import { useContext } from "react";
-
-import { Link, useLoaderData, useSubmit } from "react-router-dom";
+import { Link, useLoaderData, useSubmit } from "react-router";
 
 import { List, Card, Button } from "antd";
 import { StarFilled, StarOutlined, SettingOutlined } from "@ant-design/icons";
 
-import { ModalContext, ModalDataContext } from "../ModalProvider.jsx";
+import { useModalContext, useModalDataContext } from "../ModalProvider.jsx";
 
 
 export function ProjectsList() {
     const projects = useLoaderData();
     const submit = useSubmit();
-    const handleClickModal = useContext(ModalContext);
-    const setModalData = useContext(ModalDataContext);
+    const [modalOpen, setModalOpen] = useModalContext();
+    const [modalData, setModalData] = useModalDataContext();
 
     if (!projects) return "You don't have any project yet!"
 
@@ -41,9 +39,8 @@ export function ProjectsList() {
                             actions={[
                                 <FavoriteButton starred={item.starred} />,
                                 <SettingsButton
-                                    handleClickModal={handleClickModal}
-                                    setModalData={setModalData}
                                     project={{...item}}
+                                    setModalFuncs={[setModalOpen, setModalData]}
                                 />
                             ]}
                         >
@@ -73,14 +70,16 @@ function FavoriteButton(starred) {
 }
 
 
-function SettingsButton({ handleClickModal, setModalData, project }) {
+function SettingsButton({ project, setModalFuncs }) {
+    const [setModalOpen, setModalData] = setModalFuncs;
+
     return (
         <Button
             title="Settings"
             className="border-0 shadow-none"
             icon={<SettingOutlined style={buttonSize}/>}
             onClick={() => {
-                handleClickModal({visible: true, modalId: 2});
+                setModalOpen({visible: true, modalId: 2});
                 setModalData(project)
             }}
         />

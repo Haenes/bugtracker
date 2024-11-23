@@ -1,16 +1,14 @@
-import { useContext } from "react";
-
-import { useLoaderData } from "react-router-dom";
+import { useLoaderData } from "react-router";
 
 import { Card } from "antd";
 
-import { ModalContext, ModalDataContext } from "../ModalProvider.jsx";
+import { useModalContext, useModalDataContext } from "../ModalProvider.jsx";
 
 
 export function IssuesBoard() {
     const issues = useLoaderData();
-    const handleClickModal = useContext(ModalContext);
-    const setModalData = useContext(ModalDataContext);
+    const [modalOpen, setModalOpen] = useModalContext();
+    const [modalData, setModalData] = useModalDataContext();
 
     if (!issues) return "You don't have any issues for this project yet!"
 
@@ -32,7 +30,7 @@ export function IssuesBoard() {
                     "text-start"
                 }
                 onClick={() => {
-                    handleClickModal({visible: true, modalId: 2});
+                    setModalOpen({visible: true, modalId: 2});
                     setModalData(issueStatus[i])
                 }}
             >

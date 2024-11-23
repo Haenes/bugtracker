@@ -2,7 +2,7 @@ import { useState } from 'react';
 
 import {Button, Select, Input} from 'antd';
 
-import { Form, useActionData } from "react-router-dom";
+import { Form, useActionData } from "react-router";
 
 const { TextArea } = Input;
 
@@ -27,27 +27,27 @@ export function CreateIssueForm() {
     const [priority, setPriority] = useState("");
 
     const handleTypeChange = () => {
-        errors?.errorType && delete errors.errorType;
+        errors?.createType && delete errors.createType;
     };
 
     const handlePriorityChange = () => {
-        errors?.errorPriority && delete errors.errorPriority;
+        errors?.createPriority && delete errors.createPriority;
     }
 
     return (
         <Form method="post" name="createIssue" className="flex flex-col gap-y-4">
 
-            {errors?.errorTitle || errors?.errorType || errors?.errorPriority ?
+            {errors?.createTitle || errors?.createType || errors?.createPriority ?
                 <div className='flex flex-col text-center text-red-500'>
-                    {errors?.errorTitle && <span>{errors.errorTitle}</span>}
-                    {errors?.errorType && <span>{errors.errorType}</span>}
-                    {errors?.errorPriority && <span>{errors.errorPriority}</span>}
+                    {errors?.createTitle}
+                    {errors?.createType && <span>{errors.createType}</span>}
+                    {errors?.createPriority && <span>{errors.createPriority}</span>}
                 </div> : <></>
             }
 
             <Input
                 name="title"
-                status={errors?.errorTitle && "error"}
+                status={errors?.createTitle && "error"}
                 type="text"
                 required
                 placeholder="Issue title"
@@ -63,7 +63,7 @@ export function CreateIssueForm() {
 
             <Select
                 placeholder="Issue type"
-                status={errors?.errorType && "error"}
+                status={errors?.createType && "error"}
                 options={[
                     {label: "Feature", value: "Feature"},
                     {label: "Bug", value: "Bug"}
@@ -74,7 +74,7 @@ export function CreateIssueForm() {
 
             <Select
                 placeholder="Issue priority"
-                status={errors?.errorPriority && "error"}
+                status={errors?.createPriority && "error"}
                 options={[
                     {label: "Lowest", value: "Lowest"},
                     {label: "Low", value: "Low"},
@@ -86,7 +86,7 @@ export function CreateIssueForm() {
             />
             <input name="priority" type="hidden" value={priority} />
 
-            <Button className="self-center" type="primary" htmlType="submit">
+            <Button name="intent" value="create" className="self-center" type="primary" htmlType="submit">
                 Create new
             </Button>
         </Form>

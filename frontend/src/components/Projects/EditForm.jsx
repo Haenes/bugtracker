@@ -1,45 +1,34 @@
-import { useState, useContext } from 'react';
+import { useState } from 'react';
 
-import { useSubmit } from "react-router-dom";
+import { Form, useActionData } from "react-router";
 
 import { Button, Select, Checkbox, Input } from 'antd';
 
-import { Form, useActionData } from "react-router-dom";
-
-import { ModalContext } from "../ModalProvider.jsx";
-import { convertDate } from "../Page.jsx";
+import { useModalContext } from "../ModalProvider.jsx";
+import { convertDate } from "../PageLayout.jsx";
 
 
 export function EditProjectForm({ project }) {
     const errors = useActionData();
-    const submit = useSubmit();
-    const setModalOpen = useContext(ModalContext);
-    const [selectedValue, setSelectedValue] = useState(project.type);
-
-    const handleDelete = () => {
-        submit(null, {method: "POST", action: `${project.id}/delete`});
-        setModalOpen({visible: false, modalId: 2});
-    };
+    const [modalOpen, setModalOpen] = useModalContext();
+    const [type, setType] = useState(project.type);
 
     return (
-        <Form
-            method="post"
-            action={`${project.id}/update`}
-            name="editProject"
-            className="flex flex-col gap-3 mt-4"
-        >
-            {errors?.errorName || errors?.errorKey ?
+        <Form method="post" name="editProject" className="flex flex-col gap-3 mt-4">
+            {errors?.editName || errors?.editKey ?
                 <div className='text-center text-red-500'>
-                    {errors?.errorName}
-                    {errors?.errorKey}
+                    {errors?.editName}
+                    {errors?.editKey}
                 </div> : <></>
             }
+
+            <input name="projectId" value={project.id} type="hidden" />
 
             <div className="flex flex-row items-center">
                 <span className="mr-2">Name:</span>
                 <Input
                     name="name" 
-                    status={errors?.errorName && "error"}
+                    status={errors?.editName && "error"}
                     type="text"
                     defaultValue={project.name}
                     required
@@ -51,7 +40,7 @@ export function EditProjectForm({ project }) {
                 <span className="mr-5">Key:</span>
                 <Input
                     name="key"
-                    status={errors?.errorKey && "error"}
+                    status={errors?.editKey && "error"}
                     type="text"
                     defaultValue={project.key}
                     required
@@ -69,9 +58,9 @@ export function EditProjectForm({ project }) {
                         {label: "Back-end", value: "Back-end"},
                         {label: "Front-end", value: "Front-end"}
                     ]}
-                    onChange={value => {setSelectedValue(value), handleChange()}}
+                    onChange={value => setType(value)}
                 />
-                <input name="type" type="hidden" value={selectedValue} />
+                <input name="type" type="hidden" value={type} />
             </div>
 
             <div>
@@ -90,11 +79,18 @@ export function EditProjectForm({ project }) {
             </div>
 
             <div className="flex flex-row gap-3 justify-end">
-                <Button danger type="text" htmlType="button" onClick={handleDelete}>
+                <Button
+                    danger
+                    name="intent"
+                    value="delete"
+                    type="text"
+                    htmlType="submit"
+                    onClick={() => setModalOpen({visible: false, modalId: 2})}
+                >
                     Delete
                 </Button>
 
-                <Button type="primary" htmlType="submit">
+                <Button name="intent" value="edit" type="primary" htmlType="submit">
                     Change
                 </Button>
             </div>

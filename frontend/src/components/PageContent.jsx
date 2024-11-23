@@ -1,10 +1,10 @@
-import { useContext } from "react";
+import { Outlet } from "react-router";
 
 import { Layout, theme, Button } from "antd";
 
 import {FormOutlined} from "@ant-design/icons";
 
-import { ModalContext } from "./ModalProvider.jsx";
+import { CreateModal, useModalContext, useModalDataContext } from "./ModalProvider.jsx";
 
 const { Content } = Layout;
 
@@ -16,7 +16,8 @@ export function PageContent({ header, children }) {
         background: colorBgContainer,
         borderRadius: borderRadiusLG,
     };
-    const handleClickModal = useContext(ModalContext);
+    const [modalOpen, setModalOpen] = useModalContext();
+    const [modalData, setModalData] = useModalDataContext();
 
     return (
         <Content className="mx-2 mt-3">
@@ -28,11 +29,17 @@ export function PageContent({ header, children }) {
                         title="Create new"
                         type="button"
                         icon={<FormOutlined />}
-                        onClick={() => handleClickModal({visible: true, modalId: 1})}
+                        onClick={() => setModalOpen({visible: true, modalId: 1})}
                         size="small"
                     />
                 </div>
-                <div className="mt-3">{children}</div>
+
+                <div className="mt-3">
+                    {children}
+                </div>
+
+                <CreateModal modalId={1} />
+                <CreateModal modalId={2} data={modalData} />
             </div>
         </Content>
     );

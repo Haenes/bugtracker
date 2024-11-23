@@ -1,46 +1,37 @@
-import { useState, useContext } from 'react';
+import { useState } from 'react';
 
 import {Button, Select, Input} from 'antd';
 
-import { Form, useActionData, useSubmit } from "react-router-dom";
+import { Form, useActionData } from "react-router";
 
-import { ModalContext } from "../ModalProvider.jsx";
-import { convertDate } from "../Page.jsx";
+import { useModalContext } from "../ModalProvider.jsx";
+import { convertDate } from "../PageLayout.jsx";
 
 const { TextArea } = Input;
 
 
 export function EditIssueForm({ issue }) {
     const errors = useActionData();
-    const submit = useSubmit();
-    const setModalOpen = useContext(ModalContext);
+    const [modalOpen, setModalOpen] = useModalContext();
 
     const [type, setType] = useState(issue.type);
     const [issueStatus, setIssueStatus] = useState(issue.status);
     const [priority, setPriority] = useState(issue.priority);
 
-    const handleDelete = () => {
-        submit(null, {method: "POST", action: `${issue.id}/delete`});
-        setModalOpen({visible: false, modalId: 3});
-    };
-
     return (
-        <Form
-            method="post"
-            action={`${issue.id}/update`}
-            name="editIssue"
-            className="grid grid-cols-2 gap-x-8 mt-4"
-        >
-            {errors?.errorTitle ?
+        <Form method="post" name="editIssue" className="grid grid-cols-2 gap-x-8 mt-4">
+            {errors?.editTitle ?
                 <div className='flex flex-col text-center text-red-500'>
-                    <span>{errors.errorTitle}</span>
+                    <span>{errors.editTitle}</span>
                 </div> : <></>
             }
+
+            <input name="issueId" value={issue.id} type="hidden" />
 
             <div className="col-span-2">
                 <Input
                     name="title"
-                    status={errors?.errorTitle && "error"}
+                    status={errors?.editTitle && "error"}
                     type="text"
                     defaultValue={issue.title}
                     required
@@ -56,18 +47,19 @@ export function EditIssueForm({ issue }) {
                     placeholder="Description is empty."
                     maxLength={255}
                 />
-
-                <span className="mr-5">Type:</span>
-                <Select
-                    defaultValue={issue.type}
-                    popupMatchSelectWidth={false}
-                    options={[
-                        {label: "Feature", value: "Feature"},
-                        {label: "Bug", value: "Bug"}
-                    ]}
-                    onChange={value => setType(value)}
-                />
-                <input name="type" type="hidden" value={type} />
+                <div>
+                    <span className="mr-5">Type:</span>
+                    <Select
+                        defaultValue={issue.type}
+                        popupMatchSelectWidth={false}
+                        options={[
+                            {label: "Feature", value: "Feature"},
+                            {label: "Bug", value: "Bug"}
+                        ]}
+                        onChange={value => setType(value)}
+                    />
+                    <input name="type" type="hidden" value={type} />
+                </div>
 
                 <div className="my-3">
                     <span className="mr-3">Status:</span>
@@ -110,11 +102,18 @@ export function EditIssueForm({ issue }) {
                 </div>
 
                 <div className="flex flex-row gap-3 justify-end">
-                    <Button danger type="text" htmlType="button" onClick={handleDelete}>
+                    <Button
+                        danger
+                        name="intent"
+                        value="delete"
+                        type="text"
+                        htmlType="submit"
+                        onClick={() => setModalOpen({visible: false, modalId: 3})}
+                    >
                         Delete
                     </Button>
 
-                    <Button type="primary" htmlType="submit">
+                    <Button name="intent" value="edit" type="primary" htmlType="submit">
                         Change
                     </Button>
                 </div>
