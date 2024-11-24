@@ -7,8 +7,9 @@ from auth.models import User
 from config import (
     SMTP_HOST, SMTP_PORT,
     SMTP_USER, SMTP_PASSWORD,
-    VERIFY_URL, PASSWORD_RESET_URL
-    )
+    VERIFY_URL_BACKEND, VERIFY_URL_FRONTEND,
+    PASSWORD_RESET_URL_BACKEND, PASSWORD_RESET_URL_FRONTEND
+)
 
 
 class EmailInterface():
@@ -35,6 +36,7 @@ class EmailInterface():
         content: str
     ) -> EmailMessage:
         """ Returns an EmailMessage ready to be sent. """
+
         email = EmailMessage()
         email["Subject"] = subject
         email["From"] = SMTP_USER
@@ -55,8 +57,6 @@ class EmailInterface():
 
 
 class EmailVerification(EmailInterface):
-
-    url = VERIFY_URL
     subject = "Email verification"
 
     @classmethod
@@ -69,10 +69,10 @@ class EmailVerification(EmailInterface):
             "Please, click on the link below to verify your email "
             "if you're using UI (site): "
             "<br><br>"
-            f"{cls.url}?{token}"
+            f"{VERIFY_URL_FRONTEND}/{token}"
             "<br><br>"
             "If you're using the API make a POST request to "
-            f"{cls.url} in json format with data:"
+            f"{VERIFY_URL_BACKEND} in json format with data:"
             "<br><br>"
             f'"token": "{token}"'
             "</p>"
@@ -89,8 +89,6 @@ class EmailVerification(EmailInterface):
 
 
 class EmailResetPassword(EmailInterface):
-
-    url = PASSWORD_RESET_URL
     subject = "Password reset"
 
     @classmethod
@@ -106,10 +104,10 @@ class EmailResetPassword(EmailInterface):
             "<br><br>"
             "Please go to this page and enter a new password:"
             "<br><br>"
-            f"{cls.url}?{token}"
+            f"{PASSWORD_RESET_URL_FRONTEND}?{token}"
             "<br><br>"
             "If you're using the API make a POST request to "
-            f"{cls.url} in json format with data:"
+            f"{PASSWORD_RESET_URL_BACKEND} in json format with data:"
             "<br><br>"
             f'"token": "{token}",'
             "<br>"
