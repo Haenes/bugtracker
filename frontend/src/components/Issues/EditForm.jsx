@@ -2,7 +2,7 @@ import { useState } from 'react';
 
 import {Button, Select, Input} from 'antd';
 
-import { Form, useActionData } from "react-router";
+import { Form, useActionData, useFetcher } from "react-router";
 
 import { useModalContext } from "../ModalProvider.jsx";
 import { convertDate } from "../PageLayout.jsx";
@@ -12,11 +12,20 @@ const { TextArea } = Input;
 
 export function EditIssueForm({ issue }) {
     const errors = useActionData();
+    const fetcher = useFetcher();
     const [modalOpen, setModalOpen] = useModalContext();
 
     const [type, setType] = useState(issue.type);
     const [issueStatus, setIssueStatus] = useState(issue.status);
     const [priority, setPriority] = useState(issue.priority);
+
+    const handleDelete = () => {
+        setModalOpen({visible: false, modalId: 2});
+        fetcher.submit(
+            {intent: "delete", issueId: issue.id},
+            {method: "POST"}
+        )
+    };
 
     return (
         <Form method="post" name="editIssue" className="grid grid-cols-2 gap-x-8 mt-4">
@@ -107,8 +116,7 @@ export function EditIssueForm({ issue }) {
                         name="intent"
                         value="delete"
                         type="text"
-                        htmlType="submit"
-                        onClick={() => setModalOpen({visible: false, modalId: 3})}
+                        onClick={handleDelete}
                     >
                         Delete
                     </Button>

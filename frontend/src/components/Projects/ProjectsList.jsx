@@ -12,7 +12,7 @@ export function ProjectsList() {
     const [modalOpen, setModalOpen] = useModalContext();
     const [modalData, setModalData] = useModalDataContext();
 
-    if (!projects) return "You don't have any project yet!"
+    if (!projects) return <List />
 
     const paginationParams = {
         current: projects.page,

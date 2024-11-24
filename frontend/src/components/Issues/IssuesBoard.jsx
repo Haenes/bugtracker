@@ -1,6 +1,6 @@
 import { useLoaderData } from "react-router";
 
-import { Card } from "antd";
+import { Card, Empty } from "antd";
 
 import { useModalContext, useModalDataContext } from "../ModalProvider.jsx";
 
@@ -10,7 +10,7 @@ export function IssuesBoard() {
     const [modalOpen, setModalOpen] = useModalContext();
     const [modalData, setModalData] = useModalDataContext();
 
-    if (!issues) return "You don't have any issues for this project yet!"
+    if (!issues) return <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
 
     const toDo = issues.results.filter(issue => issue.status === "To do");
     const inProgress = issues.results.filter(issue => issue.status === "In progress");

@@ -1,26 +1,19 @@
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
 import { useState } from 'react';
-import {
-    Col,
-    Row,
-    Card,
-    Button,
-    Checkbox,
-    Input
-} from 'antd';
+import { Card, Button, Checkbox, Input } from 'antd';
 
 import { Form, Link, useActionData } from "react-router";
 
 
-export function LoginForm() {
+export function LoginForm({ children }) {
     return (
-        <Row className='h-screen w-screen items-center justify-center'>
-            <Col>
-                <Card title="Log in">
-                    <LoginFormHelper />
-                </Card>
-            </Col>
-        </Row>
+        <div className="flex flex-col h-screen w-screen items-center justify-center">
+            <div className="mb-5">{children}</div>
+
+            <Card title="Log in">
+                <LoginFormHelper/>
+            </Card>
+        </div>
     );
 }
 
@@ -34,11 +27,12 @@ function LoginFormHelper() {
     const errors = useActionData();
 
     return (
-        <Form  method="post" name="login" className="flex flex-col gap-y-4">
+        <Form method="post" name="login" className="flex flex-col gap-y-4">
 
-            {errors?.auth &&
+            {errors &&
                 <div className='text-center text-red-500'>
-                    {errors.auth}
+                    {errors?.auth}
+                    {errors?.verify}
                 </div>
             }
 

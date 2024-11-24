@@ -17,17 +17,15 @@ export async function registerAction({ request }) {
 
     const results = await userRegistration(Object.fromEntries(formData));
 
-    if (results["detail"] == "REGISTER_USER_ALREADY_EXISTS") {
-        // errors.email = "A user with this email already exists."
+    if (results["detail"] === "REGISTER_USER_ALREADY_EXISTS") {
         errors.email = "This email already taken";
         return errors;
-    } else if (results["detail"] == "USERNAME_ALREADY_EXISTS") {
-        // errors.username = "A user with this username already exists."
+    } else if (results["detail"] === "USERNAME_ALREADY_EXISTS") {
         errors.username = "This username already taken";
         return errors;
     }
     
-    return redirect("/login");
+    return redirect("/login?register=true");
 }
 
 

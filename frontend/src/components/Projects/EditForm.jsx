@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import { Form, useActionData } from "react-router";
+import { Form, useActionData, useFetcher } from "react-router";
 
 import { Button, Select, Checkbox, Input } from 'antd';
 
@@ -10,8 +10,17 @@ import { convertDate } from "../PageLayout.jsx";
 
 export function EditProjectForm({ project }) {
     const errors = useActionData();
+    const fetcher = useFetcher();
     const [modalOpen, setModalOpen] = useModalContext();
     const [type, setType] = useState(project.type);
+
+    const handleDelete = () => {
+        setModalOpen({visible: false, modalId: 2});
+        fetcher.submit(
+            {intent: "delete", projectId: project.id},
+            {method: "POST"}
+        )
+    };
 
     return (
         <Form method="post" name="editProject" className="flex flex-col gap-3 mt-4">
@@ -84,8 +93,7 @@ export function EditProjectForm({ project }) {
                     name="intent"
                     value="delete"
                     type="text"
-                    htmlType="submit"
-                    onClick={() => setModalOpen({visible: false, modalId: 2})}
+                    onClick={handleDelete}
                 >
                     Delete
                 </Button>

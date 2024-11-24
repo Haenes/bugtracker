@@ -10,6 +10,7 @@ import "./index.css";
 import { Root } from "./routes/root.jsx";
 import { Registration, registerAction } from "./routes/auth/registration.jsx";
 import { Login, loginAction } from "./routes/auth/login.jsx";
+import { verifyAction } from "./routes/auth/verify.jsx";
 import { logoutAction } from "./routes/auth/logout.jsx";
 
 import { Projects, projectsLoader, projectsAction } from "./routes/projects.jsx";
@@ -30,6 +31,11 @@ const router = createBrowserRouter([
         element: <Registration />,
         errorElement: <ErrorPage />,
         action: registerAction,
+    },
+    {
+        path: "/verify/:token",
+        errorElement: <ErrorPage />,
+        loader: verifyAction
     },
     {
         path: "/login",
