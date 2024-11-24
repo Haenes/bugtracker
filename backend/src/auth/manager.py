@@ -48,7 +48,7 @@ fastapi_users = CustomFastAPIUsers[User, int](get_user_manager, [auth_backend])
 
 current_active_user = fastapi_users.current_user(active=True)
 
-auth_router = fastapi_users.get_auth_router(auth_backend)
+auth_router = fastapi_users.get_auth_router(auth_backend, requires_verification=True)
 register_router = fastapi_users.get_register_router(UserRead, UserCreate)
 users_router = fastapi_users.get_users_router(UserRead, UserUpdate)
 auth_verify_router = fastapi_users.get_verify_router(UserRead)
