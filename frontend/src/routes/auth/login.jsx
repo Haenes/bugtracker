@@ -14,7 +14,7 @@ export function Login() {
             <LoginForm>
                 <Alert
                     message="Almost done!"
-                    description=" Check your email to confirm it!"
+                    description="Check your email to confirm it!"
                     type="info"
                     showIcon
                     closable
@@ -26,6 +26,29 @@ export function Login() {
             <LoginForm>
                 <Alert
                     message="Mail is confirmed!"
+                    type="success"
+                    showIcon
+                    closable
+                />
+            </LoginForm>
+        )
+    } else if (location.includes("forgotPassword")) {
+        return (
+            <LoginForm>
+                <Alert
+                    message="Almost done!"
+                    description="Check your email to recover password!"
+                    type="info"
+                    showIcon
+                    closable
+                />
+            </LoginForm>
+        )
+    } else if (location.includes("resetPassword")) {
+        return (
+            <LoginForm>
+                <Alert
+                    message="Access restored!"
                     type="success"
                     showIcon
                     closable

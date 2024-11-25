@@ -12,6 +12,8 @@ import { Registration, registerAction } from "./routes/auth/registration.jsx";
 import { Login, loginAction } from "./routes/auth/login.jsx";
 import { verifyAction } from "./routes/auth/verify.jsx";
 import { logoutAction } from "./routes/auth/logout.jsx";
+import { ForgotPassword, forgotPasswordAction } from "./routes/auth/forgotPassword.jsx";
+import { ResetPassword, resetPasswordAction } from "./routes/auth/resetPassword.jsx";
 
 import { Projects, projectsLoader, projectsAction } from "./routes/projects.jsx";
 import { Issues, issuesLoader, issuesAction } from "./routes/issues.jsx";
@@ -36,6 +38,18 @@ const router = createBrowserRouter([
         path: "/verify/:token",
         errorElement: <ErrorPage />,
         loader: verifyAction
+    },
+    {
+        path: "/forgot-pasword",
+        element: <ForgotPassword />,
+        errorElement: <ErrorPage />,
+        action: forgotPasswordAction,
+    },
+    {
+        path: "/reset-password/:token",
+        element: <ResetPassword />,
+        errorElement: <ErrorPage />,
+        action: resetPasswordAction,
     },
     {
         path: "/login",

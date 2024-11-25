@@ -39,6 +39,48 @@ export async function userVerification(token) {
 }
 
 
+export async function userForgotPassword(email) {
+    try {
+        let rawResponse = await fetch(
+            "http://127.0.0.1:8000/auth/forgot-password", {
+                method: "POST",
+                headers: {
+                    "Accept": "application/json",
+                    "Content-Type": "application/json"  
+                },
+                body: JSON.stringify(email)
+            }
+        );
+
+        return rawResponse;
+    } catch(err) {
+        throw new Response("Error", error503);
+    }
+}
+
+
+export async function userResetPassword(password, token) {
+    try {
+        let rawResponse = await fetch(
+            "http://127.0.0.1:8000/auth/reset-password", {
+                method: "POST",
+                headers: {
+                    "Accept": "application/json",
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({  
+                    "token": token, "password": password
+                })
+            }
+        )
+
+        return rawResponse;
+    } catch(err) {
+        throw new Response("Error", error503);
+    }
+}
+
+
 export async function userLogin(data) {
     try {
         let rawResponse = await fetch("http://127.0.0.1:8000/auth/jwt/login", {
@@ -50,7 +92,7 @@ export async function userLogin(data) {
             body: data
         });
 
-        return rawResponse.ok ? rawResponse : rawResponse.json();
+        return rawResponse.ok ? rawResponse : await rawResponse.json();
     } catch(err) {
         throw new Response("Error", error503);
     }

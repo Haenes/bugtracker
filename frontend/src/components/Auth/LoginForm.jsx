@@ -1,5 +1,7 @@
-import { LockOutlined, UserOutlined } from '@ant-design/icons';
 import { useState } from 'react';
+
+import { LockOutlined, UserOutlined } from '@ant-design/icons';
+
 import { Card, Button, Checkbox, Input } from 'antd';
 
 import { Form, Link, useActionData } from "react-router";
@@ -30,7 +32,7 @@ function LoginFormHelper() {
         <Form method="post" name="login" className="flex flex-col gap-y-4">
 
             {errors &&
-                <div className='text-center text-red-500'>
+                <div className="text-center text-red-500">
                     {errors?.auth}
                     {errors?.verify}
                 </div>
@@ -66,8 +68,8 @@ function LoginFormHelper() {
                 Log in
             </Button>
 
-            <div className='flex flex-row gap-x-10'>
-                <Link to="forgot-pasword">Forgot password</Link>
+            <div className="flex flex-row gap-x-10">
+                <Link to="/forgot-pasword">Forgot password</Link>
                 <Link to="/register">Register now!</Link>
             </div>
 
