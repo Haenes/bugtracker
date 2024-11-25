@@ -1,4 +1,4 @@
-import { redirect } from "react-router";
+import { replace } from "react-router";
 
 import { createItem, updateItem, deleteItem, getItems } from "../client/base.js";
 
@@ -77,13 +77,15 @@ async function editProjectAction(projectId, formData) {
         projectId
     );
 
-    return project.detail ? afterSubmitValidation(project, "edit") : project;
+    return project.detail ?
+        afterSubmitValidation(project, "edit", projectId) :
+        project;
 }
 
 
 async function deleteProjectAction(projectId) {
     const results = await deleteItem(projectId);
-    return results.results === "Success" && redirect("");
+    return results.results === "Success" && replace("");
 }
 
 
@@ -121,7 +123,7 @@ function afterSubmitValidation(project, intent) {
         return errors;
     } else if (project.detail === "Project with this name already exist!") {
         intent === "create" ?
-        errors.createName = "Project with this name already exist!":
+        errors.createName = "Project with this name already exist!" :
         errors.editName = "Project with this name already exist!";
 
         return errors;

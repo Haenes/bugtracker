@@ -1,3 +1,5 @@
+import { replace } from "react-router";
+
 import { getItems, updateItem, deleteItem, createItem } from "../client/base.js";
 
 import { IssuesBoard } from "../components/Issues/IssuesBoard.jsx";
@@ -90,7 +92,7 @@ async function editIssueAction(projectId, issueId, formData) {
 
 async function deleteIssueAction(projectId, issueId) {
     const results = await deleteItem(projectId, issueId);
-    return results.results === "Success" && redirect("");
+    return results.results === "Success" && replace("");
 }
 
 

@@ -29,15 +29,18 @@ export function EditIssueForm({ issue }) {
 
     return (
         <Form method="post" name="editIssue" className="grid grid-cols-2 gap-x-8 mt-4">
-            {errors?.editTitle ?
-                <div className='flex flex-col text-center text-red-500'>
-                    <span>{errors.editTitle}</span>
-                </div> : <></>
-            }
-
             <input name="issueId" value={issue.id} type="hidden" />
 
             <div className="col-span-2">
+
+                {errors?.editTitle ?
+                    <div className='text-center text-red-500'>
+                        <span className='text-center text-red-500'>
+                            {errors.editTitle}
+                        </span>
+                    </div> : <></>
+                }
+
                 <Input
                     name="title"
                     status={errors?.editTitle && "error"}
@@ -56,6 +59,7 @@ export function EditIssueForm({ issue }) {
                     placeholder="Description is empty."
                     maxLength={255}
                 />
+
                 <div>
                     <span className="mr-5">Type:</span>
                     <Select

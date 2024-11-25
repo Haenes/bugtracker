@@ -1,4 +1,4 @@
-import { redirect } from "react-router";
+import { replace } from "react-router";
 
 import { userRegistration } from "../../client/auth.js";
 import { RegisterForm } from "../../components/Auth/RegisterForm.jsx";
@@ -25,7 +25,7 @@ export async function registerAction({ request }) {
         return errors;
     }
     
-    return redirect("/login?register=true");
+    return replace("/login?register=true");
 }
 
 

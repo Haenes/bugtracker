@@ -1,12 +1,17 @@
-import { useLoaderData } from "react-router";
+import { useActionData, useLoaderData } from "react-router";
 
 import { Card, Empty } from "antd";
 
-import { useModalContext, useModalDataContext } from "../ModalProvider.jsx";
+import { CreateModal, useModalContext, useModalDataContext } from "../ModalProvider.jsx";
+import { CreateIssueForm } from "./CreateForm.jsx"
+import { EditIssueForm } from "./EditForm.jsx";
 
 
 export function IssuesBoard() {
     const issues = useLoaderData();
+    const errors = useActionData();
+    const modalTitle = "Issue";
+
     const [modalOpen, setModalOpen] = useModalContext();
     const [modalData, setModalData] = useModalDataContext();
 
@@ -55,6 +60,14 @@ export function IssuesBoard() {
             <Card className="col-span-12 md:col-span-4" title="DONE">
                 {issueCard(done)}
             </Card>
+
+            <CreateModal modalId={1} title={modalTitle} errors={errors}>
+                <CreateIssueForm />
+            </CreateModal>
+
+            <CreateModal modalId={2} title={modalTitle} errors={errors}>
+                <EditIssueForm issue={modalData} />
+            </CreateModal>
         </div>
     );
 }

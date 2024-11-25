@@ -1,28 +1,28 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 import { Button, Select, Checkbox, Input } from 'antd';
 
 import { Form, useActionData } from "react-router";
 
-
-/*
-Unfortunately, due to the fact that the data validation results
-becomes known only after submitting the form, it's impossible
-to make the modal close only when the project is successfully created.
-At the moment, after submitting the form, the modal is active
-and it needs to be closed independently.
-But at least it doesn't close when validation fails and
-the user understands what went wrong and how to fix it.
-*/
+import { useModalContext} from "../ModalProvider";
 
 
 export function CreateProjectForm() {
     const errors = useActionData();
+    const [modalOpen, setModalOpen] = useModalContext();
     const [type, setType] = useState("");
 
     const handleChange = () => {
         errors?.createType && delete errors.createType;
     };
+
+    // Close Modal with form after successful creation.
+    useEffect(() => {
+        if (errors?.created) {
+            setModalOpen({visible: false, modalId: 1});
+            delete errors.created;
+        }
+    }, [errors])
 
     return (
         <Form method="post" name="createProject" className="flex flex-col gap-y-4 w-full">

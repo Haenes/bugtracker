@@ -1,4 +1,4 @@
-import { redirect } from "react-router";
+import { replace } from "react-router";
 import { userVerification } from "../../client/auth";
 
 
@@ -11,5 +11,5 @@ export async function verifyAction({ params }) {
         throw({status: 400, statusText: "Token is invalid."})
     }
 
-    return redirect("/login?verify=true");
+    return replace("/login?verify=true");
 }

@@ -1,28 +1,18 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
-import {Button, Select, Input} from 'antd';
+import { Button, Select, Input } from 'antd';
 
 import { Form, useActionData } from "react-router";
 
+import { useModalContext } from "../ModalProvider";
+
 const { TextArea } = Input;
-
-/* 
-Default input fields helps to circumvent the Select
-restriction, which makes it impossible to pass the name
-with the selected option value inside the form.
-
-Unfortunately, due to the fact that the data validation results
-becomes known only after submitting the form, it's impossible
-to make the modal close only when the project is successfully created.
-At the moment, after submitting the form, the modal is active
-and it needs to be closed independently.
-But at least it doesn't close when validation fails and
-the user understands what went wrong and how to fix it.
-*/
 
 
 export function CreateIssueForm() {
     const errors = useActionData();
+    const [modalOpen, setModalOpen] = useModalContext();
+
     const [type, setType] = useState("");
     const [priority, setPriority] = useState("");
 
@@ -33,6 +23,14 @@ export function CreateIssueForm() {
     const handlePriorityChange = () => {
         errors?.createPriority && delete errors.createPriority;
     }
+
+    // Close Modal with form after successful creation.
+    useEffect(() => {
+        if (errors?.created) {
+            setModalOpen({visible: false, modalId: 1});
+            delete errors.created;
+        }
+    }, [errors])
 
     return (
         <Form method="post" name="createIssue" className="flex flex-col gap-y-4">

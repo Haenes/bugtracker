@@ -2,12 +2,7 @@ import { createContext, useContext, useState } from "react";
 
 import { Modal } from "antd";
 
-import { Outlet, useLocation } from 'react-router';
-
-import { CreateProjectForm } from "./Projects/CreateForm.jsx"
-import { EditProjectForm } from "./Projects/EditForm.jsx";
-import { CreateIssueForm } from "./Issues/CreateForm.jsx"
-import { EditIssueForm } from "./Issues/EditForm.jsx";
+import { Outlet } from 'react-router';
 
 
 export const ModalContext = createContext(null);
@@ -28,20 +23,21 @@ export function ModalProvider() {
 }
 
 
-export function CreateModal({ modalId, data = null }) {
-    const location = useLocation();
+export function CreateModal({ modalId, title, errors = null, children }) {
     const [modalOpen, setModalOpen] = useModalContext();
+    let clearErrors;
 
-    let title;
-    let modalForm;
-
-    if (location.pathname.includes("issues")) {
-        title = "Issue";
-        modalId === 1 ? modalForm = <CreateIssueForm /> : modalForm = <EditIssueForm issue={data}/>
-    } else {
-        title = "Project";
-        modalId === 1 ? modalForm = <CreateProjectForm /> : modalForm = <EditProjectForm project={data}/>
-    }
+    title === "Project" ?
+        clearErrors = (errors) => {
+            delete errors?.createName;
+            delete errors?.editName;
+            delete errors?.createKey;
+            delete errors?.editKey;
+        } :
+        clearErrors = (errors) => {
+            delete errors?.createTitle;
+            delete errors?.editTitle;
+        }
 
     return (
         <Modal
@@ -52,9 +48,12 @@ export function CreateModal({ modalId, data = null }) {
             footer={null}
             focusTriggerAfterClose={false}
             destroyOnClose={true}
-            onCancel={() => setModalOpen({visible: false, modalId: modalId})}
+            onCancel={() => {
+                setModalOpen({visible: false, modalId: modalId});
+                clearErrors(errors);
+            }}
         >
-            {modalForm}
+            {children}
         </Modal>
     );
 }

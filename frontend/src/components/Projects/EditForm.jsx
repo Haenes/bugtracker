@@ -36,7 +36,7 @@ export function EditProjectForm({ project }) {
             <div className="flex flex-row items-center">
                 <span className="mr-2">Name:</span>
                 <Input
-                    name="name" 
+                    name="name"
                     status={errors?.editName && "error"}
                     type="text"
                     defaultValue={project.name}

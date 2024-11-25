@@ -1,14 +1,21 @@
-import { Link, useLoaderData, useSubmit } from "react-router";
+import { Link, useActionData, useLoaderData, useSubmit } from "react-router";
 
 import { List, Card, Button } from "antd";
 import { StarFilled, StarOutlined, SettingOutlined } from "@ant-design/icons";
 
-import { useModalContext, useModalDataContext } from "../ModalProvider.jsx";
+import { CreateProjectForm } from "./CreateForm.jsx";
+import { EditProjectForm } from "./EditForm.jsx";
+
+import { CreateModal, useModalContext, useModalDataContext } from "../ModalProvider.jsx";
 
 
 export function ProjectsList() {
     const projects = useLoaderData();
+    const errors = useActionData();
     const submit = useSubmit();
+
+    const modalTitle = "Project";
+
     const [modalOpen, setModalOpen] = useModalContext();
     const [modalData, setModalData] = useModalDataContext();
 
@@ -26,33 +33,43 @@ export function ProjectsList() {
     }
 
     return (
-        <List
-            grid={listGrid}
-            pagination={paginationParams}
-            dataSource={projects.results}
-            renderItem={(item) => {
-                return (
-                    <List.Item>
-                        <Card
-                            title={<Link to={`${item.id}/issues`}>{item.name}</Link>}
-                            hoverable
-                            actions={[
-                                <FavoriteButton starred={item.starred} />,
-                                <SettingsButton
-                                    project={{...item}}
-                                    setModalFuncs={[setModalOpen, setModalData]}
-                                />
-                            ]}
-                        >
-                            <div className="flex flex-col">
-                                <i>KEY: {item.key}</i>
-                                <i>TYPE: {item.type}</i>
-                            </div>
-                        </Card>
-                    </List.Item>
-                );
-            }}
-        />
+        <>
+            <List
+                grid={listGrid}
+                pagination={paginationParams}
+                dataSource={projects.results}
+                renderItem={(item) => {
+                    return (
+                        <List.Item>
+                            <Card
+                                title={<Link to={`${item.id}/issues`}>{item.name}</Link>}
+                                hoverable
+                                actions={[
+                                    <FavoriteButton starred={item.starred} />,
+                                    <SettingsButton
+                                        project={{...item}}
+                                        setModalFuncs={[setModalOpen, setModalData]}
+                                    />
+                                ]}
+                            >
+                                <div className="flex flex-col">
+                                    <i>KEY: {item.key}</i>
+                                    <i>TYPE: {item.type}</i>
+                                </div>
+                            </Card>
+                        </List.Item>
+                    );
+                }}
+            />
+
+            <CreateModal modalId={1} title={modalTitle} errors={errors}>
+                <CreateProjectForm />
+            </CreateModal>
+
+            <CreateModal modalId={2} title={modalTitle} errors={errors}>
+                <EditProjectForm project={modalData} />
+            </CreateModal>
+        </>
     );
 }
 

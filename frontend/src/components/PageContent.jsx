@@ -1,10 +1,8 @@
-import { Outlet } from "react-router";
-
 import { Layout, theme, Button } from "antd";
 
-import {FormOutlined} from "@ant-design/icons";
+import { FormOutlined } from "@ant-design/icons";
 
-import { CreateModal, useModalContext, useModalDataContext } from "./ModalProvider.jsx";
+import { useModalContext } from "./ModalProvider.jsx";
 
 const { Content } = Layout;
 
@@ -17,7 +15,6 @@ export function PageContent({ header, children }) {
         borderRadius: borderRadiusLG,
     };
     const [modalOpen, setModalOpen] = useModalContext();
-    const [modalData, setModalData] = useModalDataContext();
 
     return (
         <Content className="mx-2 mt-3">
@@ -37,9 +34,6 @@ export function PageContent({ header, children }) {
                 <div className="mt-3">
                     {children}
                 </div>
-
-                <CreateModal modalId={1} />
-                <CreateModal modalId={2} data={modalData} />
             </div>
         </Content>
     );
