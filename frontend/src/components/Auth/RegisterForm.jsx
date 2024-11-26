@@ -25,7 +25,7 @@ export function RegisterForm() {
 
 /**
  *  A function that helps reduce nesting in the RegisterForm
- * @returns {Card}
+ * @returns
  */
 function RegisterCard() {
     const [passwordVisible, setPasswordVisible] = useState(false);

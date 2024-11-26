@@ -4,7 +4,6 @@ import { Alert } from "antd";
 
 import { userLogin } from "../../client/auth.js";
 import { LoginForm } from "../../components/Auth/LoginForm.jsx";
-import React from "react";
 
 
 export function Login() {
@@ -51,7 +50,7 @@ export async function loginAction({ request }) {
  * @param {string} message
  * @param {string} type
  * @param {string} description 
- * @returns {React.JSX.Element}
+ * @returns
  */
 function GetAlert({
     message = "Almost done!",

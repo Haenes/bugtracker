@@ -22,7 +22,7 @@ export function LoginForm({ children }) {
 
 /**
  * A function that helps reduce nesting in the LoginForm
- * @returns {Form}
+ * @returns
  */
 function LoginFormHelper() {
     const [passwordVisible, setPasswordVisible] = useState(false);
