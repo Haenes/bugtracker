@@ -62,11 +62,11 @@ export function IssuesBoard() {
             </Card>
 
             <CreateModal modalId={1} title={modalTitle} errors={errors}>
-                <CreateIssueForm />
+                <CreateIssueForm errors={errors} setModalOpen={setModalOpen} />
             </CreateModal>
 
             <CreateModal modalId={2} title={modalTitle} errors={errors}>
-                <EditIssueForm issue={modalData} />
+                <EditIssueForm issue={modalData} errors={errors} setModalOpen={setModalOpen} />
             </CreateModal>
         </div>
     );

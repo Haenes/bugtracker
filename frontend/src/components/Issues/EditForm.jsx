@@ -2,18 +2,15 @@ import { useState } from 'react';
 
 import {Button, Select, Input} from 'antd';
 
-import { Form, useActionData, useFetcher } from "react-router";
+import { Form, useFetcher } from "react-router";
 
-import { useModalContext } from "../ModalProvider.jsx";
 import { convertDate } from "../PageLayout.jsx";
 
 const { TextArea } = Input;
 
 
-export function EditIssueForm({ issue }) {
-    const errors = useActionData();
+export function EditIssueForm({ issue, errors, setModalOpen }) {
     const fetcher = useFetcher();
-    const [modalOpen, setModalOpen] = useModalContext();
 
     const [type, setType] = useState(issue.type);
     const [issueStatus, setIssueStatus] = useState(issue.status);
@@ -111,7 +108,11 @@ export function EditIssueForm({ issue }) {
 
                 <div className="mb-4">
                     <span className="mr-1">Updated:</span>
-                    {convertDate(issue.updated)}
+                    {/* Get updated datetime from PATCH response to synchronize data */}
+                    {errors?.created == issue.created ?
+                    convertDate(errors.updated) :
+                    convertDate(issue.updated)
+                }
                 </div>
 
                 <div className="flex flex-row gap-3 justify-end">

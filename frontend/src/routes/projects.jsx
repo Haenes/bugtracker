@@ -93,7 +93,7 @@ async function deleteProjectAction(projectId) {
  * Function to validate select's from form
  * before send fetch request.
  * @param {*} formData 
- * @returns {Object}
+ * @returns {object}
  */
 function selectValidation(formData) {
     const errors = {};
@@ -107,10 +107,10 @@ function selectValidation(formData) {
 
 
 /**
- * Function to validate Name and key fields
+ * Function to validate Name and Key fields
  * from form after send fetch request.
  * @param {*} formData 
- * @returns {Object}
+ * @returns {object}
  */
 function afterSubmitValidation(project, intent) {
     const errors = {};

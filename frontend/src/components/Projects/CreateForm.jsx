@@ -2,14 +2,11 @@ import { useState, useEffect } from 'react';
 
 import { Button, Select, Checkbox, Input } from 'antd';
 
-import { Form, useActionData } from "react-router";
-
-import { useModalContext} from "../ModalProvider";
+import { Form } from "react-router";
 
 
-export function CreateProjectForm() {
-    const errors = useActionData();
-    const [modalOpen, setModalOpen] = useModalContext();
+
+export function CreateProjectForm({errors, setModalOpen}) {
     const [type, setType] = useState("");
 
     const handleChange = () => {
@@ -75,7 +72,13 @@ export function CreateProjectForm() {
 
             <Checkbox name="starred">Favorite</Checkbox>
 
-            <Button name="intent" value="create" className="self-center" type="primary" htmlType="submit">
+            <Button
+                name="intent"
+                value="create"
+                className="self-center"
+                type="primary"
+                htmlType="submit"
+            >
                 Create new
             </Button>
         </Form>

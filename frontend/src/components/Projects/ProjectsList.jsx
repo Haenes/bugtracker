@@ -63,11 +63,11 @@ export function ProjectsList() {
             />
 
             <CreateModal modalId={1} title={modalTitle} errors={errors}>
-                <CreateProjectForm />
+                <CreateProjectForm errors={errors} setModalOpen={setModalOpen} />
             </CreateModal>
 
             <CreateModal modalId={2} title={modalTitle} errors={errors}>
-                <EditProjectForm project={modalData} />
+                <EditProjectForm project={modalData} errors={errors} setModalOpen={setModalOpen} />
             </CreateModal>
         </>
     );
@@ -97,7 +97,7 @@ function SettingsButton({ project, setModalFuncs }) {
             icon={<SettingOutlined style={buttonSize}/>}
             onClick={() => {
                 setModalOpen({visible: true, modalId: 2});
-                setModalData(project)
+                setModalData(project);
             }}
         />
     );

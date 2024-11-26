@@ -17,7 +17,7 @@ export async function forgotPasswordAction({ request }) {
     );
 
     if (!result.ok) {
-        throw({status: 422, statusText: "Validation Error."})
+        throw({status: 422, statusText: "Validation Error."});
     }
 
     return replace("/login?forgotPassword=true");

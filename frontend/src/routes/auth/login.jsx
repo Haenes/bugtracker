@@ -1,62 +1,30 @@
-import { replace, useLocation } from "react-router";
+import { replace, useLocation, useNavigate } from "react-router";
 
-import {Alert} from "antd";
+import { Alert } from "antd";
 
 import { userLogin } from "../../client/auth.js";
 import { LoginForm } from "../../components/Auth/LoginForm.jsx";
+import React from "react";
 
 
 export function Login() {
     const location = useLocation().search;
-
-    if (location.includes("register")) {
-        return (
-            <LoginForm>
-                <Alert
-                    message="Almost done!"
-                    description="Check your email to confirm it!"
-                    type="info"
-                    showIcon
-                    closable
-                />
-            </LoginForm>
-        )
-    } else if (location.includes("verify")) {
-        return (
-            <LoginForm>
-                <Alert
-                    message="Mail is confirmed!"
-                    type="success"
-                    showIcon
-                    closable
-                />
-            </LoginForm>
-        )
-    } else if (location.includes("forgotPassword")) {
-        return (
-            <LoginForm>
-                <Alert
-                    message="Almost done!"
-                    description="Check your email to recover password!"
-                    type="info"
-                    showIcon
-                    closable
-                />
-            </LoginForm>
-        )
-    } else if (location.includes("resetPassword")) {
-        return (
-            <LoginForm>
-                <Alert
-                    message="Access restored!"
-                    type="success"
-                    showIcon
-                    closable
-                />
-            </LoginForm>
-        )
-    }
-    return <LoginForm />
+    return (
+        <LoginForm>
+            {location.includes("register") &&
+                <GetAlert description="Check your email to confirm it!" />
+            }
+            {location.includes("verify") &&
+                <GetAlert message="Mail is confirmed!" type="success" />
+            }
+            {location.includes("forgotPassword") &&
+                <GetAlert description="Check your email to recover password!" />
+            }
+            {location.includes("resetPassword") &&
+                <GetAlert message="Access restored!" type="success" />
+            }
+        </LoginForm>
+    );
 }
 
 
@@ -74,4 +42,33 @@ export async function loginAction({ request }) {
     }
 
     return replace("/projects");
+}
+
+
+/**
+ * Shortens the code when you
+ * need several similar alerts.
+ * @param {string} message
+ * @param {string} type
+ * @param {string} description 
+ * @returns {React.JSX.Element}
+ */
+function GetAlert({
+    message = "Almost done!",
+    type = "info",
+    description
+}) {
+    const navigate = useNavigate();
+    const handleClose = () => navigate("/login", {replace: true});
+
+    return (
+        <Alert
+            message={message}
+            type={type}
+            description={description || null}
+            showIcon
+            closable
+            onClose={handleClose}
+        />
+    );
 }

@@ -2,17 +2,12 @@ import { useState, useEffect } from 'react';
 
 import { Button, Select, Input } from 'antd';
 
-import { Form, useActionData } from "react-router";
-
-import { useModalContext } from "../ModalProvider";
+import { Form } from "react-router";
 
 const { TextArea } = Input;
 
 
-export function CreateIssueForm() {
-    const errors = useActionData();
-    const [modalOpen, setModalOpen] = useModalContext();
-
+export function CreateIssueForm({ errors, setModalOpen }) {
     const [type, setType] = useState("");
     const [priority, setPriority] = useState("");
 
@@ -84,7 +79,13 @@ export function CreateIssueForm() {
             />
             <input name="priority" type="hidden" value={priority} />
 
-            <Button name="intent" value="create" className="self-center" type="primary" htmlType="submit">
+            <Button
+                name="intent"
+                value="create"
+                className="self-center"
+                type="primary"
+                htmlType="submit"
+            >
                 Create new
             </Button>
         </Form>

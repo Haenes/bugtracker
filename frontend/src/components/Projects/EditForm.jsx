@@ -1,17 +1,14 @@
 import { useState } from 'react';
 
-import { Form, useActionData, useFetcher } from "react-router";
+import { Form, useFetcher } from "react-router";
 
 import { Button, Select, Checkbox, Input } from 'antd';
 
-import { useModalContext } from "../ModalProvider.jsx";
 import { convertDate } from "../PageLayout.jsx";
 
 
-export function EditProjectForm({ project }) {
-    const errors = useActionData();
+export function EditProjectForm({ project, errors, setModalOpen }) {
     const fetcher = useFetcher();
-    const [modalOpen, setModalOpen] = useModalContext();
     const [type, setType] = useState(project.type);
 
     const handleDelete = () => {
@@ -84,7 +81,11 @@ export function EditProjectForm({ project }) {
 
             <div>
                 <span className="mr-2">Updated:</span>
-                {convertDate(project.updated)}
+                {/* Get updated datetime from PATCH response to synchronize data */}
+                {errors?.created == project.created ?
+                    convertDate(errors.updated) :
+                    convertDate(project.updated)
+                }
             </div>
 
             <div className="flex flex-row gap-3 justify-end">

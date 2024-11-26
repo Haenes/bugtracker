@@ -98,9 +98,9 @@ async function deleteIssueAction(projectId, issueId) {
 
 /**
  * Function to validate select's from form
- * before send fetch request.
+ * before send create fetch POST request.
  * @param {*} formData 
- * @returns {Object}
+ * @returns {object}
  */
 function selectValidation(formData) {
     const errors = {};
