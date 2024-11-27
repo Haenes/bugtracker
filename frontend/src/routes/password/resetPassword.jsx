@@ -1,7 +1,7 @@
 import { replace } from "react-router";
 
 import { userResetPassword } from "../../client/auth.js";
-import { formValidation } from "./utils.js";
+import { formValidation } from "../utils.js";
 import { ResetPasswordForm } from "../../components/Auth/ResetPasswordForm.jsx";
 
 

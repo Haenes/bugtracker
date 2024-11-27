@@ -8,12 +8,12 @@ import { RouterProvider } from "react-router/dom";
 import "./index.css";
 
 import { Root } from "./routes/root.jsx";
-import { Registration, registerAction } from "./routes/auth/registration.jsx";
-import { Login, loginAction } from "./routes/auth/login.jsx";
+import { Registration, registerLoader, registerAction } from "./routes/auth/registration.jsx";
+import { Login, loginLoader, loginAction } from "./routes/auth/login.jsx";
 import { verifyAction } from "./routes/auth/verify.jsx";
 import { logoutAction } from "./routes/auth/logout.jsx";
-import { ForgotPassword, forgotPasswordAction } from "./routes/auth/forgotPassword.jsx";
-import { ResetPassword, resetPasswordAction } from "./routes/auth/resetPassword.jsx";
+import { ForgotPassword, forgotPasswordAction } from "./routes/password/forgotPassword.jsx";
+import { ResetPassword, resetPasswordAction } from "./routes/password/resetPassword.jsx";
 
 import { Projects, projectsLoader, projectsAction } from "./routes/projects.jsx";
 import { Issues, issuesLoader, issuesAction } from "./routes/issues.jsx";
@@ -32,6 +32,7 @@ const router = createBrowserRouter([
         path: "/register",
         element: <Registration />,
         errorElement: <ErrorPage />,
+        loader: registerLoader,
         action: registerAction,
     },
     {
@@ -55,6 +56,7 @@ const router = createBrowserRouter([
         path: "/login",
         element: <Login />,
         errorElement: <ErrorPage />,
+        loader: loginLoader,
         action: loginAction,
     },
     {
@@ -84,7 +86,5 @@ const router = createBrowserRouter([
 
 
 ReactDOM.createRoot(document.getElementById("root")).render(
-    <RouterProvider
-        router={router}
-    />
+    <RouterProvider router={router} />
 );

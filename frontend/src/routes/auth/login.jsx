@@ -4,6 +4,7 @@ import { Alert } from "antd";
 
 import { userLogin } from "../../client/auth.js";
 import { LoginForm } from "../../components/Auth/LoginForm.jsx";
+import { authProvider } from "./authProvider.jsx";
 
 
 export function Login() {
@@ -27,9 +28,19 @@ export function Login() {
 }
 
 
+export async function loginLoader() {
+    if (authProvider.isAuth) {
+        return replace("/projects");
+    }
+    return null;
+}
+
+
 export async function loginAction({ request }) {
     const formData = await request.formData();
     const results = await userLogin(formData);
+
+    const next = new URL(request.url)?.searchParams.get("next");
     const errors = {};
 
     if (results.detail === "LOGIN_BAD_CREDENTIALS") {
@@ -40,7 +51,8 @@ export async function loginAction({ request }) {
         return errors;
     }
 
-    return replace("/projects");
+    authProvider.setTrue();
+    return replace(next ? next : "/projects");
 }
 
 

@@ -1,12 +1,17 @@
-import { Outlet } from "react-router"
+import { useEffect } from "react"
+
+import { Outlet, useSubmit } from "react-router"
 
 import { Layout } from "antd"
 
 import { Sidebar } from "./Sidebar.jsx"
 import { ModalProvider } from "./ModalProvider.jsx"
+import { authProvider } from "../routes/auth/authProvider.jsx"
 
 
 export function PageLayout() {
+    useJwtExpirationTime();
+
     return (
         <Layout hasSider>
             <Sidebar />
@@ -28,4 +33,23 @@ export function convertDate(date) {
     )
 
     return dateFormat.format(dateObj);
+}
+
+
+/**
+ * Log out user after JWT expire in 3 hrs.
+ */
+function useJwtExpirationTime() {
+    const submit = useSubmit();
+
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            submit(null, {method: "POST", action: "/logout"});
+        }, 3 * 3_600_000);
+
+        return () => {
+            authProvider.setFalse();
+            clearTimeout(timer);
+        }
+    }, [authProvider.isAuth]);
 }

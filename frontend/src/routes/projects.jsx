@@ -4,6 +4,7 @@ import { createItem, updateItem, deleteItem, getItems } from "../client/base.js"
 
 import { PageContent } from "../components/PageContent.jsx";
 import { ProjectsList } from "../components/Projects/ProjectsList.jsx";
+import { authProvider } from "./auth/authProvider.jsx";
 
 
 export function Projects() {
@@ -16,6 +17,8 @@ export function Projects() {
 
 
 export async function projectsLoader({ request }) {
+    if (!authProvider.isAuth) return replace("/login");
+
     const params = new URL(request.url)?.searchParams;
     let page;
     let limit;

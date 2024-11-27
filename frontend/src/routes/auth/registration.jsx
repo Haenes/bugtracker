@@ -1,12 +1,21 @@
 import { replace } from "react-router";
 
 import { userRegistration } from "../../client/auth.js";
-import { formValidation } from "./utils.js";
+import { formValidation } from "../utils.js";
 import { RegisterForm } from "../../components/Auth/RegisterForm.jsx";
+import { authProvider } from "./authProvider.jsx";
 
 
 export function Registration() {
     return <RegisterForm />;
+}
+
+
+export async function registerLoader() {
+    if (authProvider.isAuth) {
+        return replace("/projects");
+    }
+    return null;
 }
 
 

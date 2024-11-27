@@ -4,6 +4,7 @@ import { getItems, updateItem, deleteItem, createItem } from "../client/base.js"
 
 import { IssuesBoard } from "../components/Issues/IssuesBoard.jsx";
 import { PageContent } from "../components/PageContent.jsx";
+import { authProvider } from "./auth/authProvider.jsx";
 
 
 export function Issues() {
@@ -16,6 +17,10 @@ export function Issues() {
 
 
 export async function issuesLoader({ request, params }) {
+    if (!authProvider.isAuth) {
+        return replace(`/login?next=${new URL(request.url).pathname}`);
+    }
+
     const urlParams = new URL(request.url)?.searchParams;
     let page;
     let limit;
