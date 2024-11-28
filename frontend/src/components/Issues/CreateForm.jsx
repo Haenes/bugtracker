@@ -21,9 +21,9 @@ export function CreateIssueForm({ errors, setModalOpen }) {
 
     // Close Modal with form after successful creation.
     useEffect(() => {
-        if (errors?.created) {
+        if (errors?.id) {
             setModalOpen({visible: false, modalId: 1});
-            delete errors.created;
+            delete errors.id;
         }
     }, [errors])
 

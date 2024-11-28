@@ -4,6 +4,8 @@ import { authProvider } from "./authProvider.jsx";
 
 
 export async function logoutAction() {
+    if (!authProvider.isAuth) return replace("/login");
+
     const result = await userLogout();
     authProvider.setFalse();
 
