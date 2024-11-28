@@ -1,3 +1,6 @@
+import { error503 } from "./auth.js";
+
+
 export async function getItems(page, limit, project_id = null) {
     const url = urlGetAllHelper(page, limit, project_id);
 
@@ -7,7 +10,7 @@ export async function getItems(page, limit, project_id = null) {
 
         return response;
     } catch(err) {
-        console.log(err);
+        throw new Response("Error", error503);
     }
 }
 
@@ -29,27 +32,7 @@ export async function createItem(data, project_id = null) {
         let response = await rawResponse.json();
         return response;
     } catch(err) {
-        console.log(err);
-    }
-}
-
-
-export async function getItem(project_id, issue_id = null) {
-    const url = urlSingleHelper(project_id, issue_id);
-
-    try {
-        let rawResponse = await fetch(url, {
-            headers: {
-                "Accept": "application/json",
-                "Content-Type": "application/json"
-            },
-            credentials: "include"
-        });
-
-        let response = await rawResponse.json();
-        return response;
-    } catch(err) {
-        console.log(err);
+        throw new Response("Error", error503);
     }
 }
 
@@ -71,7 +54,7 @@ export async function updateItem(data, project_id, issue_id = null) {
         let response = await rawResponse.json();
         return response;
     } catch(err) {
-        console.log(err);
+        throw new Response("Error", error503);
     }
 }
 
@@ -92,7 +75,7 @@ export async function deleteItem(project_id, issue_id = null) {
         let response = await rawResponse.json();
         return response;
     } catch(err) {
-        console.log(err);
+        throw new Response("Error", error503);
     }
 }
 
@@ -100,8 +83,8 @@ export async function deleteItem(project_id, issue_id = null) {
 /**
  * Returns the API endpoint for the one item
  * to get, update or delete it.
- * @param {*} project_id 
- * @param {*} issue_id 
+ * @param {string | number} project_id 
+ * @param {string | number} issue_id 
  * @returns url
  */
 function urlSingleHelper(project_id, issue_id) {
@@ -119,9 +102,9 @@ function urlSingleHelper(project_id, issue_id) {
 
 /**
  * Returns the API endpoint for getting all items (GET only).
- * @param {*} page 
- * @param {*} limit 
- * @param {*} project_id 
+ * @param {string | number} page 
+ * @param {string | number} limit 
+ * @param {string | number} project_id 
  * @returns url
  */
 function urlGetAllHelper(page, limit, project_id) {
@@ -144,7 +127,7 @@ function urlGetAllHelper(page, limit, project_id) {
 
 /**
  * Returns the API endpoint for creating single item.
- * @param {*} project_id 
+ * @param {string | number} project_id 
  * @returns url
  */
 function urlCreateHelper(project_id) {

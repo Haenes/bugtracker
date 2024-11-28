@@ -1,4 +1,4 @@
-const error503 = {status: 503, statusText: "Service Unavailable"};
+export const error503 = {status: 503, statusText: "Service Unavailable"};
 
 
 export async function userRegistration(data) {
@@ -111,6 +111,6 @@ export async function userLogout() {
 
         return rawResponse;
     } catch(err) {
-        console.log(err);
+        throw new Response("Error", error503);
     }
 }
