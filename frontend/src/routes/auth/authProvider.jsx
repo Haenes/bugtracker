@@ -1,13 +1,17 @@
 export const authProvider = {
-    isAuth: localStorage.getItem("isAuth"),
+    jwtLifetime: localStorage.getItem("jwtLifetime"),
 
-    setTrue() {
-        localStorage.setItem("isAuth", true);
-        this.isAuth = true;
+    signIn() {
+        // Add 2:59 hr (1 min for all sort of delays)
+        // (JWT lifetime) to current time.
+        const expire = new Date().getTime() + 10_740_000;
+    
+        localStorage.setItem("jwtLifetime", expire);
+        this.jwtLifetime = expire;
     },
 
-    setFalse() {
-        localStorage.removeItem("isAuth");
-        this.isAuth = false;
+    signOut() {
+        localStorage.removeItem("jwtLifetime");
+        this.jwtLifetime = false;
     }
 };

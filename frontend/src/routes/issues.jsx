@@ -17,7 +17,7 @@ export function Issues() {
 
 
 export async function issuesLoader({ request, params }) {
-    if (!authProvider.isAuth) {
+    if (!authProvider.jwtLifetime) {
         return replace(`/login?next=${new URL(request.url).pathname}`);
     }
 

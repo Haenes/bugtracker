@@ -12,7 +12,7 @@ export function Registration() {
 
 
 export async function registerLoader() {
-    if (authProvider.isAuth) {
+    if (authProvider.jwtLifetime) {
         return replace("/projects");
     }
     return null;

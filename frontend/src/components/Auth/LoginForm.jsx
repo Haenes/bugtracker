@@ -56,7 +56,7 @@ function LoginFormHelper() {
                 status={errors?.auth && "error"}
                 type="password"
                 placeholder="Password"
-                minLength={6}
+                minLength={8}
                 required
                 prefix={<LockOutlined />}
                 visibilityToggle={() => (!setPasswordVisible)}

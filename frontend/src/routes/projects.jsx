@@ -17,7 +17,7 @@ export function Projects() {
 
 
 export async function projectsLoader({ request }) {
-    if (!authProvider.isAuth) return replace("/login");
+    if (!authProvider.jwtLifetime) return replace("/login");
 
     const params = new URL(request.url)?.searchParams;
     let page;

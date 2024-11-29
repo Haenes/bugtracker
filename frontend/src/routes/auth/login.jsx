@@ -29,7 +29,7 @@ export function Login() {
 
 
 export async function loginLoader() {
-    if (authProvider.isAuth) {
+    if (authProvider.jwtLifetime) {
         return replace("/projects");
     }
     return null;
@@ -51,7 +51,7 @@ export async function loginAction({ request }) {
         return errors;
     }
 
-    authProvider.setTrue();
+    authProvider.signIn();
     return replace(next ? next : "/projects");
 }
 

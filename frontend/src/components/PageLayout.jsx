@@ -45,11 +45,12 @@ function useJwtExpirationTime() {
     useEffect(() => {
         const timer = setTimeout(() => {
             submit(null, {method: "POST", action: "/logout"});
-        }, 3 * 3_600_000);
 
-        return () => {
-            authProvider.setFalse();
-            clearTimeout(timer);
-        }
-    }, [authProvider.isAuth]);
+        // Dynamic set of delay help to fight
+        // with timer reset on page reload.
+        }, authProvider.jwtLifetime - new Date().getTime())
+
+        return () => clearTimeout(timer);
+
+    }, [authProvider.jwtLifetime]);
 }
