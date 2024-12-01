@@ -5,6 +5,8 @@ import * as ReactDOM from "react-dom/client";
 import { createBrowserRouter } from "react-router";
 import { RouterProvider } from "react-router/dom";
 
+import { ConfigProvider, Layout, theme } from 'antd';
+
 import "./index.css";
 
 import { Root } from "./routes/root.jsx";
@@ -86,5 +88,14 @@ const router = createBrowserRouter([
 
 
 ReactDOM.createRoot(document.getElementById("root")).render(
-    <RouterProvider router={router} />
+    <ConfigProvider theme={
+        {algorithm:
+            localStorage.getItem("colorMode") === "dark" ?
+            theme.darkAlgorithm : theme.defaultAlgorithm
+        }
+    }>
+        <Layout>
+            <RouterProvider router={router} />
+        </Layout>
+    </ConfigProvider>
 );

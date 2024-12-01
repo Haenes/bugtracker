@@ -6,6 +6,7 @@ import {
     SettingOutlined,
     HomeOutlined,
     LogoutOutlined,
+    SunOutlined, MoonOutlined
 } from "@ant-design/icons";
 
 import { ConfigProvider, Layout, Menu } from "antd";
@@ -23,6 +24,18 @@ export function Sidebar() {
         submit(null, {method: "POST", action: "/logout"});
     }
 
+    const handleClickMode = () => {
+        let currentColorMode = localStorage.getItem("colorMode");
+        
+        if (!currentColorMode) currentColorMode = "light";
+
+        localStorage.setItem(
+            "colorMode",
+            currentColorMode === "dark" ? "light" : "dark"
+        );
+        window.location.reload();
+    };
+
     const menuItems = [
         {
             key: "1",   
@@ -39,6 +52,13 @@ export function Sidebar() {
             label: "Log out",
             icon: <LogoutOutlined />,
             onClick: handleClickLogout
+        },
+        {
+            key: "4",
+            label: "Color mode",
+            icon: localStorage.getItem("colorMode") === "dark" ?
+                <SunOutlined /> : <MoonOutlined />,
+            onClick: handleClickMode
         }
     ];
 
