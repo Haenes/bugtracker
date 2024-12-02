@@ -7,7 +7,7 @@ import { ProjectsList } from "../components/Projects/ProjectsList.jsx";
 import { authProvider } from "./auth/authProvider.jsx";
 
 
-export function Projects() {
+export function Component() {
     return (
         <PageContent header="Projects">
             <ProjectsList />
@@ -16,7 +16,7 @@ export function Projects() {
 }
 
 
-export async function projectsLoader({ request }) {
+export async function loader({ request }) {
     if (!authProvider.jwtLifetime) return replace("/login");
 
     const params = new URL(request.url)?.searchParams;
@@ -41,7 +41,7 @@ export async function projectsLoader({ request }) {
 }
 
 
-export async function projectsAction({ request }) {
+export async function action({ request }) {
     const formData = await request.formData();
     const intent = formData.get("intent");
 

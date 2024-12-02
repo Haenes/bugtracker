@@ -7,7 +7,7 @@ import { PageContent } from "../components/PageContent.jsx";
 import { authProvider } from "./auth/authProvider.jsx";
 
 
-export function Issues() {
+export function Component() {
     return (
         <PageContent header="Issues">
             <IssuesBoard />
@@ -16,7 +16,7 @@ export function Issues() {
 }
 
 
-export async function issuesLoader({ request, params }) {
+export async function loader({ request, params }) {
     if (!authProvider.jwtLifetime) {
         return replace(`/login?next=${new URL(request.url).pathname}`);
     }
@@ -43,7 +43,7 @@ export async function issuesLoader({ request, params }) {
 }
 
 
-export async function issuesAction({ request, params }) {
+export async function action({ request, params }) {
     const formData = await request.formData();
 
     const projectId = params.projectId;

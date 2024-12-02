@@ -7,7 +7,7 @@ import { LoginForm } from "../../components/Auth/LoginForm.jsx";
 import { authProvider } from "./authProvider.jsx";
 
 
-export function Login() {
+export function Component() {
     const location = useLocation().search;
     return (
         <LoginForm>
@@ -28,7 +28,7 @@ export function Login() {
 }
 
 
-export async function loginLoader() {
+export async function loader() {
     if (authProvider.jwtLifetime) {
         return replace("/projects");
     }
@@ -36,7 +36,7 @@ export async function loginLoader() {
 }
 
 
-export async function loginAction({ request }) {
+export async function action({ request }) {
     const formData = await request.formData();
     const results = await userLogin(formData);
 

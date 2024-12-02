@@ -5,12 +5,12 @@ import { formValidation } from "../utils.js";
 import { ResetPasswordForm } from "../../components/Auth/ResetPasswordForm.jsx";
 
 
-export function ResetPassword() {
+export function Component() {
     return <ResetPasswordForm />;
 }
 
 
-export async function resetPasswordAction({ request, params }) {
+export async function action({ request, params }) {
     const formData = await request.formData();
     const errors = formValidation(formData);
 

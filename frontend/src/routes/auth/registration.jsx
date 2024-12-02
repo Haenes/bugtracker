@@ -6,12 +6,12 @@ import { RegisterForm } from "../../components/Auth/RegisterForm.jsx";
 import { authProvider } from "./authProvider.jsx";
 
 
-export function Registration() {
+export function Component() {
     return <RegisterForm />;
 }
 
 
-export async function registerLoader() {
+export async function loader() {
     if (authProvider.jwtLifetime) {
         return replace("/projects");
     }
@@ -19,7 +19,7 @@ export async function registerLoader() {
 }
 
 
-export async function registerAction({ request }) {
+export async function action({ request }) {
     const formData = await request.formData();
     const errors = formValidation(formData);
 

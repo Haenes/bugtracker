@@ -9,7 +9,7 @@ import { ModalProvider } from "./ModalProvider.jsx"
 import { authProvider } from "../routes/auth/authProvider.jsx"
 
 
-export function PageLayout() {
+export function Component() {
     useJwtExpirationTime();
 
     return (

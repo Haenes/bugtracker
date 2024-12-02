@@ -1,7 +1,7 @@
 import { Link } from "react-router";
 
 
-export function Root() {
+export function Component() {
     return (
         <div className="m-2">
             <p>Hello root!</p>
