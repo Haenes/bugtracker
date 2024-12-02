@@ -1,12 +1,17 @@
 import { useRouteError } from "react-router";
 
-export function ErrorPage() {
+export function ErrorBoundary() {
     const error = useRouteError();
+    const colorMode = localStorage.getItem("colorMode");
+    let className = "flex flex-row h-screen w-screen items-center justify-center ";
 
     return (
         <div
             id="error-page"
-            className="h-screen w-screen items-center justify-center flex flex-row"
+            className={
+                colorMode === "dark" ?
+                className + "text-white" : className
+            }
         >
             <h1 className="text-center">
                 <i className="font-medium">{error.status}</i>
