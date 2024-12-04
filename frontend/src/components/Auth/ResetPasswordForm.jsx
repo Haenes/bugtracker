@@ -4,14 +4,19 @@ import { Button, Card, Tooltip, Input } from 'antd';
 
 import { Form, useActionData } from "react-router";
 
+import { useTranslation } from "react-i18next";
+
+import { passwordTooltip } from "./RegisterForm.jsx";
+
 
 export function ResetPasswordForm() {
     const [passwordVisible, setPasswordVisible] = useState(false);
+    const { t } = useTranslation();
     const errors = useActionData();
 
     return (
         <div className="flex flex-col h-screen w-screen items-center justify-center">
-            <Card title="Set new password" className="text-center w-4/5 md:w-2/5 lg:w-1/4">
+            <Card title={t("resetPassword_cardTitle")} className="text-center w-4/5 md:w-2/5 lg:w-1/4">
 
                 <Form method="post" name="forgotPassword" className="flex flex-col">
 
@@ -29,7 +34,7 @@ export function ResetPasswordForm() {
                             autoFocus
                             status={errors?.password && "error"}
                             type="password"
-                            placeholder="Password"
+                            placeholder={t("password")}
                             minLength={8}
                             maxLength={32}
                             required
@@ -43,7 +48,7 @@ export function ResetPasswordForm() {
                         status={errors?.confirm_password && "error"}
                         className="my-4"
                         type="password"
-                        placeholder="Confirm password"
+                        placeholder={t("confirmPassword")}
                         minLength={8}
                         maxLength={32}
                         required
@@ -51,7 +56,7 @@ export function ResetPasswordForm() {
                     />
 
                     <Button type="primary" htmlType="submit">
-                        Set    
+                        {t("resetPassword_button")}
                     </Button>
 
                 </Form>
@@ -60,14 +65,3 @@ export function ResetPasswordForm() {
         </div>
     );
 }
-
-
-const passwordTooltip = (
-    <div>
-        Your password must have:
-        <p>1) a 8 - 32 characters.</p>
-        <p>2) at least one uppercase and lowercase letters.</p>
-        <p>3) at least one digit.</p>
-        <p>4) at least one special character</p>
-    </div>
-);

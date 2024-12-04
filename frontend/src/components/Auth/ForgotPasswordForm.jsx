@@ -2,15 +2,19 @@ import { Card, Button, Input } from 'antd';
 
 import { Form, Link } from "react-router";
 
+import { useTranslation } from "react-i18next";
+
 
 export function ForgotPasswordForm() {
+    const { t } = useTranslation();
+
     return (
         <div className="flex flex-col h-screen w-screen items-center justify-center">
-            <Card title="Can't log in?" className="text-center">
+            <Card title={t("forgotPassword_title")} className="text-center">
 
                 <Form method="post" name="forgotPassword" className="flex flex-col">
                     <span className="text-start text-stone-400">
-                        We'll send a recovery link to:
+                        {t("forgotPassword_span")}
                     </span>
 
                     <Input
@@ -18,16 +22,16 @@ export function ForgotPasswordForm() {
                         size="large"
                         autoComplete="email"
                         type="email"
-                        placeholder="Email"
+                        placeholder={t("email")}
                         autoFocus
                         required
                     />
 
                     <Button className="my-4" type="primary" htmlType="submit">
-                        Send    
+                        {t("forgotPassword_btn")}    
                     </Button>
 
-                    <Link to="/login">Return to log in</Link>
+                    <Link to="/login">{t("returnToLogin")}</Link>
                 </Form>
 
             </Card>

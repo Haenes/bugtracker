@@ -3,6 +3,11 @@ import { userLogout } from "../../client/auth.js";
 import { authProvider } from "./authProvider.jsx";
 
 
+export async function loader() {
+    if (!authProvider.jwtLifetime) return replace("/login");
+}
+
+
 export async function action() {
     if (!authProvider.jwtLifetime) return replace("/login");
 

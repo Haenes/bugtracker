@@ -1,0 +1,93 @@
+{
+    "register_cardTitle": "Create an account",
+    "register_username": "Username",
+    "register_firstName": "First name",
+    "register_lastName": "Last name",
+    "register_btn": "Register",
+
+    "forgotPassword_title" : "Can't log in?",
+    "forgotPassword_span": "We'll send a recovery link to:",
+    "forgotPassword_btn": "Send",
+
+    "resetPassword_cardTitle": "Set new password",
+    "resetPassword_button": "Set",
+
+    "passwordTooltip": "Your password must have: <p>1) a 8 - 32 characters.</p> <p>2) at least one uppercase and lowercase letters.</p> <p>3) at least one digit.</p> <p>4) at least one special character</p>",
+
+    "login_cardTitle": "Log in",
+    "login_rememberMe": "Remember me",
+    "login_forgotPassword": "Forgot password",
+    "login_register": "Register now!",
+
+    "sidebar_home": "Home",
+    "sidebar_settings": "Settings",
+    "sidebar_logOut": "Log out",
+
+    "projectsList_modalTitle": "Project",
+    "projectsList_favoriteTrue": "Remove from favorites",
+    "projectsList_favoriteFalse": "Add to favorites",
+    "projectsList_projectKey": "KEY:",
+    "projectsList_projectType": "TYPE:",
+
+    "project_typeFullstack": "Fullstack",
+    "project_typeBackend": "Back-end",
+    "project_typeFrontend": "Front-end",
+
+    "createProject_name": "Project name",
+    "createProject_key": "Project key",
+    "createProject_type": "Project type",
+    "createProject_favorite": "Favorite",
+
+    "editProject_name": "Name:",
+    "editProject_key": "Key:",
+    "editProject_type": "Type:",
+    "editProject_favorite": "Favorite:",
+
+    "issuesBoard_modalTitle": "Issue",
+    "issuesBoard_toDo": "TO DO",
+    "issuesBoard_inProgress": "IN PROGRESS",
+    "issuesBoard_done": "DONE",
+
+    "issue_typeFeature": "Feature",
+    "issue_typeBug": "Bug",
+
+    "issue_statusToDo": "To do",
+    "issue_statusInProgress": "In progress",
+    "issue_statusDone": "Done",
+
+    "issue_priorityLowest": "Lowest",
+    "issue_priorityLow": "Low",
+    "issue_priorityMedium": "Medium",
+    "issue_priorityHigh": "High",
+    "issue_priorityHighest": "Highest",
+
+    "createIssue_title": "Issue title",
+    "createIssue_description": "Issue description",
+    "createIssue_type": "Issue type",
+    "createIssue_priority": "Issue priority",
+
+    "editIssue_description": "Description is empty.",
+    "editIssue_type": "Type:",
+    "editIssue_status": "Status:",
+    "editIssue_priority": "Priority:",
+
+    "editCreated": "Created:",
+    "editUpdated": "Updated:",
+
+    "btn_logIn": "Log in",
+    "btn_settings": "Settings",
+    "btn_create": "Create new",
+    "btn_delete": "Delete",
+    "btn_change": "Change",
+
+    "alert_defaultMessage": "Almost done!",
+    "alert_register": "Check your email to confirm it!",
+    "alert_verify": "Email is confirmed!",
+    "alert_forgotPassword": "Check your email to recover password!",
+    "alert_resetPassword": "Access restored!",
+
+    "email": "Email",
+    "password": "Password",
+    "confirmPassword": "Confirm password",
+    "returnToLogin": "Return to login page"
+}

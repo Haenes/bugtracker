@@ -1,5 +1,7 @@
 import { Link, useActionData, useLoaderData, useSubmit } from "react-router";
 
+import { useTranslation } from "react-i18next";
+
 import { List, Card, Button } from "antd";
 import { StarFilled, StarOutlined, SettingOutlined } from "@ant-design/icons";
 
@@ -14,7 +16,9 @@ export function ProjectsList() {
     const errors = useActionData();
     const submit = useSubmit();
 
-    const modalTitle = "Project";
+    const { t } = useTranslation();
+
+    const modalTitle = t("projectsList_modalTitle");
 
     const [modalOpen, setModalOpen] = useModalContext();
     const [modalData, setModalData] = useModalDataContext();
@@ -53,8 +57,8 @@ export function ProjectsList() {
                                 ]}
                             >
                                 <div className="flex flex-col">
-                                    <i>KEY: {item.key}</i>
-                                    <i>TYPE: {item.type}</i>
+                                    <i>{t("projectsList_projectKey")} {item.key}</i>
+                                    <i>{t("projectsList_projectType")} {item.type}</i>
                                 </div>
                             </Card>
                         </List.Item>
@@ -88,11 +92,12 @@ function FavoriteButton(starred) {
 
 
 function SettingsButton({ project, setModalFuncs }) {
+    const { t } = useTranslation();
     const [setModalOpen, setModalData] = setModalFuncs;
 
     return (
         <Button
-            title="Settings"
+            title={t("btn_settings")}
             className="border-0 shadow-none"
             icon={<SettingOutlined style={buttonSize}/>}
             onClick={() => {
@@ -105,9 +110,11 @@ function SettingsButton({ project, setModalFuncs }) {
 
 
 function isFavorite(bool) {
+    const { t } = useTranslation();
+
     return bool ?
-        <StarFilled title="Remove from favorites" style={buttonSize}/> :
-        <StarOutlined title="Add to favorites" style={buttonSize}/>
+        <StarFilled title={t("projectsList_favoriteTrue")} style={buttonSize}/> :
+        <StarOutlined title={t("projectsList_favoriteFalse")} style={buttonSize}/>
 }
 
 

@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
 
+import { useTranslation } from "react-i18next";
+
 import { Button, Select, Input } from 'antd';
 
 import { Form } from "react-router";
@@ -8,6 +10,7 @@ const { TextArea } = Input;
 
 
 export function CreateIssueForm({ errors, setModalOpen }) {
+    const { t } = useTranslation();
     const [type, setType] = useState("");
     const [priority, setPriority] = useState("");
 
@@ -43,37 +46,38 @@ export function CreateIssueForm({ errors, setModalOpen }) {
                 status={errors?.createTitle && "error"}
                 type="text"
                 required
-                placeholder="Issue title"
+                placeholder={t("createIssue_title")}
                 minLength={3}
                 maxLength={255}
             />
 
             <TextArea
                 name="description"
+                autoSize={{ minRows: 1, maxRows: 4 }}
                 maxLength={255}
-                placeholder="Issue description"
+                placeholder={t("createIssue_description")}
             />
 
             <Select
-                placeholder="Issue type"
+                placeholder={t("createIssue_type")}
                 status={errors?.createType && "error"}
                 options={[
-                    {label: "Feature", value: "Feature"},
-                    {label: "Bug", value: "Bug"}
+                    {label: t("issue_typeFeature"), value: "Feature"},
+                    {label: t("issue_typeBug"), value: "Bug"}
                 ]}
                 onChange={value => {setType(value); handleTypeChange()}}
             />
             <input name="type" type="hidden" value={type} />
 
             <Select
-                placeholder="Issue priority"
+                placeholder={t("createIssue_priority")}
                 status={errors?.createPriority && "error"}
                 options={[
-                    {label: "Lowest", value: "Lowest"},
-                    {label: "Low", value: "Low"},
-                    {label: "Medium", value: "Medium"},
-                    {label: "High", value: "High"},
-                    {label: "Highest", value: "Highest"}
+                    {label: t("issue_priorityLowest"), value: "Lowest"},
+                    {label: t("issue_priorityLow"), value: "Low"},
+                    {label: t("issue_priorityMedium"), value: "Medium"},
+                    {label: t("issue_priorityHigh"), value: "High"},
+                    {label: t("issue_priorityHighest"), value: "Highest"}
                 ]}
                 onChange={value => {setPriority(value), handlePriorityChange()}}
             />
@@ -86,7 +90,7 @@ export function CreateIssueForm({ errors, setModalOpen }) {
                 type="primary"
                 htmlType="submit"
             >
-                Create new
+                {t("btn_create")}
             </Button>
         </Form>
     );

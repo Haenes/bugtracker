@@ -2,11 +2,13 @@ import { useState } from "react";
 
 import { Link, useSubmit, useLocation } from "react-router";
 
+import { useTranslation } from "react-i18next";
+
 import {
     SettingOutlined,
     HomeOutlined,
     LogoutOutlined,
-    SunOutlined, MoonOutlined
+    SunOutlined, MoonOutlined, SelectOutlined
 } from "@ant-design/icons";
 
 import { ConfigProvider, Layout, Menu } from "antd";
@@ -16,6 +18,7 @@ const { Sider } = Layout;
 
 export function Sidebar() {
     const submit = useSubmit();
+    const { t, i18n } = useTranslation();
     const location = useLocation().pathname;
     const [collapsed, setCollapsed] = useState(true);
     const menuCompanent = {Menu: {activeBarBorderWidth: 0, dropdownWidth: 1}};
@@ -36,20 +39,25 @@ export function Sidebar() {
         window.location.reload();
     };
 
+    const handleClickLang = () => {
+        let currentLang = localStorage.getItem("i18nextLng");
+        i18n.changeLanguage(currentLang === "en" ? "ru" : "en");
+    };
+
     const menuItems = [
         {
             key: "1",   
-            label: "Home",
+            label: t("sidebar_home"),
             icon: <Link to="/projects"><HomeOutlined /></Link>
         },
         {
             key: "2",
-            label: "Settings",
+            label: t("sidebar_settings"),
             icon: <SettingOutlined />
         },
         {
             key: "3",
-            label: "Log out",
+            label: t("sidebar_logOut"),
             icon: <LogoutOutlined />,
             onClick: handleClickLogout
         },
@@ -59,6 +67,12 @@ export function Sidebar() {
             icon: localStorage.getItem("colorMode") === "dark" ?
                 <SunOutlined /> : <MoonOutlined />,
             onClick: handleClickMode
+        },
+        {
+            key: "5",
+            label: "Language",
+            icon: <SelectOutlined />,
+            onClick: handleClickLang
         }
     ];
 

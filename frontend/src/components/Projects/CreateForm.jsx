@@ -4,9 +4,12 @@ import { Button, Select, Checkbox, Input } from 'antd';
 
 import { Form } from "react-router";
 
+import { useTranslation } from "react-i18next";
+
 
 
 export function CreateProjectForm({errors, setModalOpen}) {
+    const { t } = useTranslation();
     const [type, setType] = useState("");
 
     const handleChange = () => {
@@ -36,7 +39,7 @@ export function CreateProjectForm({errors, setModalOpen}) {
                 name="name"
                 status={errors?.createName && "error"}
                 type="text"
-                placeholder="Project name"
+                placeholder={t("createProject_name")}
                 required
                 minLength={3}
             />
@@ -45,19 +48,19 @@ export function CreateProjectForm({errors, setModalOpen}) {
                 name="key"
                 status={errors?.createKey && "error"}
                 type="text"
-                placeholder="Project key"
+                placeholder={t("createProject_key")}
                 required
                 minLength={3}
                 maxLength={10}
             />
 
             <Select
-                placeholder="Project type"
+                placeholder={t("createProject_type")}
                 status={errors?.createType && "error"}
                 options={[
-                    {label: "Fullstack", value: "Fullstack"},
-                    {label: "Back-end", value: "Back-end"},
-                    {label: "Front-end", value: "Front-end"}
+                    {label: t("project_typeFullstack"), value: "Fullstack"},
+                    {label: t("project_typeBackend"), value: "Back-end"},
+                    {label: t("project_typeFrontend"), value: "Front-end"}
                 ]}
                 onChange={value => {setType(value), handleChange()}}
             />
@@ -70,7 +73,7 @@ export function CreateProjectForm({errors, setModalOpen}) {
             }
             <input name="type" type="hidden" value={type} />
 
-            <Checkbox name="starred">Favorite</Checkbox>
+            <Checkbox name="starred">{t("createProject_favorite")}</Checkbox>
 
             <Button
                 name="intent"
@@ -79,7 +82,7 @@ export function CreateProjectForm({errors, setModalOpen}) {
                 type="primary"
                 htmlType="submit"
             >
-                Create new
+                {t("btn_create")}
             </Button>
         </Form>
     );

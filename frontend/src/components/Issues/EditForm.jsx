@@ -4,6 +4,8 @@ import {Button, Select, Input} from 'antd';
 
 import { Form, useFetcher } from "react-router";
 
+import { useTranslation } from "react-i18next";
+
 import { convertDate } from "../PageLayout.jsx";
 
 const { TextArea } = Input;
@@ -11,6 +13,7 @@ const { TextArea } = Input;
 
 export function EditIssueForm({ issue, errors, setModalOpen }) {
     const fetcher = useFetcher();
+    const { t } = useTranslation();
 
     const [type, setType] = useState(issue.type);
     const [issueStatus, setIssueStatus] = useState(issue.status);
@@ -53,18 +56,18 @@ export function EditIssueForm({ issue, errors, setModalOpen }) {
                     autoSize={{ minRows: 1, maxRows: 4 }}
                     defaultValue={issue.description}
                     className="my-3"
-                    placeholder="Description is empty."
+                    placeholder={t("editIssue_description")}
                     maxLength={255}
                 />
 
                 <div>
-                    <span className="mr-5">Type:</span>
+                    <span className="mr-2">{t("editIssue_type")}</span>
                     <Select
                         defaultValue={issue.type}
                         popupMatchSelectWidth={false}
                         options={[
-                            {label: "Feature", value: "Feature"},
-                            {label: "Bug", value: "Bug"}
+                            {label: t("issue_typeFeature"), value: "Feature"},
+                            {label: t("issue_typeBug"), value: "Bug"}
                         ]}
                         onChange={value => setType(value)}
                     />
@@ -72,42 +75,42 @@ export function EditIssueForm({ issue, errors, setModalOpen }) {
                 </div>
 
                 <div className="my-3">
-                    <span className="mr-3">Status:</span>
+                    <span className="mr-2">{t("editIssue_status")}</span>
                     <Select
                         defaultValue={issue.status}
                         popupMatchSelectWidth={false}
                         options={[
-                            {label: "To do", value: "To do"},
-                            {label: "In progress", value: "In progress"},
-                            {label: "Done", value: "Done"}
+                            {label: t("issue_statusToDo"), value: "To do"},
+                            {label: t("issue_statusInProgress"), value: "In progress"},
+                            {label: t("issue_statusDone"), value: "Done"}
                         ]}
                         onChange={value => setIssueStatus(value)}
                     />
                     <input name="status" type="hidden" value={issueStatus} />
                 </div>
 
-                <span className="mr-1.5">Priority:</span>
+                <span className="mr-2">{t("editIssue_priority")}</span>
                 <Select
                     defaultValue={issue.priority}
                     popupMatchSelectWidth={false}
                     options={[
-                        {label: "Lowest", value: "Lowest"},
-                        {label: "Low", value: "Low"},
-                        {label: "Medium", value: "Medium"},
-                        {label: "High", value: "High"},
-                        {label: "Highest", value: "Highest"}
+                        {label: t("issue_priorityLowest"), value: "Lowest"},
+                        {label: t("issue_priorityLow"), value: "Low"},
+                        {label: t("issue_priorityMedium"), value: "Medium"},
+                        {label: t("issue_priorityHigh"), value: "High"},
+                        {label: t("issue_priorityHighest"), value: "Highest"}
                     ]}
                     onChange={value => setPriority(value)}
                 />
                 <input name="priority" type="hidden" value={priority} />
 
                 <div className="my-3">
-                    <span className="mr-2">Created:</span>
+                    <span className="mr-2">{t("editCreated")}</span>
                     {convertDate(issue.created)}
                 </div>
 
                 <div className="mb-4">
-                    <span className="mr-1">Updated:</span>
+                    <span className="mr-1">{t("editUpdated")}</span>
                     {/* Get updated datetime from PATCH response to synchronize data */}
                     {errors?.created == issue.created ?
                     convertDate(errors.updated) :
@@ -123,11 +126,11 @@ export function EditIssueForm({ issue, errors, setModalOpen }) {
                         type="text"
                         onClick={handleDelete}
                     >
-                        Delete
+                        {t("btn_delete")}
                     </Button>
 
                     <Button name="intent" value="edit" type="primary" htmlType="submit">
-                        Change
+                        {t("btn_change")}
                     </Button>
                 </div>
             </div>

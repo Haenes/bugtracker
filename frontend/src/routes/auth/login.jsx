@@ -1,5 +1,7 @@
 import { replace, useLocation, useNavigate } from "react-router";
 
+import { useTranslation } from "react-i18next";
+
 import { Alert } from "antd";
 
 import { userLogin } from "../../client/auth.js";
@@ -8,20 +10,21 @@ import { authProvider } from "./authProvider.jsx";
 
 
 export function Component() {
+    const { t } = useTranslation();
     const location = useLocation().search;
     return (
         <LoginForm>
             {location.includes("register") &&
-                <GetAlert description="Check your email to confirm it!" />
+                <GetAlert description={t("alert_register")} />
             }
             {location.includes("verify") &&
-                <GetAlert message="Mail is confirmed!" type="success" />
+                <GetAlert message={t("alert_verify")} type="success" />
             }
             {location.includes("forgotPassword") &&
-                <GetAlert description="Check your email to recover password!" />
+                <GetAlert description={t("alert_forgotPassword")} />
             }
             {location.includes("resetPassword") &&
-                <GetAlert message="Access restored!" type="success" />
+                <GetAlert message={t("alert_resetPassword")} type="success" />
             }
         </LoginForm>
     );
@@ -65,16 +68,17 @@ export async function action({ request }) {
  * @returns
  */
 function GetAlert({
-    message = "Almost done!",
+    message,
     type = "info",
     description
 }) {
+    const { t } = useTranslation();
     const navigate = useNavigate();
     const handleClose = () => navigate("/login", {replace: true});
 
     return (
         <Alert
-            message={message}
+            message={message ?  message : t("alert_defaultMessage")}
             type={type}
             description={description || null}
             showIcon

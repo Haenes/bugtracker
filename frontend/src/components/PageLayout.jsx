@@ -26,9 +26,11 @@ export function Component() {
 
 
 export function convertDate(date) {
-    const dateObj = new Date(Date.parse(date));
+    const dateObj = new Date(date);
+    const locale = localStorage.getItem("i18nextLng");
+
     const dateFormat = new Intl.DateTimeFormat(
-        ["ru-RU", "en-US"],
+        locale,
         {dateStyle: "short", timeStyle: "medium"}
     )
 
@@ -48,7 +50,7 @@ function useJwtExpirationTime() {
 
         // Dynamic set of delay help to fight
         // with timer reset on page reload.
-        }, authProvider.jwtLifetime - new Date().getTime())
+        }, authProvider.jwtLifetime - Date.now())
 
         return () => clearTimeout(timer);
 

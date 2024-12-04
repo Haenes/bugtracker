@@ -1,5 +1,7 @@
 import { useActionData, useLoaderData } from "react-router";
 
+import { useTranslation } from "react-i18next";
+
 import { Card, Empty } from "antd";
 
 import { CreateModal, useModalContext, useModalDataContext } from "../ModalProvider.jsx";
@@ -10,7 +12,9 @@ import { EditIssueForm } from "./EditForm.jsx";
 export function IssuesBoard() {
     const issues = useLoaderData();
     const errors = useActionData();
-    const modalTitle = "Issue";
+    const { t } = useTranslation();
+
+    const modalTitle = t("issuesBoard_modalTitle");
 
     const [modalOpen, setModalOpen] = useModalContext();
     const [modalData, setModalData] = useModalDataContext();
@@ -22,26 +26,30 @@ export function IssuesBoard() {
     const done = issues.results.filter(issue => issue.status === "Done");
 
     const issueCard = (issueStatus) => {
-        return (Array.from(issueStatus).map((_, i) => (
+        return (Array.from(issueStatus).map((issue, i) => (
             <Card
-                title={issueStatus[i].title}
-                key={issueStatus[i].key}
+                title={issue.title}
+                key={issue.key}
                 type="inner"
                 size="small"
                 hoverable
                 className={
-                    issueStatus[i+1] ?
+                    issueStatus[i + 1] ?
                     "text-start mb-4" :
                     "text-start"
                 }
                 onClick={() => {
                     setModalOpen({visible: true, modalId: 2});
-                    setModalData(issueStatus[i])
+                    setModalData(issue)
                 }}
             >
                 <div className="flex flex-col">
-                    <i>{issueStatus[i].type}</i>
-                    <i>{issueStatus[i].priority}</i>
+                    <i>
+                        {t("editIssue_type")} {t("issue_type" + issue.type)}
+                    </i>
+                    <i>
+                        {t("editIssue_priority")} {t("issue_priority" + issue.priority)}
+                    </i>
                 </div>
             </Card>
         )));
@@ -49,15 +57,15 @@ export function IssuesBoard() {
 
     return (
         <div className="grid grid-cols-12 gap-4 md:gap-2 h-full text-center">
-            <Card className="col-span-12 md:col-span-4" title="TO DO">
+            <Card className="col-span-12 md:col-span-4" title={t("issuesBoard_toDo")}>
                 {issueCard(toDo)}
             </Card>
 
-            <Card className="col-span-12 md:col-span-4" title="IN PROGRESS">
+            <Card className="col-span-12 md:col-span-4" title={t("issuesBoard_inProgress")}>
                 {issueCard(inProgress)}
             </Card>
 
-            <Card className="col-span-12 md:col-span-4" title="DONE">
+            <Card className="col-span-12 md:col-span-4" title={t("issuesBoard_done")}>
                 {issueCard(done)}
             </Card>
 

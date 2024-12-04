@@ -6,6 +6,7 @@ import { RouterProvider } from "react-router/dom";
 import { ConfigProvider, Layout, theme } from 'antd';
 
 import "./index.css";
+import "./i18n/config.js";
 
 
 const router = createBrowserRouter([

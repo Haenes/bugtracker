@@ -1,3 +1,5 @@
+import { useTranslation } from "react-i18next";
+
 import { Layout, theme, Button } from "antd";
 
 import { FormOutlined } from "@ant-design/icons";
@@ -14,6 +16,7 @@ export function PageContent({ header, children }) {
         background: colorBgContainer,
         borderRadius: borderRadiusLG,
     };
+    const { t } = useTranslation();
     const [modalOpen, setModalOpen] = useModalContext();
 
     return (
@@ -23,7 +26,7 @@ export function PageContent({ header, children }) {
                     <span className="text-xl">{header}</span>
                     <Button
                         className="items-baseline"
-                        title="Create new"
+                        title={t("btn_create")}
                         type="button"
                         icon={<FormOutlined />}
                         onClick={() => setModalOpen({visible: true, modalId: 1})}

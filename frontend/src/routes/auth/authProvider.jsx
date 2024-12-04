@@ -4,7 +4,7 @@ export const authProvider = {
     signIn() {
         // Add 2:59 hr (1 min for all sort of delays)
         // (JWT lifetime) to current time.
-        const expire = new Date().getTime() + 10_740_000;
+        const expire = Date.now() + 10_740_000;
     
         localStorage.setItem("jwtLifetime", expire);
         this.jwtLifetime = expire;
