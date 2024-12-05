@@ -50,7 +50,7 @@ export function ProjectsList() {
                                 title={<Link to={`${item.id}/issues`}>{item.name}</Link>}
                                 hoverable
                                 actions={[
-                                    <FavoriteButton starred={item.starred} />,
+                                    <FavoriteButton data={{id: item.id, starred: item.starred}} />,
                                     <SettingsButton
                                         project={{...item}}
                                         setModalFuncs={[setModalOpen, setModalData]}
@@ -79,14 +79,27 @@ export function ProjectsList() {
 }
 
 
-function FavoriteButton(starred) {
+function FavoriteButton({data}) {
+    const submit = useSubmit();
+
+    const handleClick = () => {
+        submit(
+            {
+                intent: "edit",
+                projectId: data.id,
+                starred: !data.starred
+            },
+            {method: "PATCH"}
+        );
+    };
+
     return (
         <Button
             htmlType="submit"
             name="starred"
-            value={starred.starred}
             className="border-0 shadow-none"
-            icon={isFavorite(starred.starred)}
+            icon={isFavorite(data.starred)}
+            onClick={handleClick}
         />
     );
 }
