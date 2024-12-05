@@ -46,7 +46,7 @@ function useJwtExpirationTime() {
 
     useEffect(() => {
         const timer = setTimeout(() => {
-            submit(null, {method: "POST", action: "/logout"});
+            submit(null, {method: "POST", action: "/logout?sessionExpired=true"});
 
         // Dynamic set of delay help to fight
         // with timer reset on page reload.

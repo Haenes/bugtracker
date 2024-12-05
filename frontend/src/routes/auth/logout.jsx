@@ -8,12 +8,16 @@ export async function loader() {
 }
 
 
-export async function action() {
+export async function action({ request }) {
     if (!authProvider.jwtLifetime) return replace("/login");
 
     const result = await userLogout();
     authProvider.signOut();
 
-    return result.ok && replace("/login");
+    const isSessionExpired = new URL(request.url)?.searchParams.get("sessionExpired");
+
+    return result.ok && replace(
+        isSessionExpired ? "/login?sessionExpired=true" : "/login"
+    );
 }
  

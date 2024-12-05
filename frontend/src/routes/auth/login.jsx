@@ -15,6 +15,9 @@ export function Component() {
     const location = useLocation().search;
     return (
         <LoginForm>
+            {location.includes("sessionExpired") &&
+                <GetAlert message={t("alert_sessionExpired")} />
+            }
             {location.includes("register") &&
                 <GetAlert description={t("alert_register")} />
             }

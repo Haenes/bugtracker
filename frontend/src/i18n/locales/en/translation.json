@@ -82,6 +82,7 @@
     "btn_change": "Change",
 
     "alert_defaultMessage": "Almost done!",
+    "alert_sessionExpired": "Your session is expired!",
     "alert_register": "Check your email to confirm it!",
     "alert_verify": "Email is confirmed!",
     "alert_forgotPassword": "Check your email to recover password!",
