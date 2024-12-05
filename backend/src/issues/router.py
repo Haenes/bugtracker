@@ -9,7 +9,7 @@ from utils.cache import Redis, get_redis_client, cache_get_or_set
 from auth.manager import User, current_active_user
 from utils.pagination import (
     PaginatedResponse, NoItemsResponse,
-    paginate, pagination_params
+    pagination_params, Pagination
     )
 from .schemas import (
     CreateIssueSchema,  UpdateIssueSchema,
@@ -40,10 +40,10 @@ async def get_issues(
 
     return await cache_get_or_set(
         cache,
-        f"issues_project_{project_id}",
-        paginate,
+        f"issues_project_{project_id}_{pagination_params}",
+        Pagination.get_paginated,
         session, Issue, pagination_params, user.id, project_id
-        )
+    )
 
 
 @router.post("", status_code=201)
