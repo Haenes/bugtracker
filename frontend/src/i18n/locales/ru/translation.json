@@ -43,6 +43,7 @@
     "editProject_type": "Тип:",
     "editProject_favorite": "Избранное:",
 
+    "issuesBoard_projectNotFound": "Проект не найден.",
     "issuesBoard_modalTitle": "Задача",
     "issuesBoard_toDo": "СДЕЛАТЬ",
     "issuesBoard_inProgress": "В ПРОЦЕССЕ",

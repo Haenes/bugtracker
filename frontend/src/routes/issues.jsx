@@ -18,6 +18,7 @@ export function Component() {
 
 
 export async function loader({ request, params }) {
+
     if (!authProvider.jwtLifetime) {
         return replace(`/login?next=${new URL(request.url).pathname}`);
     }
@@ -36,11 +37,13 @@ export async function loader({ request, params }) {
 
     const issues = await getItems(page, limit, params.projectId);
 
-    if (issues.results == "You don't have any issues for this project!") {
+    if (issues.results === "You don't have any issues for this project!") {
         return false;
-    } else {
-        return issues;
     }
+    else if (issues.detail === "Project not found!") {
+        throw({status: 404, statusText: i18n.t("issuesBoard_projectNotFound")})
+    }
+    return issues;
 }
 
 

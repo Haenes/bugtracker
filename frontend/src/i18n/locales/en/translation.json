@@ -43,6 +43,7 @@
     "editProject_type": "Type:",
     "editProject_favorite": "Favorite:",
 
+    "issuesBoard_projectNotFound": "Project not found.",
     "issuesBoard_modalTitle": "Issue",
     "issuesBoard_toDo": "TO DO",
     "issuesBoard_inProgress": "IN PROGRESS",
