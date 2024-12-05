@@ -29,7 +29,12 @@ class UserManager(IntegerIDMixin, BaseUserManager[User, int]):
         token: str,
         request: Request | None = None
     ):
-        celery_send_email.delay("EmailVerification", user=user, token=token)
+        celery_send_email.delay(
+            "EmailVerification",
+            user=user,
+            token=token,
+            params=request.query_params
+        )
 
     async def on_after_forgot_password(
         self,
@@ -37,7 +42,12 @@ class UserManager(IntegerIDMixin, BaseUserManager[User, int]):
         token: str,
         request: Request | None = None
     ):
-        celery_send_email.delay("EmailResetPassword", user=user, token=token)
+        celery_send_email.delay(
+            "EmailResetPassword",
+            user=user,
+            token=token,
+            params=request.query_params
+        )
 
 
 async def get_user_manager(user_db=Depends(get_user_db)):
