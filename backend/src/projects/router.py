@@ -9,21 +9,21 @@ from utils.db import get_async_session
 from utils.cache import (
     Redis, get_redis_client,
     cache_get_or_set, cache_delete_all
-    )
+)
 from utils.pagination import (
     PaginatedResponse, NoItemsResponse,
-    paginate, pagination_params
-    )
+    pagination_params, Pagination
+)
 from .schemas import (
     CreateProjectSchema,
     ProjectSchema, CreatedProjectSchema,
     UpdateProjectSchema
-    )
+)
 from .models import Project
 from .crud import (
     get_project_db, create_project_db,
     update_project_db, delete_project_db
-    )
+)
 
 
 router = APIRouter(
@@ -44,9 +44,9 @@ async def projects(
     return await cache_get_or_set(
         cache,
         f"projects_{user.id}_{pagination_params}",
-        paginate,
+        Pagination.get_paginated,
         session, Project, pagination_params, user.id
-        )
+    )
 
 
 @router.post("", status_code=201)
