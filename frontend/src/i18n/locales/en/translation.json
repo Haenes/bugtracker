@@ -89,5 +89,23 @@
     "email": "Email",
     "password": "Password",
     "confirmPassword": "Confirm password",
-    "returnToLogin": "Return to login page"
+    "returnToLogin": "Return to login page",
+
+    "error_loginBadCreds": "Invalid email and/or password!",
+    "error_loginNotVerified": "You are not verified! Check email.",
+    "error_registerEmail": "This email already taken",
+    "error_registerUsername": "This username already taken",
+    "error_verifyAlready": "Already verified.",
+    "error_verifyInvalidToken": "Token is invalid.",
+    "error_resetPassword": "Bad token.",
+    "error_forgotPassword": "Validation Error.",
+    "error_projectType": "Please, select the project type!",
+    "error_projectKey":"Project with this key already exist!",
+    "error_projectName": "Project with this name already exist!",
+    "error_issueTitle": "Issue with this title already exist!",
+    "error_issueType": "Please, select the issue type!",
+    "error_issuePriority": "Please, select the priority of the issue!",
+    "error_passwordWeak": "Password doesn't meet the conditions",
+    "error_passwordNotConfirm": "Password confirmation is wrong",
+    "error_nameNotLetters": "Only letters are allowed"
 }

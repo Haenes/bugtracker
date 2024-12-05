@@ -1,5 +1,6 @@
 import { replace } from "react-router";
 
+import i18n from "../../i18n/config.js";
 import { userResetPassword } from "../../client/auth.js";
 import { formValidation } from "../utils.js";
 import { ResetPasswordForm } from "../../components/Auth/ResetPasswordForm.jsx";
@@ -22,7 +23,7 @@ export async function action({ request, params }) {
     );
 
     if (!result.ok) {
-        throw({status: 400, statusText: "Bad token."});
+        throw({status: 400, statusText: i18n.t("error_resetPassword")});
     }
     
     return replace("/login?resetPassword=true");

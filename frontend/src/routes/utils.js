@@ -1,3 +1,6 @@
+import i18n from "../i18n/config.js";
+
+
 /**
  * Function to validate data from form
  * before send fetch request
@@ -13,19 +16,19 @@ export function formValidation(formData, intent) {
     const confirm_password = formData.get("confirm_password");
 
     if (!validatePassword(password)) {
-        errors.password = "Password doesn't meet the conditions";
+        errors.password = i18n.t("error_passwordWeak");
     } else if (password != confirm_password) {
-        errors.confirm_password = "Password confirmation is wrong";
+        errors.confirm_password = i18n.t("error_passwordNotConfirm");
     }
 
     if (intent === "resetPassword") return errors;
 
     if (!validateName(first_name) && !validateName(last_name)) {
-        errors.first_name = "Only letters are allowed";
+        errors.first_name = i18n.t("error_nameNotLetters");
     } else if (!validateName(first_name)) {
-        errors.first_name = "Only letters are allowed";
+        errors.first_name = i18n.t("error_nameNotLetters");
     } else if (!validateName(last_name)) {
-        errors.last_name = "Only letters are allowed";
+        errors.last_name = i18n.t("error_nameNotLetters");
     }
 
     return errors;

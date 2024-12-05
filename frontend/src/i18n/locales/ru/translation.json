@@ -89,5 +89,23 @@
     "email": "Эл. почта",
     "password": "Пароль",
     "confirmPassword": "Подтверждение пароля",
-    "returnToLogin": "Вернуться назад"
+    "returnToLogin": "Вернуться назад",
+
+    "error_loginBadCreds": "Неверная почта и/или пароль!",
+    "error_loginNotVerified": "Вы не верифицированы! Проверьте почту.",
+    "error_registerEmail": "Эта эл.почта уже занята",
+    "error_registerUsername": "Этот логин уже занят",
+    "error_verifyAlready": "Уже верифицированы.",
+    "error_verifyInvalidToken": "Токен недействителен.",
+    "error_resetPassword": "Токен недействителен.",
+    "error_forgotPassword": "Ошибка Валидации.",
+    "error_projectType": "Пожалуйста, выберите тип проекта!",
+    "error_projectKey":"Проект с этим ключём уже существует!",
+    "error_projectName": "Проект с этим именем уже существует!",
+    "error_issueTitle": "Задача с этим заголовком уже существует!",
+    "error_issueType": "Пожалуйста, выберите тип задачи!",
+    "error_issuePriority": "Пожалуйста, выберите приоритет задачи!",
+    "error_passwordWeak": "Пароль не соответствует требоованиям",
+    "error_passwordNotConfirm": "Подтверждение пароля неверно",
+    "error_nameNotLetters": "Допустимы только буквы"
 }

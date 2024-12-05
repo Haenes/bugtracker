@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 
 import { Alert } from "antd";
 
+import i18n from "../../i18n/config.js";
 import { userLogin } from "../../client/auth.js";
 import { LoginForm } from "../../components/Auth/LoginForm.jsx";
 import { authProvider } from "./authProvider.jsx";
@@ -47,10 +48,10 @@ export async function action({ request }) {
     const errors = {};
 
     if (results.detail === "LOGIN_BAD_CREDENTIALS") {
-        errors.auth = "Invalid email and/or password!"
+        errors.auth = i18n.t("error_loginBadCreds")
         return errors;
     } else if (results.detail === "LOGIN_USER_NOT_VERIFIED") {
-        errors.verify = "You are not verified! Check email."
+        errors.verify = i18n.t("error_loginNotVerified")
         return errors;
     }
 

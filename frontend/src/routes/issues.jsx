@@ -1,5 +1,6 @@
 import { replace } from "react-router";
 
+import i18n from "../i18n/config.js";
 import { getItems, updateItem, deleteItem, createItem } from "../client/base.js";
 
 import { IssuesBoard } from "../components/Issues/IssuesBoard.jsx";
@@ -71,7 +72,7 @@ async function createIssueAction(projectId, formData) {
     const issue = await createItem(Object.fromEntries(formData), projectId);
 
     if (issue.detail == "Issue with this title already exist!") {
-        errors.createTitle = "Issue with this title already exist!";
+        errors.createTitle = i18n.t("error_issueTitle");
         return errors;
     }
     return issue;
@@ -88,7 +89,7 @@ async function editIssueAction(projectId, issueId, formData) {
     );
 
     if (issue.detail) {
-        errors.editTitle = "Issue with this title already exists!";
+        errors.editTitle = i18n.t("error_issueTitle");
         return errors;
     }
     return issue;
@@ -114,10 +115,10 @@ function selectValidation(formData) {
     const priority = formData.get("priority");
 
     if (!type) {
-        errors.createType = "Please, select the issue type!";
+        errors.createType = i18n.t("error_issueType");
     }
     if (!priority) {
-        errors.createPriority = "Please, select the priority of the issue!";
+        errors.createPriority = i18n.t("error_issuePriority");
     }
     return errors;
 }

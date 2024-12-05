@@ -1,5 +1,6 @@
 import { replace } from "react-router";
 
+import i18n from "../../i18n/config.js";
 import { userRegistration } from "../../client/auth.js";
 import { formValidation } from "../utils.js";
 import { RegisterForm } from "../../components/Auth/RegisterForm.jsx";
@@ -28,10 +29,10 @@ export async function action({ request }) {
     const results = await userRegistration(Object.fromEntries(formData));
 
     if (results["detail"] === "REGISTER_USER_ALREADY_EXISTS") {
-        errors.email = "This email already taken";
+        errors.email = i18n.t("error_registerEmail");
         return errors;
     } else if (results["detail"] === "USERNAME_ALREADY_EXISTS") {
-        errors.username = "This username already taken";
+        errors.username = i18n.t("error_registerUsername");
         return errors;
     }
     

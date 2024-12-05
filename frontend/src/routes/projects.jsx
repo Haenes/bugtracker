@@ -1,5 +1,6 @@
 import { replace } from "react-router";
 
+import i18n from "../i18n/config.js";
 import { createItem, updateItem, deleteItem, getItems } from "../client/base.js";
 
 import { PageContent } from "../components/PageContent.jsx";
@@ -103,7 +104,7 @@ function selectValidation(formData) {
     const type = formData.get("type");
 
     if (!type) {
-        errors.createType = "Please, select the project type!";
+        errors.createType = i18n.t("error_projectType");
     }
     return errors;
 }
@@ -120,14 +121,14 @@ function afterSubmitValidation(project, intent) {
 
     if (project.detail === "Project with this key already exist!") {
         intent === "create" ?
-        errors.createKey = "Project with this key already exist!" :
-        errors.editKey = "Project with this key already exist!" ;
+        errors.createKey = i18n.t("error_projectKey") :
+        errors.editKey = i18n.t("error_projectKey");
 
         return errors;
     } else if (project.detail === "Project with this name already exist!") {
         intent === "create" ?
-        errors.createName = "Project with this name already exist!" :
-        errors.editName = "Project with this name already exist!";
+        errors.createName = i18n.t("error_projectName") :
+        errors.editName = i18n.t("error_projectKey");
 
         return errors;
     }

@@ -21,6 +21,9 @@ i18n
             "default": ["en"]
         },
         supportedLngs: Object.keys(supportedLngs),
+        load: "languageOnly",
+        saveMissing: false,
+        saveMissingPlurals: false,
         interpolation: {
             escapeValue: false,
         },

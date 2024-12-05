@@ -30,6 +30,7 @@ export function ProjectsList() {
         total: projects.count,
         position: "bottom",
         align: "center",
+        showTitle: false,
         showSizeChanger: false,
         simple: true,
         hideOnSinglePage: true,
