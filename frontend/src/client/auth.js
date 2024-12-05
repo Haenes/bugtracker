@@ -1,16 +1,18 @@
 export const error503 = {status: 503, statusText: "Service Unavailable"};
 
 
-export async function userRegistration(data) {
+export async function userRegistration(data, language) {
     try {
-        let rawResponse = await fetch("http://127.0.0.1:8000/auth/register", {
-            method: "POST",
-            headers: {
-                "Accept": "application/json",
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(data)
-        });
+        let rawResponse = await fetch(
+            `http://127.0.0.1:8000/auth/register?client=browser&lang=${language}`, {
+                method: "POST",
+                headers: {
+                    "Accept": "application/json",
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(data)
+            }
+        );
         let response = await rawResponse.json();
 
         return response;
@@ -39,10 +41,10 @@ export async function userVerification(token) {
 }
 
 
-export async function userForgotPassword(email) {
+export async function userForgotPassword(email, language) {
     try {
         let rawResponse = await fetch(
-            "http://127.0.0.1:8000/auth/forgot-password", {
+            `http://127.0.0.1:8000/auth/forgot-password?client=browser&lang=${language}`, {
                 method: "POST",
                 headers: {
                     "Accept": "application/json",

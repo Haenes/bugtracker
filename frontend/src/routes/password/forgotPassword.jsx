@@ -14,7 +14,8 @@ export async function action({ request }) {
     const formData = await request.formData();
 
     const result = await userForgotPassword(
-        Object.fromEntries(formData)
+        Object.fromEntries(formData),
+        i18n.resolvedLanguage
     );
 
     if (!result.ok) {

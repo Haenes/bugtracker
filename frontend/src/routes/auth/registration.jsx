@@ -26,7 +26,10 @@ export async function action({ request }) {
 
     if (Object.keys(errors).length) return errors;
 
-    const results = await userRegistration(Object.fromEntries(formData));
+    const results = await userRegistration(
+        Object.fromEntries(formData),
+        i18n.resolvedLanguage
+    );
 
     if (results["detail"] === "REGISTER_USER_ALREADY_EXISTS") {
         errors.email = i18n.t("error_registerEmail");
