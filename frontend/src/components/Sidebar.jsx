@@ -28,10 +28,8 @@ export function Sidebar() {
     }
 
     const handleClickMode = () => {
-        let currentColorMode = localStorage.getItem("colorMode");
+        const currentColorMode = localStorage.getItem("colorMode");
         
-        if (!currentColorMode) currentColorMode = "light";
-
         localStorage.setItem(
             "colorMode",
             currentColorMode === "dark" ? "light" : "dark"

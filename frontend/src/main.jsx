@@ -9,6 +9,26 @@ import "./index.css";
 import "./i18n/config.js";
 
 
+const getColorMode = () => {
+    const isAlredySet = localStorage.getItem("colorMode");
+
+    // Handle case, when user change color mode via switcher.
+    if (isAlredySet === "dark") {
+        return theme.darkAlgorithm;
+    } else if (isAlredySet === "light") {
+        return theme.defaultAlgorithm;
+    }
+
+    // Default case, set default color mode based on user OS theme.
+    if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+        localStorage.setItem("colorMode", "dark");
+        return theme.darkAlgorithm;
+    } else {
+        localStorage.setItem("colorMode", "light");
+        return theme.defaultAlgorithm;
+    }
+};
+
 const router = createBrowserRouter([
     {
         lazy: () => import("./components/ErrorPage.jsx"),
@@ -68,12 +88,7 @@ const router = createBrowserRouter([
 
 
 ReactDOM.createRoot(document.getElementById("root")).render(
-    <ConfigProvider theme={
-        {algorithm:
-            localStorage.getItem("colorMode") === "dark" ?
-            theme.darkAlgorithm : theme.defaultAlgorithm
-        }
-    }>
+    <ConfigProvider theme={{algorithm: getColorMode()}}>
         <Layout>
             <RouterProvider router={router} />
         </Layout>
