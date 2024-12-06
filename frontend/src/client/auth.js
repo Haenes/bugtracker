@@ -116,3 +116,55 @@ export async function userLogout() {
         throw new Response("Error", error503);
     }
 }
+
+
+export async function getMe() {
+    try {
+        let rawResponse = await fetch("http://127.0.0.1:8000/users/me", {
+            headers: {
+                "Accept": "application/json",
+            },
+            credentials: "include",
+        });
+
+        return rawResponse.json();
+    } catch(err) {
+        throw new Response("Error", error503);
+    }
+}
+
+
+export async function editMe(data) {
+    try {
+        let rawResponse = await fetch("http://127.0.0.1:8000/users/me", {
+            method: "PATCH",
+            headers: {
+                "Accept": "application/json",
+                "Content-Type": "application/json"
+            },
+            credentials: "include",
+            body: data
+        });
+
+        return rawResponse.json();
+    } catch(err) {
+        throw new Response("Error", error503);
+    }
+}
+
+
+export async function deleteMe() {
+    try {
+        let rawResponse = await fetch("http://127.0.0.1:8000/users/me", {
+            method: "DELETE",
+            headers: {
+                "Accept": "application/json",
+            },
+            credentials: "include",
+        });
+
+        return rawResponse;
+    } catch(err) {
+        throw new Response("Error", error503);
+    }
+}
