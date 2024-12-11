@@ -1,10 +1,12 @@
-import { useActionData, useLoaderData } from "react-router";
+import { useState } from "react";
+
+import { useActionData, useOutletContext, useLoaderData } from "react-router";
 
 import { useTranslation } from "react-i18next";
 
 import { Card, Empty } from "antd";
 
-import { CreateModal, useModalContext, useModalDataContext } from "../ModalProvider.jsx";
+import { CreateModal } from "../ModalProvider.jsx";
 import { CreateIssueForm } from "./CreateForm.jsx"
 import { EditIssueForm } from "./EditForm.jsx";
 
@@ -16,8 +18,8 @@ export function IssuesBoard() {
 
     const modalTitle = t("issuesBoard_modalTitle");
 
-    const [modalOpen, setModalOpen] = useModalContext();
-    const [modalData, setModalData] = useModalDataContext();
+    const [modalOpen, setModalOpen] = useOutletContext();
+    const [formData, setFormData] = useState(null)
 
     if (!issues) return <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
 
@@ -40,7 +42,7 @@ export function IssuesBoard() {
                 }
                 onClick={() => {
                     setModalOpen({visible: true, modalId: 2});
-                    setModalData(issue)
+                    setFormData(issue)
                 }}
             >
                 <div className="flex flex-col">
@@ -74,7 +76,7 @@ export function IssuesBoard() {
             </CreateModal>
 
             <CreateModal modalId={2} title={modalTitle} errors={errors}>
-                <EditIssueForm issue={modalData} errors={errors} setModalOpen={setModalOpen} />
+                <EditIssueForm issue={formData} errors={errors} setModalOpen={setModalOpen} />
             </CreateModal>
         </div>
     );

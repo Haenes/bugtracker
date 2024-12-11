@@ -1,30 +1,9 @@
-import { createContext, useContext, useState } from "react";
-
 import { Modal } from "antd";
 
-import { Outlet } from 'react-router';
-
-
-export const ModalContext = createContext(null);
-export const ModalDataContext = createContext(null);
-
-
-export function ModalProvider() {
-    const [modalOpen, setModalOpen] = useState({visible: false, modalId: 0});
-    const [modalData, setModalData] = useState(null);
-
-    return (
-        <ModalContext.Provider value={[modalOpen, setModalOpen]}>
-            <ModalDataContext.Provider value={[modalData, setModalData]}>
-                <Outlet />
-            </ModalDataContext.Provider>
-        </ModalContext.Provider>
-    );
-}
-
+import { useOutletContext } from 'react-router';
 
 export function CreateModal({ modalId, title, errors = null, children }) {
-    const [modalOpen, setModalOpen] = useModalContext();
+    const [modalOpen, setModalOpen] =  useOutletContext();
     let clearErrors;
 
     title === "Project" ?
@@ -41,10 +20,10 @@ export function CreateModal({ modalId, title, errors = null, children }) {
 
     return (
         <Modal
-            title={modalId === 1 ? title : title + " details"}
+            title={title}
             width={modalId === 1 && 300}
             centered
-            open={modalOpen.modalId === modalId &&  modalOpen.visible}
+            open={modalOpen.modalId === modalId && modalOpen.visible}
             footer={null}
             focusTriggerAfterClose={false}
             destroyOnClose={true}
@@ -57,7 +36,3 @@ export function CreateModal({ modalId, title, errors = null, children }) {
         </Modal>
     );
 }
-
-
-export const useModalContext = () => useContext(ModalContext);
-export const useModalDataContext = () => useContext(ModalDataContext);

@@ -2,8 +2,8 @@ import i18n from "../i18n/config.js";
 
 
 /**
- * Function to validate data from form
- * before send fetch request
+ * Function to validate data from
+ * form before send fetch request.
  * @param {*} formData 
  * @returns {object}
  */
@@ -15,20 +15,46 @@ export function formValidation(formData, intent) {
     const password = formData.get("password");
     const confirm_password = formData.get("confirm_password");
 
-    if (!validatePassword(password)) {
+    const nameError = i18n.t("error_nameNotLetters");
+
+    if (!isValidName(first_name) && !isValidName(last_name)) {
+        errors.first_name = nameError;
+        errors.last_name = nameError;
+    } else if (!isValidName(first_name)) {
+        errors.first_name = nameError;
+    } else if (!isValidName(last_name)) {
+        errors.last_name = nameError;
+    }
+
+    if (intent === "editUser") return errors;
+
+    if (!isValidPassword(password)) {
         errors.password = i18n.t("error_passwordWeak");
     } else if (password != confirm_password) {
         errors.confirm_password = i18n.t("error_passwordNotConfirm");
     }
 
-    if (intent === "resetPassword") return errors;
+    return errors;
+}
 
-    if (!validateName(first_name) && !validateName(last_name)) {
-        errors.first_name = i18n.t("error_nameNotLetters");
-    } else if (!validateName(first_name)) {
-        errors.first_name = i18n.t("error_nameNotLetters");
-    } else if (!validateName(last_name)) {
-        errors.last_name = i18n.t("error_nameNotLetters");
+
+/**
+ * Function to validate password and
+ * password confirmation inside forms
+ * before send fetch request.
+ * @param {*} formData 
+ * @returns {object}
+ */
+export function passwordValidation(formData) {
+    const errors = {};
+
+    const password = formData.get("password");
+    const confirm_password = formData.get("confirm_password");
+
+    if (!isValidPassword(password)) {
+        errors.password = i18n.t("error_passwordWeak");
+    } else if (password != confirm_password) {
+        errors.confirm_password = i18n.t("error_passwordNotConfirm");
     }
 
     return errors;
@@ -45,7 +71,7 @@ export function formValidation(formData, intent) {
  * @param {string} password 
  * @returns {boolean}
  */
-function validatePassword(password) {
+function isValidPassword(password) {
     const pattern =
     /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/
 
@@ -57,11 +83,11 @@ function validatePassword(password) {
 
 
 /**
- * Checks that the name consists only of letters
+ * Checks that the name consists only of letters.
  * @param {string} value 
  * @returns {boolean}
  */
-function validateName(name) {
+function isValidName(name) {
     if (/^[a-zA-Z]+$/.test(name)) {
         return true;
     }

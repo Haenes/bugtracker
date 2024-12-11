@@ -8,7 +8,6 @@ import {
     SettingOutlined,
     HomeOutlined,
     LogoutOutlined,
-    SunOutlined, MoonOutlined, SelectOutlined
 } from "@ant-design/icons";
 
 import { ConfigProvider, Layout, Menu } from "antd";
@@ -18,7 +17,7 @@ const { Sider } = Layout;
 
 export function Sidebar() {
     const submit = useSubmit();
-    const { t, i18n } = useTranslation();
+    const { t } = useTranslation();
     const location = useLocation().pathname;
     const [collapsed, setCollapsed] = useState(true);
     const menuCompanent = {Menu: {activeBarBorderWidth: 0, dropdownWidth: 1}};
@@ -26,21 +25,6 @@ export function Sidebar() {
     const handleClickLogout = () => {
         submit(null, {method: "POST", action: "/logout"});
     }
-
-    const handleClickMode = () => {
-        const currentColorMode = localStorage.getItem("colorMode");
-        
-        localStorage.setItem(
-            "colorMode",
-            currentColorMode === "dark" ? "light" : "dark"
-        );
-        window.location.reload();
-    };
-
-    const handleClickLang = () => {
-        let currentLang = localStorage.getItem("i18nextLng");
-        i18n.changeLanguage(currentLang === "en" ? "ru" : "en");
-    };
 
     const menuItems = [
         {
@@ -51,26 +35,13 @@ export function Sidebar() {
         {
             key: "2",
             label: t("sidebar_settings"),
-            icon: <SettingOutlined />
+            icon: <Link to="/settings"><SettingOutlined /></Link>,
         },
         {
             key: "3",
             label: t("sidebar_logOut"),
             icon: <LogoutOutlined />,
             onClick: handleClickLogout
-        },
-        {
-            key: "4",
-            label: "Color mode",
-            icon: localStorage.getItem("colorMode") === "dark" ?
-                <SunOutlined /> : <MoonOutlined />,
-            onClick: handleClickMode
-        },
-        {
-            key: "5",
-            label: "Language",
-            icon: <SelectOutlined />,
-            onClick: handleClickLang
         }
     ];
 

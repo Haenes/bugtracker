@@ -142,8 +142,8 @@ export async function editMe(data) {
                 "Accept": "application/json",
                 "Content-Type": "application/json"
             },
-            credentials: "include",
-            body: data
+            body: JSON.stringify(data),
+            credentials: "include"
         });
 
         return rawResponse.json();

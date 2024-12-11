@@ -2,7 +2,7 @@ import { replace } from "react-router";
 
 import i18n from "../../i18n/config.js";
 import { userResetPassword } from "../../client/auth.js";
-import { formValidation } from "../utils.js";
+import { passwordValidation } from "../utils.js";
 import { ResetPasswordForm } from "../../components/Auth/ResetPasswordForm.jsx";
 
 
@@ -13,7 +13,7 @@ export function Component() {
 
 export async function action({ request, params }) {
     const formData = await request.formData();
-    const errors = formValidation(formData);
+    const errors = passwordValidation(formData);
 
     if (Object.keys(errors).length) return errors;
 

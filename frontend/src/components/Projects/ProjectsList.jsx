@@ -1,4 +1,9 @@
-import { Link, useActionData, useLoaderData, useSubmit } from "react-router";
+import { useState } from "react";
+
+import {
+    Link, useActionData, useLoaderData,
+    useSubmit, useOutletContext
+} from "react-router";
 
 import { useTranslation } from "react-i18next";
 
@@ -8,7 +13,7 @@ import { StarFilled, StarOutlined, SettingOutlined } from "@ant-design/icons";
 import { CreateProjectForm } from "./CreateForm.jsx";
 import { EditProjectForm } from "./EditForm.jsx";
 
-import { CreateModal, useModalContext, useModalDataContext } from "../ModalProvider.jsx";
+import { CreateModal } from "../ModalProvider.jsx";
 
 
 export function ProjectsList() {
@@ -20,8 +25,8 @@ export function ProjectsList() {
 
     const modalTitle = t("projectsList_modalTitle");
 
-    const [modalOpen, setModalOpen] = useModalContext();
-    const [modalData, setModalData] = useModalDataContext();
+    const [modalOpen, setModalOpen] = useOutletContext();
+    const [formData, setFormData] = useState(null)
 
     if (!projects) return <List />
 
@@ -53,7 +58,7 @@ export function ProjectsList() {
                                     <FavoriteButton data={{id: item.id, starred: item.starred}} />,
                                     <SettingsButton
                                         project={{...item}}
-                                        setModalFuncs={[setModalOpen, setModalData]}
+                                        setFuncs={[setModalOpen, setFormData]}
                                     />
                                 ]}
                             >
@@ -72,7 +77,7 @@ export function ProjectsList() {
             </CreateModal>
 
             <CreateModal modalId={2} title={modalTitle} errors={errors}>
-                <EditProjectForm project={modalData} errors={errors} setModalOpen={setModalOpen} />
+                <EditProjectForm project={formData} errors={errors} setModalOpen={setModalOpen} />
             </CreateModal>
         </>
     );
@@ -105,9 +110,9 @@ function FavoriteButton({data}) {
 }
 
 
-function SettingsButton({ project, setModalFuncs }) {
+function SettingsButton({ project, setFuncs }) {
     const { t } = useTranslation();
-    const [setModalOpen, setModalData] = setModalFuncs;
+    const [setModalOpen, setFormData] = setFuncs;
 
     return (
         <Button
@@ -116,7 +121,7 @@ function SettingsButton({ project, setModalFuncs }) {
             icon={<SettingOutlined style={buttonSize}/>}
             onClick={() => {
                 setModalOpen({visible: true, modalId: 2});
-                setModalData(project);
+                setFormData(project);
             }}
         />
     );

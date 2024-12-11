@@ -1,8 +1,8 @@
 {
     "register_cardTitle": "Создать аккаунт",
-    "register_username": "Имя пользователя (логин)",
-    "register_firstName": "Имя",
-    "register_lastName": "Фамилия",
+    "username": "Имя пользователя (логин)",
+    "firstName": "Имя",
+    "lastName": "Фамилия",
     "register_btn": "Зарегистрироваться",
 
     "forgotPassword_title" : "Не можете войти?",
@@ -80,6 +80,7 @@
     "btn_create": "Создать",
     "btn_delete": "Удалить",
     "btn_change": "Изменить",
+    "btn_changePassword": "Изменить пароль",
 
     "alert_defaultMessage": "Почти готово!",
     "alert_sessionExpired": "Срок действия вашего сеанса истек!",
@@ -87,6 +88,11 @@
     "alert_verify": "Эл. почта подтверждена!",
     "alert_forgotPassword": "Проверьте вашу эл. почту, чтобы восстановить пароль!",
     "alert_resetPassword": "Доступ восстановлен!",
+
+    "confirm_title": "Вы уверены?",
+    "confirm_description": "Это действие необратимо",
+    "confirm_cancel": "Отменить",
+    "confirm_ok": "Да",
 
     "email": "Эл. почта",
     "password": "Пароль",

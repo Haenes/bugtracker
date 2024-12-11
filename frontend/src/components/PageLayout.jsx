@@ -1,25 +1,22 @@
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 
 import { Outlet, useSubmit } from "react-router"
 
 import { Layout } from "antd"
 
 import { Sidebar } from "./Sidebar.jsx"
-import { ModalProvider } from "./ModalProvider.jsx"
 import { authProvider } from "../routes/auth/authProvider.jsx"
 
 
 export function Component() {
     useJwtExpirationTime();
 
+    const [modalOpen, setModalOpen] = useState({visible: false, modalId: 0});
+
     return (
         <Layout hasSider>
-            <Sidebar />
-
-            <ModalProvider>
-                <Outlet />
-            </ModalProvider>
-
+            <Sidebar context={[modalOpen, setModalOpen]}/>
+            <Outlet context={[modalOpen, setModalOpen]}/>
         </Layout>
     );
 }

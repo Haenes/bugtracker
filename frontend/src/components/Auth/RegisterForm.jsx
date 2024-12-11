@@ -21,8 +21,11 @@ export function RegisterForm() {
                         <div className="flex flex-col text-center text-red-500">
                             <span>{errors?.email}</span>
                             <span>{errors?.username}</span>
-                            <span>{errors?.first_name}</span>
-                            <span>{errors?.last_name}</span>
+                            {errors?.first_name && errors?.last_name &&
+                                <span>{errors?.first_name}</span>
+                            }
+                            <span>{!errors?.last_name && errors?.first_name}</span>
+                            <span>{!errors?.first_name && errors?.last_name}</span>
                             <span>{errors?.password}</span>
                             <span>{errors?.confirm_password}</span>
                         </div> : <></>
@@ -43,7 +46,7 @@ export function RegisterForm() {
                         autoComplete="nickname"
                         status={errors?.username && "error"}
                         type="text"
-                        placeholder={t("register_username")}
+                        placeholder={t("username")}
                         minLength={4}
                         required
                     />
@@ -53,7 +56,7 @@ export function RegisterForm() {
                         autoComplete="given-name"
                         status={errors?.first_name && "error"}
                         type="text"
-                        placeholder={t("register_firstName")}
+                        placeholder={t("firstName")}
                         autoCapitalize="on"
                         minLength={2}
                         required
@@ -64,7 +67,7 @@ export function RegisterForm() {
                         autoComplete="family-name"
                         status={errors?.last_name && "error"}
                         type="text"
-                        placeholder={t("register_lastName")}
+                        placeholder={t("lastName")}
                         autoCapitalize="on"
                         minLength={2}
                         required
