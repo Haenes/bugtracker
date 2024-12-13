@@ -19,10 +19,21 @@
     "login_forgotPassword": "Forgot password",
     "login_register": "Register now!",
 
+    "settings_header": "Settings",
+    "settings_tab1": "Account",
+    "settings_tab2": "Preferences",
+    "settings_light": "Light",
+    "settings_dark": "Dark",
+    "settings_en": "English",
+    "settings_ru": "Russian",
+    "settings_colorMode": "Color mode",
+    "settings_lang": "Language",
+
     "sidebar_home": "Home",
     "sidebar_settings": "Settings",
     "sidebar_logOut": "Log out",
 
+    "projectsList_header": "Projects",
     "projectsList_modalTitle": "Project",
     "projectsList_favoriteTrue": "Remove from favorites",
     "projectsList_favoriteFalse": "Add to favorites",
@@ -44,6 +55,7 @@
     "editProject_favorite": "Favorite:",
 
     "issuesBoard_projectNotFound": "Project not found.",
+    "issuesBoard_header": "Issues",
     "issuesBoard_modalTitle": "Issue",
     "issuesBoard_toDo": "TO DO",
     "issuesBoard_inProgress": "IN PROGRESS",

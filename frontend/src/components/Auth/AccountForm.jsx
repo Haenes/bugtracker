@@ -49,7 +49,7 @@ export function AccountForm() {
             }
 
             <div className="flex flex-row items-center">
-                <span className="mr-2">{t("email")}:</span>
+                <span className="mr-2 text-nowrap">{t("email")}:</span>
                 <Input
                     name="email"
                     status={errors?.email && "error"}

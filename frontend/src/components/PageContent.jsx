@@ -24,7 +24,7 @@ export function PageContent({ header, children }) {
             <div style={contentStyle} className="h-full">
                     <div className="flex flex-row items-center">
                         <span className="text-xl">{header}</span>
-                        {header !== "Settings" &&
+                        {header !== t("settings_header") &&
                             <Button
                                 className="items-baseline"
                                 title={t("btn_create")}

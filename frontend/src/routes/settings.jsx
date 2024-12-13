@@ -1,69 +1,15 @@
 import { replace } from "react-router";
 
-import { useTranslation } from "react-i18next";
-
-import { Tabs } from "antd";
-
-import { SunOutlined, MoonOutlined } from "@ant-design/icons";
-
 import { authProvider } from "./auth/authProvider.jsx";
 import { formValidation, passwordValidation } from "./utils.js";
 import { getMe, editMe, deleteMe } from "../client/auth.js";
-import { CreateModal } from "../components/ModalProvider.jsx";
-import { ChangePasswordForm } from "../components/Auth/ChangePasswordForm.jsx";
-import { PageContent } from "../components/PageContent.jsx";
-import { AccountForm } from "../components/AccountForm.jsx";
 
- 
+import { Settings } from "../components/Settings.jsx";
+
 
 export function Component() {
-    const { t, i18n } = useTranslation();
-
-    const handleClickMode = () => {
-        const currentColorMode = localStorage.getItem("colorMode");
-        
-        localStorage.setItem(
-            "colorMode",
-            currentColorMode === "dark" ? "light" : "dark"
-        );
-        window.location.reload();
-    };
-
-    const handleClickLang = () => {
-        let currentLang = localStorage.getItem("i18nextLng");
-        i18n.changeLanguage(currentLang === "en" ? "ru" : "en");
-    };
-
-    const items = [
-        {label: "Account", key: 1, children: <AccountForm />},
-        {label: "Preferences", key: 2, children: <>
-            <div className="flex flex-row items-center">
-                <span className="mr-2">{t("settings_colorMode")}</span>
-                {localStorage.getItem("colorMode") === "dark" ?
-                <SunOutlined onClick={handleClickMode} /> : <MoonOutlined onClick={handleClickMode}/>}
-            </div>
-
-            <div className="flex flex-row items-center w-2/3">
-                <span className="mr-2">{t("settings_lang")}</span>
-            </div>
-        </>}
-    ]
-
-    return (
-        <PageContent header="Settings">
-            <Tabs
-                className="h-screen"
-                tabPosition={"top"}
-                items={items.map((_, i) => {return items[i]})}
-            />
-
-            <CreateModal modalId={3} title="Change password">
-                <ChangePasswordForm />
-            </CreateModal>
-        </PageContent>
-    );
+    return <Settings />;
 }
-
 
 
 export async function loader() {

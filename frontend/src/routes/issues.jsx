@@ -10,7 +10,7 @@ import { authProvider } from "./auth/authProvider.jsx";
 
 export function Component() {
     return (
-        <PageContent header="Issues">
+        <PageContent header={i18n.t("issuesBoard_header")}>
             <IssuesBoard />
         </PageContent>
     );

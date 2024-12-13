@@ -1,6 +1,6 @@
 {
     "register_cardTitle": "Создать аккаунт",
-    "username": "Имя пользователя (логин)",
+    "username": "Логин",
     "firstName": "Имя",
     "lastName": "Фамилия",
     "register_btn": "Зарегистрироваться",
@@ -19,10 +19,21 @@
     "login_forgotPassword": "Забыл пароль",
     "login_register": "Регистрация",
 
+    "settings_header": "Настройки",
+    "settings_tab1": "Аккаунт",
+    "settings_tab2": "Предпочтения",
+    "settings_light": "Cветлая",
+    "settings_dark": "Тёмная",
+    "settings_en": "Английский",
+    "settings_ru": "Русский",
+    "settings_colorMode": "Цветовая тема",
+    "settings_lang": "Язык",
+
     "sidebar_home": "Главная",
     "sidebar_settings": "Настройки",
     "sidebar_logOut": "Выйти",
 
+    "projectsList_header": "Проекты",
     "projectsList_modalTitle": "Проект",
     "projectsList_favoriteTrue": "Убрать из избранных",
     "projectsList_favoriteFalse": "Добавить в избранные",
@@ -44,6 +55,7 @@
     "editProject_favorite": "Избранное:",
 
     "issuesBoard_projectNotFound": "Проект не найден.",
+    "issuesBoard_header": "Задачи",
     "issuesBoard_modalTitle": "Задача",
     "issuesBoard_toDo": "СДЕЛАТЬ",
     "issuesBoard_inProgress": "В ПРОЦЕССЕ",
