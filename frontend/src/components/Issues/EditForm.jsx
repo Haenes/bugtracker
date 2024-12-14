@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import {Button, Select, Input} from 'antd';
+import { Button, Select, Input, Popconfirm } from 'antd';
 
 import { Form, useFetcher } from "react-router";
 
@@ -24,7 +24,7 @@ export function EditIssueForm({ issue, errors, setModalOpen }) {
         fetcher.submit(
             {intent: "delete", issueId: issue.id},
             {method: "POST"}
-        )
+        );
     };
 
     return (
@@ -119,15 +119,22 @@ export function EditIssueForm({ issue, errors, setModalOpen }) {
                 </div>
 
                 <div className="flex flex-row gap-3 justify-end">
-                    <Button
-                        danger
-                        name="intent"
-                        value="delete"
-                        type="text"
-                        onClick={handleDelete}
+                    <Popconfirm
+                        title={t("confirm_title")}
+                        description={t("confirm_description")}
+                        cancelText={t("confirm_cancel")}
+                        okText={t("confirm_ok")}
+                        onConfirm={handleDelete}
                     >
-                        {t("btn_delete")}
-                    </Button>
+                        <Button
+                            danger
+                            name="intent"
+                            value="delete"
+                            type="text"
+                        >
+                            {t("btn_delete")}
+                        </Button>
+                    </Popconfirm>
 
                     <Button name="intent" value="edit" type="primary" htmlType="submit">
                         {t("btn_change")}

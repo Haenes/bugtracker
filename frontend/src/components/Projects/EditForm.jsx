@@ -4,7 +4,7 @@ import { Form, useFetcher } from "react-router";
 
 import { useTranslation } from "react-i18next";
 
-import { Button, Select, Checkbox, Input } from 'antd';
+import { Button, Select, Checkbox, Input, Popconfirm } from 'antd';
 
 import { convertDate } from "../PageLayout.jsx";
 
@@ -19,7 +19,7 @@ export function EditProjectForm({ project, errors, setModalOpen }) {
         fetcher.submit(
             {intent: "delete", projectId: project.id},
             {method: "POST"}
-        )
+        );
     };
 
     return (
@@ -92,15 +92,22 @@ export function EditProjectForm({ project, errors, setModalOpen }) {
             </div>
 
             <div className="flex flex-row gap-3 justify-end">
-                <Button
-                    danger
-                    name="intent"
-                    value="delete"
-                    type="text"
-                    onClick={handleDelete}
+                <Popconfirm
+                    title={t("confirm_title")}
+                    description={t("confirm_description")}
+                    cancelText={t("confirm_cancel")}
+                    okText={t("confirm_ok")}
+                    onConfirm={handleDelete}
                 >
-                    {t("btn_delete")}
-                </Button>
+                    <Button
+                        danger
+                        name="intent"
+                        value="delete"
+                        type="text"
+                    >
+                        {t("btn_delete")}
+                    </Button>
+                </Popconfirm>
 
                 <Button name="intent" value="edit" type="primary" htmlType="submit">
                 {t("btn_change")}

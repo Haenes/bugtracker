@@ -15,7 +15,7 @@ export function ChangePasswordForm() {
     const errors = useActionData();
 
     return (
-        <Form method="post" name="forgotPassword" className="flex flex-col">
+        <Form method="post" name="changePassword" className="flex flex-col">
 
             {errors?.password || errors?.confirm_password ?
                 <div className="mb-4 text-center text-red-500">
@@ -55,6 +55,7 @@ export function ChangePasswordForm() {
             <Button
                 name="intent"
                 value="changePassword"
+                className="self-center"
                 type="primary"
                 htmlType="submit"
             >

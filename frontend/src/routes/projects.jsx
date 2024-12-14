@@ -64,6 +64,8 @@ async function createProjectAction(formData) {
     const errors = selectValidation(formData);
     if (Object.keys(errors).length) return errors;
 
+    formData.set("key", formData.get("key").toUpperCase());
+
     const project = await createItem(Object.fromEntries(formData));
 
     return project.detail ? afterSubmitValidation(project, "create") : project;
@@ -75,6 +77,7 @@ async function editProjectAction(projectId, formData) {
     // but because the unchecked checkbox is null (not false!)
     // the project remains a favorite.
     formData.get("starred") === null && formData.set("starred", false);
+    formData.set("key", formData.get("key").toUpperCase());
 
     const project = await updateItem(
         Object.fromEntries(formData),

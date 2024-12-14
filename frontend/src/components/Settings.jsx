@@ -29,7 +29,7 @@ export function Settings() {
                 items={items.map((_, i) => {return items[i]})}
             />
 
-            <CreateModal modalId={3} title="Change password">
+            <CreateModal modalId={3} title={t("settings_changePassword")}>
                 <ChangePasswordForm />
             </CreateModal>
         </PageContent>

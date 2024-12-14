@@ -100,8 +100,8 @@ export function AccountForm() {
 
             <div className="flex flex-row flex-wrap gap-3">
                 <Popconfirm
-                    title="Are you sure?"
-                    description="This action is irreversible"
+                    title={t("confirm_title")}
+                    description={t("confirm_description")}
                     cancelText={t("confirm_cancel")}
                     okText={t("confirm_ok")}
                     onConfirm={handleAccDelete}
