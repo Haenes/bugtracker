@@ -2,6 +2,7 @@ import { replace } from "react-router";
 
 import { authProvider } from "./auth/authProvider.jsx";
 import { formValidation, passwordValidation } from "./utils.js";
+import i18n from "../i18n/config.js";
 import { getMe, editMe, deleteMe } from "../client/auth.js";
 
 import { Settings } from "../components/Settings.jsx";
@@ -43,7 +44,7 @@ async function editUserAction(formData) {
 
     const result = await editMe(Object.fromEntries(formData));
 
-    if (result["detail"] === "EMAIl_ALREADY_EXISTS") {
+    if (result["detail"] === "UPDATE_USER_EMAIL_ALREADY_EXISTS") {
         errors.email = i18n.t("error_registerEmail");
         return errors;
     } else if (result["detail"] === "USERNAME_ALREADY_EXISTS") {
