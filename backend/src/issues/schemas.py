@@ -42,7 +42,6 @@ class UpdateIssueSchema(CreateIssueSchema):
 
 
 class IssueSchema(CreateIssueSchema):
-    key: int
     created: datetime
     updated: datetime
 

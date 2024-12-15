@@ -125,7 +125,11 @@ class Pagination:
                 if project_id
                 else model.author_id == user_id
             )
-            .order_by(model.id)
+            .order_by(
+                model.type if project_id
+                else model.starred.desc(),
+                model.created
+            )
             .offset(offset)
             .limit(limit)
         )
