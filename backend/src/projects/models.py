@@ -1,29 +1,17 @@
-from sqlalchemy import (
-    VARCHAR, CheckConstraint,
-    )
+from sqlalchemy import VARCHAR, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column
 
 from models import BaseClass
-from .schemas import ProjectType
 
 
 class Project(BaseClass):
     __tablename__ = "project"
 
-    name: Mapped[str] = mapped_column(VARCHAR(255), unique=True)
-    key: Mapped[str] = mapped_column(VARCHAR(10), unique=True)
-    type: Mapped[str] = mapped_column(VARCHAR)
+    name: Mapped[str] = mapped_column(VARCHAR(255))
+    key: Mapped[str] = mapped_column(VARCHAR(10))
     starred: Mapped[bool | None] = mapped_column(default=False)
 
     __table_args__ = (
-        CheckConstraint(
-            sqltext=type.in_(
-                [
-                    ProjectType.fullstack.value,
-                    ProjectType.frontend.value,
-                    ProjectType.backend.value
-                    ]
-                ),
-            name='project_type_check'
-            ),
-        )
+        UniqueConstraint("author_id", "name", name="project_unique_name"),
+        UniqueConstraint("author_id", "key", name="project_unique_key"),
+    )

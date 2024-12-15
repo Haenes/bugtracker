@@ -30,7 +30,7 @@ if config.config_file_name is not None:
 # add your model's MetaData object here
 # for 'autogenerate' support
 target_metadata = [BaseClass.metadata]
-target_tables_list = ["issue", "project", "auth_user"]
+target_tables_list = ["issue", "project", "user"]
 
 
 def include_object(object, name, type_, reflected, compare_to):
