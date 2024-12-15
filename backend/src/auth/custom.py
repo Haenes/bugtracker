@@ -14,6 +14,14 @@ from fastapi_users.manager import BaseUserManager, UserManagerDependency
 from fastapi_users.router.common import ErrorCode, ErrorModel
 
 
+PASSWORD_VALIDATION_ERROR = (
+    "Your password must have: "
+    "1) a 8 - 32 characters. "
+    "2) at least one uppercase and lowercase letters. "
+    "3) at least one digit. "
+    "4) at least one special character"
+)
+
 class CustomErrorCode(str, Enum):
     USERNAME_ALREADY_EXISTS = "USERNAME_ALREADY_EXISTS"
 
@@ -113,8 +121,7 @@ def custom_get_register_router(
                                 "value": {
                                     "detail": {
                                         "code": ErrorCode.REGISTER_INVALID_PASSWORD,
-                                        "reason": "Password should be"
-                                        "at least 3 characters",
+                                        "reason": PASSWORD_VALIDATION_ERROR,
                                     }
                                 },
                             },
@@ -149,8 +156,7 @@ def custom_get_register_router(
                     "reason": e.reason,
                 },
             )
-        except IntegrityError as e:
-            print("DETAIL OF EXCEPTION", e.detail)
+        except IntegrityError:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail=CustomErrorCode.USERNAME_ALREADY_EXISTS,
@@ -222,14 +228,19 @@ def custom_get_users_router(
                                     "detail": ErrorCode.UPDATE_USER_EMAIL_ALREADY_EXISTS
                                 },
                             },
+                            CustomErrorCode.USERNAME_ALREADY_EXISTS: {
+                                "summary": "A user with this username already exists.",
+                                "value": {
+                                    "detail": CustomErrorCode.USERNAME_ALREADY_EXISTS
+                                },
+                            },
                             ErrorCode.UPDATE_USER_INVALID_PASSWORD: {
                                 "summary": "Password validation failed.",
                                 "value": {
                                     "detail": {
                                         "code":
                                         ErrorCode.UPDATE_USER_INVALID_PASSWORD,
-                                        "reason": "Password should be"
-                                        "at least 8 characters",
+                                        "reason": PASSWORD_VALIDATION_ERROR,
                                     }
                                 },
                             },
@@ -262,6 +273,11 @@ def custom_get_users_router(
             raise HTTPException(
                 status.HTTP_400_BAD_REQUEST,
                 detail=ErrorCode.UPDATE_USER_EMAIL_ALREADY_EXISTS,
+            )
+        except IntegrityError:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=CustomErrorCode.USERNAME_ALREADY_EXISTS,
             )
 
     @router.delete(
