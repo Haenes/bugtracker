@@ -21,11 +21,7 @@ export function RegisterForm() {
                         <div className="flex flex-col text-center text-red-500">
                             <span>{errors?.email}</span>
                             <span>{errors?.username}</span>
-                            {errors?.first_name && errors?.last_name &&
-                                <span>{errors?.first_name}</span>
-                            }
-                            <span>{!errors?.last_name && errors?.first_name}</span>
-                            <span>{!errors?.first_name && errors?.last_name}</span>
+                            <span>{errors?.first_name}</span>
                             <span>{errors?.password}</span>
                             <span>{errors?.confirm_password}</span>
                         </div> : <></>
@@ -57,17 +53,6 @@ export function RegisterForm() {
                         status={errors?.first_name && "error"}
                         type="text"
                         placeholder={t("firstName")}
-                        autoCapitalize="on"
-                        minLength={2}
-                        required
-                    />
-
-                    <Input
-                        name="last_name"
-                        autoComplete="family-name"
-                        status={errors?.last_name && "error"}
-                        type="text"
-                        placeholder={t("lastName")}
                         autoCapitalize="on"
                         minLength={2}
                         required

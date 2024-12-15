@@ -11,19 +11,13 @@ export function formValidation(formData, intent) {
     const errors = {};
 
     const first_name = formData.get("first_name");
-    const last_name = formData.get("last_name");
     const password = formData.get("password");
     const confirm_password = formData.get("confirm_password");
 
     const nameError = i18n.t("error_nameNotLetters");
 
-    if (!isValidName(first_name) && !isValidName(last_name)) {
+    if (!isValidName(first_name)) {
         errors.first_name = nameError;
-        errors.last_name = nameError;
-    } else if (!isValidName(first_name)) {
-        errors.first_name = nameError;
-    } else if (!isValidName(last_name)) {
-        errors.last_name = nameError;
     }
 
     if (intent === "editUser") return errors;

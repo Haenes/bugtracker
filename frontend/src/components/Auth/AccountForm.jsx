@@ -35,16 +35,11 @@ export function AccountForm() {
     return (
         <Form method="post" name="account" className="flex flex-col gap-y-4 md:w-2/5">
 
-            {errors?.email || errors?.username ||
-            errors?.first_name || errors?.last_name ?
+            {errors?.email || errors?.username || errors?.first_name ?
                 <div className="flex flex-col text-center text-red-500">
                     <span>{errors?.email}</span>
                     <span>{errors?.username}</span>
-                    {errors?.first_name && errors?.last_name &&
-                        <span>{errors?.first_name}</span>
-                    }
-                    <span>{!errors?.last_name && errors?.first_name}</span>
-                    <span>{!errors?.first_name && errors?.last_name}</span>
+                    <span>{errors?.first_name}</span>
                 </div> : <></>
             }
 
@@ -79,19 +74,6 @@ export function AccountForm() {
                     status={errors?.first_name && "error"}
                     type="text"
                     defaultValue={user.first_name}
-                    autoCapitalize="on"
-                    minLength={2}
-                    required
-                />
-            </div>
-
-            <div className="flex flex-row items-center">
-                <span className="mr-2 text-nowrap">{t("lastName")}:</span>
-                <Input
-                    name="last_name"
-                    status={errors?.last_name && "error"}
-                    type="text"
-                    defaultValue={user.last_name}
                     autoCapitalize="on"
                     minLength={2}
                     required

@@ -31,7 +31,7 @@ export function IssuesBoard() {
         return (Array.from(issueStatus).map((issue, i) => (
             <Card
                 title={issue.title}
-                key={issue.key}
+                key={issue.id}
                 type="inner"
                 size="small"
                 hoverable

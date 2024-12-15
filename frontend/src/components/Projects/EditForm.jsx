@@ -1,10 +1,8 @@
-import { useState } from 'react';
-
 import { Form, useFetcher } from "react-router";
 
 import { useTranslation } from "react-i18next";
 
-import { Button, Select, Checkbox, Input, Popconfirm } from 'antd';
+import { Button, Checkbox, Input, Popconfirm } from 'antd';
 
 import { convertDate } from "../PageLayout.jsx";
 
@@ -12,7 +10,6 @@ import { convertDate } from "../PageLayout.jsx";
 export function EditProjectForm({ project, errors, setModalOpen }) {
     const fetcher = useFetcher();
     const { t } = useTranslation();
-    const [type, setType] = useState(project.type);
 
     const handleDelete = () => {
         setModalOpen({visible: false, modalId: 2});
@@ -56,20 +53,6 @@ export function EditProjectForm({ project, errors, setModalOpen }) {
                     minLength={3}
                     maxLength={10}
                 />
-            </div>
-
-            <div className="items-center">
-                <span className="mr-2">{t("editProject_type")}</span>
-                <Select
-                    defaultValue={project.type}
-                    options={[
-                        {label: t("project_typeFullstack"), value: "Fullstack"},
-                        {label: t("project_typeBackend"), value: "Back-end"},
-                        {label: t("project_typeFrontend"), value: "Front-end"}
-                    ]}
-                    onChange={value => setType(value)}
-                />
-                <input name="type" type="hidden" value={type} />
             </div>
 
             <div>

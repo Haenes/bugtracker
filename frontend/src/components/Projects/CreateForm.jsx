@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 
-import { Button, Select, Checkbox, Input } from 'antd';
+import { Button, Checkbox, Input } from 'antd';
 
 import { Form } from "react-router";
 
@@ -10,11 +10,6 @@ import { useTranslation } from "react-i18next";
 
 export function CreateProjectForm({errors, setModalOpen}) {
     const { t } = useTranslation();
-    const [type, setType] = useState("");
-
-    const handleChange = () => {
-        errors?.createType && delete errors.createType;
-    };
 
     // Close Modal with form after successful creation.
     useEffect(() => {
@@ -27,11 +22,10 @@ export function CreateProjectForm({errors, setModalOpen}) {
     return (
         <Form method="post" name="createProject" className="flex flex-col gap-y-4 w-full">
 
-            {errors?.createName || errors?.createKey || errors?.createType ?
+            {errors?.createName || errors?.createKey ?
                 <div className='text-center text-red-500'>
                     {errors?.createName}
                     {errors?.createKey}
-                    {errors?.createType}
                 </div> : <></>
             }
 
@@ -53,25 +47,6 @@ export function CreateProjectForm({errors, setModalOpen}) {
                 minLength={3}
                 maxLength={10}
             />
-
-            <Select
-                placeholder={t("createProject_type")}
-                status={errors?.createType && "error"}
-                options={[
-                    {label: t("project_typeFullstack"), value: "Fullstack"},
-                    {label: t("project_typeBackend"), value: "Back-end"},
-                    {label: t("project_typeFrontend"), value: "Front-end"}
-                ]}
-                onChange={value => {setType(value), handleChange()}}
-            />
-            {
-                /*
-                That input field helps to circumvent the Select
-                restriction, which makes it impossible to pass the name
-                with the selected option value inside the form
-                */
-            }
-            <input name="type" type="hidden" value={type} />
 
             <Checkbox name="starred">{t("createProject_favorite")}</Checkbox>
 

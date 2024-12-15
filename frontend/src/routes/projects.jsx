@@ -29,7 +29,7 @@ export async function loader({ request }) {
         limit = params.get("limit");
     } else {
         page = 1;
-        limit = 10;
+        limit = 20;
     }
 
     const projects = await getItems(page, limit);
@@ -61,9 +61,6 @@ export async function action({ request }) {
 
 
 async function createProjectAction(formData) {
-    const errors = selectValidation(formData);
-    if (Object.keys(errors).length) return errors;
-
     formData.set("key", formData.get("key").toUpperCase());
 
     const project = await createItem(Object.fromEntries(formData));
@@ -77,7 +74,8 @@ async function editProjectAction(projectId, formData) {
     // but because the unchecked checkbox is null (not false!)
     // the project remains a favorite.
     formData.get("starred") === null && formData.set("starred", false);
-    formData.set("key", formData.get("key").toUpperCase());
+    // This check handle case, when user just add project to favorite
+    formData.get("key") && formData.set("key", formData.get("key").toUpperCase());
 
     const project = await updateItem(
         Object.fromEntries(formData),
@@ -93,23 +91,6 @@ async function editProjectAction(projectId, formData) {
 async function deleteProjectAction(projectId) {
     const results = await deleteItem(projectId);
     return results.results === "Success" && replace("");
-}
-
-
-/**
- * Function to validate select's from form
- * before send fetch request.
- * @param {*} formData 
- * @returns {object}
- */
-function selectValidation(formData) {
-    const errors = {};
-    const type = formData.get("type");
-
-    if (!type) {
-        errors.createType = i18n.t("error_projectType");
-    }
-    return errors;
 }
 
 
