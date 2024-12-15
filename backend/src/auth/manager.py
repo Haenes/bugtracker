@@ -1,10 +1,16 @@
+import re
+
 from fastapi import Depends, Request
-from fastapi_users import BaseUserManager, IntegerIDMixin
+from fastapi_users import (
+    BaseUserManager,
+    InvalidPasswordException,
+    IntegerIDMixin
+)
 
 from utils.tasks import celery_send_email
 from .config import MANAGER_SECRET, MAX_AGE
 from .cookie_jwt import auth_backend
-from .custom import CustomFastAPIUsers
+from .custom import CustomFastAPIUsers, PASSWORD_VALIDATION_ERROR
 from .models import User, get_user_db
 from .schemas import UserCreate, UserRead, UserUpdate
 
@@ -15,6 +21,30 @@ class UserManager(IntegerIDMixin, BaseUserManager[User, int]):
 
     reset_password_token_lifetime_seconds = MAX_AGE
     verification_token_lifetime_seconds = MAX_AGE
+
+    async def validate_password(
+        self,
+        password: str,
+        user: UserCreate | User,
+    ) -> None:
+        """
+        Returns None if the password is:
+        1) a 8+ characters {8,};
+        2) at least one uppercase letter (?=.*?[A-Z]);
+        3) at least one lowercase letter (?=.*?[a-z]);
+        4) at least one digit (?=.*?[0-9]);
+        5) at least one special character (?=.*?[#?!@$%^&*-_+=])
+        """
+        pattern = re.compile(
+            "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-_+=]).{8,}$"
+        )
+
+        if not pattern.match(password):
+            raise InvalidPasswordException(
+                reason=PASSWORD_VALIDATION_ERROR
+            )
+
+        return None
 
     async def on_after_register(
         self,
