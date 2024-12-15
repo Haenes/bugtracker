@@ -33,6 +33,7 @@ export function ProjectsList() {
     const paginationParams = {
         current: projects.page,
         total: projects.count,
+        pageSize: 20,
         position: "bottom",
         align: "center",
         showTitle: false,
@@ -54,6 +55,8 @@ export function ProjectsList() {
                             <Card
                                 title={<Link to={`${item.id}/issues`}>{item.name}</Link>}
                                 hoverable
+                                styles={{body: {padding: 0}}}
+                                extra={item.key}
                                 actions={[
                                     <FavoriteButton data={{id: item.id, starred: item.starred}} />,
                                     <SettingsButton
@@ -61,12 +64,7 @@ export function ProjectsList() {
                                         setFuncs={[setModalOpen, setFormData]}
                                     />
                                 ]}
-                            >
-                                <div className="flex flex-col">
-                                    <i>{t("projectsList_projectKey")} {item.key}</i>
-                                    <i>{t("projectsList_projectType")} {item.type}</i>
-                                </div>
-                            </Card>
+                            />
                         </List.Item>
                     );
                 }}
