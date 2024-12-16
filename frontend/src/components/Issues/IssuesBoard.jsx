@@ -19,9 +19,24 @@ export function IssuesBoard() {
     const modalTitle = t("issuesBoard_modalTitle");
 
     const [modalOpen, setModalOpen] = useOutletContext();
-    const [formData, setFormData] = useState(null)
+    const [formData, setFormData] = useState(null);
 
-    if (!issues) return <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
+    const createModal = () => {
+        return (
+            <CreateModal modalId={1} title={modalTitle} errors={errors}>
+                <CreateIssueForm errors={errors} setModalOpen={setModalOpen} />
+            </CreateModal>
+        );
+    }
+
+    if (!issues) {
+        return (
+            <>
+                {createModal()}
+                <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
+            </>
+        );
+    }
 
     const toDo = issues.results.filter(issue => issue.status === "To do");
     const inProgress = issues.results.filter(issue => issue.status === "In progress");
@@ -71,9 +86,7 @@ export function IssuesBoard() {
                 {issueCard(done)}
             </Card>
 
-            <CreateModal modalId={1} title={modalTitle} errors={errors}>
-                <CreateIssueForm errors={errors} setModalOpen={setModalOpen} />
-            </CreateModal>
+            {createModal()}
 
             <CreateModal modalId={2} title={modalTitle} errors={errors}>
                 <EditIssueForm issue={formData} errors={errors} setModalOpen={setModalOpen} />

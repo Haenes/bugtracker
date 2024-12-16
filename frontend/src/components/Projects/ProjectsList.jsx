@@ -26,9 +26,24 @@ export function ProjectsList() {
     const modalTitle = t("projectsList_modalTitle");
 
     const [modalOpen, setModalOpen] = useOutletContext();
-    const [formData, setFormData] = useState(null)
+    const [formData, setFormData] = useState(null);
 
-    if (!projects) return <List />
+    const createModal = () => {
+        return (
+            <CreateModal modalId={1} title={modalTitle} errors={errors}>
+                <CreateProjectForm errors={errors} setModalOpen={setModalOpen} />
+            </CreateModal>
+        );
+    }
+
+    if (!projects) {
+        return (
+            <>
+                <List />
+                {createModal()}
+            </>
+        );
+    }
 
     const paginationParams = {
         current: projects.page,
@@ -70,9 +85,7 @@ export function ProjectsList() {
                 }}
             />
 
-            <CreateModal modalId={1} title={modalTitle} errors={errors}>
-                <CreateProjectForm errors={errors} setModalOpen={setModalOpen} />
-            </CreateModal>
+            {createModal()}
 
             <CreateModal modalId={2} title={modalTitle} errors={errors}>
                 <EditProjectForm project={formData} errors={errors} setModalOpen={setModalOpen} />

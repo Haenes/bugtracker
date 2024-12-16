@@ -20,7 +20,7 @@ export function Sidebar() {
     const { t } = useTranslation();
     const location = useLocation().pathname;
     const [collapsed, setCollapsed] = useState(true);
-    const menuCompanent = {Menu: {activeBarBorderWidth: 0, dropdownWidth: 1}};
+    const menuCompanent = {Menu: {activeBarBorderWidth: 0}};
 
     const handleClickLogout = () => {
         submit(null, {method: "POST", action: "/logout"});

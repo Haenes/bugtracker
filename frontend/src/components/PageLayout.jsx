@@ -15,7 +15,7 @@ export function Component() {
 
     return (
         <Layout hasSider>
-            <Sidebar context={[modalOpen, setModalOpen]}/>
+            <Sidebar />
             <Outlet context={[modalOpen, setModalOpen]}/>
         </Layout>
     );

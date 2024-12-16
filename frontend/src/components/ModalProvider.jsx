@@ -1,22 +1,23 @@
 import { Modal } from "antd";
 
+import { useTranslation } from "react-i18next";
 import { useOutletContext } from 'react-router';
 
 export function CreateModal({ modalId, title, errors = null, children }) {
     const [modalOpen, setModalOpen] =  useOutletContext();
+    const { t } = useTranslation();
     let clearErrors;
 
-    title === "Project" ?
-        clearErrors = (errors) => {
+    clearErrors = (errors) => {
+        if (title === t("projectsList_modalTitle")) {
             delete errors?.createName;
             delete errors?.editName;
             delete errors?.createKey;
             delete errors?.editKey;
-        } :
-        clearErrors = (errors) => {
-            delete errors?.createTitle;
-            delete errors?.editTitle;
         }
+        delete errors?.createTitle;
+        delete errors?.editTitle;
+    };
 
     return (
         <Modal
