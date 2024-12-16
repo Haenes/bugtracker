@@ -11,7 +11,7 @@ class BaseClass(Base):
 
     id: Mapped[intpk]
     author_id: Mapped[int] = mapped_column(
-        ForeignKey("user.id", ondelete="CASCADE")
+        ForeignKey("auth_user.id", ondelete="CASCADE")
     )
     created: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=text("CURRENT_TIMESTAMP")

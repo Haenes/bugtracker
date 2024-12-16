@@ -19,7 +19,7 @@ user_status = Annotated[
 
 
 class User(Base):
-    __tablename__ = "user"
+    __tablename__ = "auth_user"
 
     id: Mapped[intpk]
     is_superuser: Mapped[user_status]
