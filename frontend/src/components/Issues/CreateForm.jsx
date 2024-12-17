@@ -31,7 +31,7 @@ export function CreateIssueForm({ errors, setModalOpen }) {
     }, [errors])
 
     return (
-        <Form method="post" name="createIssue" className="flex flex-col gap-y-4">
+        <Form method="post" name="createIssue" className="flex flex-col gap-y-3 mt-4">
 
             {errors?.createTitle || errors?.createType || errors?.createPriority ?
                 <div className='flex flex-col text-center text-red-500'>
@@ -60,6 +60,7 @@ export function CreateIssueForm({ errors, setModalOpen }) {
 
             <Select
                 placeholder={t("createIssue_type")}
+                className="w-1/2"
                 status={errors?.createType && "error"}
                 options={[
                     {label: t("issue_typeFeature"), value: "Feature"},
@@ -71,6 +72,7 @@ export function CreateIssueForm({ errors, setModalOpen }) {
 
             <Select
                 placeholder={t("createIssue_priority")}
+                className="w-2/3"
                 status={errors?.createPriority && "error"}
                 options={[
                     {label: t("issue_priorityLowest"), value: "Lowest"},

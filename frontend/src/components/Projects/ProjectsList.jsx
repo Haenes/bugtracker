@@ -7,7 +7,7 @@ import {
 
 import { useTranslation } from "react-i18next";
 
-import { List, Card, Button } from "antd";
+import { List, Card, Button, Pagination } from "antd";
 import { StarFilled, StarOutlined, SettingOutlined } from "@ant-design/icons";
 
 import { CreateProjectForm } from "./CreateForm.jsx";
@@ -45,24 +45,22 @@ export function ProjectsList() {
         );
     }
 
-    const paginationParams = {
-        current: projects.page,
-        total: projects.count,
-        pageSize: 20,
-        position: "bottom",
-        align: "center",
-        showTitle: false,
-        showSizeChanger: false,
-        simple: true,
-        hideOnSinglePage: true,
-        onChange: (page, pageSize) => submit(`?page=${page}&limit=${pageSize}`)
-    }
-
     return (
         <>
+            <Pagination
+                className="mb-5 items-center"
+                current={projects.page}
+                total={projects.count}
+                showTitle={false}
+                showSizeChanger={false}
+                simple
+                hideOnSinglePage
+                pageSize={20}
+                onChange={(page, pageSize) => submit(`?page=${page}&limit=${pageSize}`)}
+            />
+
             <List
                 grid={listGrid}
-                pagination={paginationParams}
                 dataSource={projects.results}
                 renderItem={(item) => {
                     return (

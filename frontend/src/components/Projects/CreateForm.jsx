@@ -20,7 +20,7 @@ export function CreateProjectForm({errors, setModalOpen}) {
     }, [errors])
 
     return (
-        <Form method="post" name="createProject" className="flex flex-col gap-y-4 w-full">
+        <Form method="post" name="createProject" className="flex flex-col gap-y-3 mt-4">
 
             {errors?.createName || errors?.createKey ?
                 <div className='text-center text-red-500'>
@@ -40,6 +40,7 @@ export function CreateProjectForm({errors, setModalOpen}) {
 
             <Input
                 name="key"
+                className="w-1/2"
                 status={errors?.createKey && "error"}
                 type="text"
                 placeholder={t("createProject_key")}

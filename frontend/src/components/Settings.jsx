@@ -24,7 +24,6 @@ export function Settings() {
     return (
         <PageContent header={t("settings_header")}>
             <Tabs
-                className="h-screen"
                 tabPosition={"top"}
                 items={items.map((_, i) => {return items[i]})}
             />

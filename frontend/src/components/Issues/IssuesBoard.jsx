@@ -73,7 +73,7 @@ export function IssuesBoard() {
     }
 
     return (
-        <div className="grid grid-cols-12 gap-4 md:gap-2 h-full text-center">
+        <div className="grid grid-cols-12 h-full gap-4 md:gap-2 text-center">
             <Card className="col-span-12 md:col-span-4" title={t("issuesBoard_toDo")}>
                 {issueCard(toDo)}
             </Card>

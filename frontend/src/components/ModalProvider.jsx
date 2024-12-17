@@ -22,7 +22,7 @@ export function CreateModal({ modalId, title, errors = null, children }) {
     return (
         <Modal
             title={title}
-            width={modalId === 1 && 300}
+            width={modalId === 1 && 290}
             centered
             open={modalOpen.modalId === modalId && modalOpen.visible}
             footer={null}

@@ -5,6 +5,7 @@ import { Layout, theme, Button } from "antd";
 import { FormOutlined } from "@ant-design/icons";
 
 import { useOutletContext } from "react-router";
+import { calc } from "antd/es/theme/internal";
 
 const { Content } = Layout;
 
@@ -20,9 +21,9 @@ export function PageContent({ header, children }) {
     const [modalOpen, setModalOpen] = useOutletContext();
 
     return (
-        <Content className="mx-2 mt-3">
-            <div style={contentStyle} className="h-full">
-                    <div className="flex flex-row items-center">
+        <Content className="m-2">
+            <div style={contentStyle} className="flex flex-col h-full w-full">
+                    <div className="flex items-center">
                         <span className="text-xl">{header}</span>
                         {header !== t("settings_header") &&
                             <Button
@@ -36,7 +37,7 @@ export function PageContent({ header, children }) {
                         }
                     </div>
 
-                <div className="mt-3">
+                <div className="flex-grow mt-3">
                     {children}
                 </div>
             </div>

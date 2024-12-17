@@ -92,7 +92,7 @@ const router = createBrowserRouter([
 
 
 ReactDOM.createRoot(document.getElementById("root")).render(
-    <ConfigProvider theme={{algorithm: getColorMode()}}>
+    <ConfigProvider theme={{algorithm: getColorMode(), token:{paddingLG: 16}}}>
         <Layout>
             <RouterProvider router={router} />
         </Layout>

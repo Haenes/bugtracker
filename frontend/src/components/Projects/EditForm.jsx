@@ -20,7 +20,7 @@ export function EditProjectForm({ project, errors, setModalOpen }) {
     };
 
     return (
-        <Form method="post" name="editProject" className="flex flex-col gap-3 mt-4">
+        <Form method="post" name="editProject" className="flex flex-col gap-y-3 mt-4">
             {errors?.editName || errors?.editKey ?
                 <div className='text-center text-red-500'>
                     {errors?.editName}
