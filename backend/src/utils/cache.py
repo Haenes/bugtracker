@@ -12,7 +12,7 @@ pool = ConnectionPool.from_url(
     f"redis://{REDIS_USER}:{REDIS_PASSWORD}@redis",
     decode_responses=True,
     max_connections=10
-    )
+)
 
 
 async def get_redis_client() -> AsyncGenerator[Redis, None]:
@@ -21,12 +21,12 @@ async def get_redis_client() -> AsyncGenerator[Redis, None]:
 
 
 async def cache_get_or_set(
-        cache: Redis,
-        key: str,
-        func: Callable,
-        *args_for_func
-        ) -> PaginatedResponse | NoItemsResponse:
-    """Return value for a given key if exist or set key with a func result."""
+    cache: Redis,
+    key: str,
+    func: Callable,
+    *args_for_func
+) -> PaginatedResponse | NoItemsResponse:
+    """ Return value for a given key if exist or set key with a func result. """
 
     try:
         cache_result = json.loads(await cache.get(key))
