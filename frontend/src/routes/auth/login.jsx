@@ -58,7 +58,7 @@ export async function action({ request }) {
         return errors;
     }
 
-    authProvider.signIn();
+    formData.get("remember") ? authProvider.signIn(true) : authProvider.signIn();
     return replace(next ? next : "/projects");
 }
 
