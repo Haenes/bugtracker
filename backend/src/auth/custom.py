@@ -37,8 +37,11 @@ class CustomAuthenticationBackend(AuthenticationBackend[models.UP, models.ID]):
         user: models.UP,
         remember: bool = False
     ) -> Response:
+        # Set the JWT lifetime to 3 weeks,
+        # if the user has checked the "Remember me" box.
+        # Otherwise - the default 3 hours.
         if remember:
-            strategy.lifetime_seconds = 60
+            strategy.lifetime_seconds = 1_814_400
             token = await strategy.write_token(user)
 
             return await self.transport.get_login_response(token)
