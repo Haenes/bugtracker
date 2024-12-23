@@ -7,12 +7,10 @@ from fastapi import (
     APIRouter, Body, Depends,
     HTTPException, Request, Response, status
     )
-from fastapi.security import OAuth2PasswordRequestForm
 
 from fastapi_users import FastAPIUsers, exceptions, models, schemas
-from fastapi_users.authentication import Authenticator, AuthenticationBackend, Strategy
+from fastapi_users.authentication import Authenticator
 from fastapi_users.manager import BaseUserManager, UserManagerDependency
-from fastapi_users.openapi import OpenAPIResponseType
 from fastapi_users.router.common import ErrorCode, ErrorModel
 
 
@@ -27,27 +25,6 @@ PASSWORD_VALIDATION_ERROR = (
 
 class CustomErrorCode(str, Enum):
     USERNAME_ALREADY_EXISTS = "USERNAME_ALREADY_EXISTS"
-
-
-class CustomAuthenticationBackend(AuthenticationBackend[models.UP, models.ID]):
-
-    async def login(
-        self,
-        strategy: Strategy[models.UP, models.ID],
-        user: models.UP,
-        remember: bool = False
-    ) -> Response:
-        # Set the JWT lifetime to 3 weeks,
-        # if the user has checked the "Remember me" box.
-        # Otherwise - the default 3 hours.
-        if remember:
-            strategy.lifetime_seconds = 1_814_400
-            token = await strategy.write_token(user)
-
-            return await self.transport.get_login_response(token)
-        else:
-            token = await strategy.write_token(user)
-            return await self.transport.get_login_response(token)
 
 
 class CustomFastAPIUsers(FastAPIUsers[models.UP, models.ID]):
@@ -71,25 +48,6 @@ class CustomFastAPIUsers(FastAPIUsers[models.UP, models.ID]):
             self.get_user_manager,
             user_schema,
             user_create_schema
-        )
-
-    def get_auth_router(
-        self,
-        backend: CustomAuthenticationBackend[models.UP, models.ID],
-        requires_verification: bool = False,
-    ) -> APIRouter:
-        """
-        Return an auth router for a given authentication backend.
-
-        :param backend: The authentication backend instance.
-        :param requires_verification: Whether the authentication
-        require the user to be verified or not. Defaults to False.
-        """
-        return custom_get_auth_router(
-            backend,
-            self.get_user_manager,
-            self.authenticator,
-            requires_verification,
         )
 
     def get_users_router(
@@ -405,93 +363,5 @@ def custom_get_verify_router(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail=ErrorCode.VERIFY_USER_ALREADY_VERIFIED,
             )
-
-    return router
-
-
-def custom_get_auth_router(
-    backend: CustomAuthenticationBackend[models.UP, models.ID],
-    get_user_manager: UserManagerDependency[models.UP, models.ID],
-    authenticator: Authenticator[models.UP, models.ID],
-    requires_verification: bool = False,
-) -> APIRouter:
-    """Generate a router with login/logout routes for an authentication backend."""
-    router = APIRouter()
-    get_current_user_token = authenticator.current_user_token(
-        active=True, verified=requires_verification
-    )
-
-    login_responses: OpenAPIResponseType = {
-        status.HTTP_400_BAD_REQUEST: {
-            "model": ErrorModel,
-            "content": {
-                "application/json": {
-                    "examples": {
-                        ErrorCode.LOGIN_BAD_CREDENTIALS: {
-                            "summary": "Bad credentials or the user is inactive.",
-                            "value": {"detail": ErrorCode.LOGIN_BAD_CREDENTIALS},
-                        },
-                        ErrorCode.LOGIN_USER_NOT_VERIFIED: {
-                            "summary": "The user is not verified.",
-                            "value": {"detail": ErrorCode.LOGIN_USER_NOT_VERIFIED},
-                        },
-                    }
-                }
-            },
-        },
-        **backend.transport.get_openapi_login_responses_success(),
-    }
-
-    @router.post(
-        "/login",
-        name=f"auth:{backend.name}.login",
-        responses=login_responses,
-    )
-    async def login(
-        request: Request,
-        credentials: OAuth2PasswordRequestForm = Depends(),
-        user_manager: BaseUserManager[models.UP, models.ID] = Depends(get_user_manager),
-        strategy: Strategy[models.UP, models.ID] = Depends(backend.get_strategy),
-    ):
-        user = await user_manager.authenticate(credentials)
-        form_data = await request._get_form()
-
-        if user is None or not user.is_active:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail=ErrorCode.LOGIN_BAD_CREDENTIALS,
-            )
-        if requires_verification and not user.is_verified:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail=ErrorCode.LOGIN_USER_NOT_VERIFIED,
-            )
-
-        if form_data.get("remember"):
-            response = await backend.login(strategy, user, True)
-        else:
-            response = await backend.login(strategy, user)
-
-        await user_manager.on_after_login(user, request, response)
-        return response
-
-    logout_responses: OpenAPIResponseType = {
-        **{
-            status.HTTP_401_UNAUTHORIZED: {
-                "description": "Missing token or inactive user."
-            }
-        },
-        **backend.transport.get_openapi_logout_responses_success(),
-    }
-
-    @router.post(
-        "/logout", name=f"auth:{backend.name}.logout", responses=logout_responses
-    )
-    async def logout(
-        user_token: tuple[models.UP, str] = Depends(get_current_user_token),
-        strategy: Strategy[models.UP, models.ID] = Depends(backend.get_strategy),
-    ):
-        user, token = user_token
-        return await backend.logout(strategy, user, token)
 
     return router
