@@ -11,6 +11,7 @@ from auth.manager import (
     )
 from projects.router import router as projects_router
 from issues.router import router as issues_router
+from search.router import router as search_router
 
 app = FastAPI(
     title="BugTracker",
@@ -43,6 +44,7 @@ celery.autodiscover_tasks()
 
 app.include_router(projects_router)
 app.include_router(issues_router)
+app.include_router(search_router)
 
 
 app.include_router(

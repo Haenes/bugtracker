@@ -129,6 +129,7 @@ async def test_create_issues(user_client: httpx.AsyncClient):
 
     r2 = await user_client.post("projects/1/issues", json={
         "title": "Another test issue",
+        "description": "Test searching",
         "type": "Bug"
     })
 
@@ -200,6 +201,44 @@ async def test_update_not_exist_issue(user_client: httpx.AsyncClient):
 
     assert r.json()["detail"] == "The issue for the update doesn't exist!"
     assert r.status_code == 400
+
+
+async def test_search_no_results(user_client: httpx.AsyncClient):
+    r = await user_client.get("search?q=hello")
+    assert r.json()["detail"] == "No results"
+
+
+async def test_search_projects(user_client: httpx.AsyncClient):
+    r = await user_client.get("search?q=test_name")
+    results = r.json()
+
+    assert results["projects"] == [{"id": 1, "name": "test_name"}]
+    assert results["issues"] == []
+
+
+async def test_search_issues(user_client: httpx.AsyncClient):
+    r = await user_client.get("search?q=Test issue")
+    results = r.json()
+
+    assert results["projects"] == []
+    assert results["issues"] == [
+        {"id": 1, "project_id": 1, "title": "Test issue"},
+        {"id": 2, "project_id": 1, "title": "Another test issue"}
+    ]
+
+
+async def test_search_results(user_client: httpx.AsyncClient):
+    r = await user_client.get("search?q=test")
+    results = r.json()
+
+    assert results["projects"] == [
+        {"id": 1, "name": "test_name"},
+        {"id": 2, "name": "test_name2"}
+    ]
+    assert results["issues"] == [
+        {"id": 1, "project_id": 1, "title": "Test issue"},
+        {"id": 2, "project_id": 1, "title": "Another test issue"}
+    ]
 
 
 async def test_delete_issue(user_client: httpx.AsyncClient):

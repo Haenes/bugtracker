@@ -1,7 +1,7 @@
-from sqlalchemy import VARCHAR, UniqueConstraint
+from sqlalchemy import Index, VARCHAR, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column
 
-from models import BaseClass
+from models import BaseClass, to_tsvector
 
 
 class Project(BaseClass):
@@ -14,4 +14,5 @@ class Project(BaseClass):
     __table_args__ = (
         UniqueConstraint("author_id", "name", name="project_unique_name"),
         UniqueConstraint("author_id", "key", name="project_unique_key"),
+        Index("project_fts_idx", to_tsvector("name", "key"), postgresql_using="gin")
     )

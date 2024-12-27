@@ -52,3 +52,9 @@ class PaginationIssue(IssueSchema):
 
 class CreatedIssueSchema(PaginationIssue):
     project_id: int
+
+
+class SearchIssue(BaseModel):
+    project_id: int
+    id: int
+    title: str

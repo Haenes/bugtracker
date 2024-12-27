@@ -1,10 +1,10 @@
 from sqlalchemy import (
-    VARCHAR, ForeignKey,
+    VARCHAR, ForeignKey, Index,
     CheckConstraint, UniqueConstraint
 )
 from sqlalchemy.orm import Mapped, mapped_column
 
-from models import BaseClass
+from models import BaseClass, to_tsvector
 from .schemas import IssueType, IssueStatus, IssuePriority
 
 
@@ -22,6 +22,11 @@ class Issue(BaseClass):
 
     __table_args__ = (
         UniqueConstraint("project_id", "title", name="issue_unique_title"),
+        Index(
+            "issue_fts_idx",
+            to_tsvector("title", "description"),
+            postgresql_using="gin"
+        ),
         CheckConstraint(
             sqltext=type.in_(
                 [
