@@ -28,3 +28,8 @@ class PaginationProject(ProjectSchema):
 
 class CreatedProjectSchema(PaginationProject):
     pass
+
+
+class SearchProject(BaseModel):
+    id: int
+    name: str
