@@ -6,6 +6,7 @@ import { useTranslation } from "react-i18next";
 
 import {
     SettingOutlined,
+    SearchOutlined,
     HomeOutlined,
     LogoutOutlined,
 } from "@ant-design/icons";
@@ -34,11 +35,16 @@ export function Sidebar() {
         },
         {
             key: "2",
+            label: t("sidebar_search"),
+            icon:  <SearchOutlined />,
+        },
+        {
+            key: "3",
             label: t("sidebar_settings"),
             icon: <Link to="/settings"><SettingOutlined /></Link>,
         },
         {
-            key: "3",
+            key: "4",
             label: t("sidebar_logOut"),
             icon: <LogoutOutlined />,
             onClick: handleClickLogout

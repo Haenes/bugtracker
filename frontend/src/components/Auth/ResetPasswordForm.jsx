@@ -1,8 +1,8 @@
 import { useState } from "react";
 
-import { Button, Card, Tooltip, Input } from 'antd';
+import { Button, Card, Tooltip, Input, Spin } from 'antd';
 
-import { Form, useActionData } from "react-router";
+import { Form, useActionData, useNavigation } from "react-router";
 
 import { useTranslation } from "react-i18next";
 
@@ -12,10 +12,13 @@ import { passwordTooltip } from "./RegisterForm.jsx";
 export function ResetPasswordForm() {
     const [passwordVisible, setPasswordVisible] = useState(false);
     const { t } = useTranslation();
+    const navigation = useNavigation();
     const errors = useActionData();
 
     return (
         <div className="flex flex-col h-screen w-screen items-center justify-center">
+            {navigation.state === "loading" && <Spin fullscreen delay={50}/>}
+
             <Card title={t("resetPassword_cardTitle")} className="text-center w-4/5 md:w-2/5 lg:w-1/4">
 
                 <Form method="post" name="forgotPassword" className="flex flex-col">
@@ -55,7 +58,12 @@ export function ResetPasswordForm() {
                         visibilityToggle={() => (!setPasswordVisible)}
                     />
 
-                    <Button type="primary" htmlType="submit">
+                    <Button
+                        loading={navigation.state === "submitting" & 50}
+                        className="w-1/3 self-center"
+                        type="primary"
+                        htmlType="submit"
+                    >
                         {t("resetPassword_button")}
                     </Button>
 

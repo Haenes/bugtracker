@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import { Form, Link, useActionData } from "react-router";
+import { Form, Link, useActionData, useNavigation} from "react-router";
 
 import { Trans, useTranslation } from "react-i18next";
 
@@ -10,6 +10,7 @@ import { Button, Card, Input, Tooltip } from "antd";
 export function RegisterForm() {
     const [passwordVisible, setPasswordVisible] = useState(false);
     const errors = useActionData();
+    const navigation = useNavigation();
     const { t } = useTranslation();
 
     return (
@@ -84,7 +85,12 @@ export function RegisterForm() {
                         visibilityToggle={() => (!setPasswordVisible)}
                     />
 
-                    <Button block type="primary" htmlType="submit">
+                    <Button
+                        loading={navigation.state === "submitting" & 50}
+                        block
+                        type="primary"
+                        htmlType="submit"
+                    >
                         {t("register_btn")}
                     </Button>
 

@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react"
 
-import { Outlet, useSubmit } from "react-router"
+import { Outlet, useSubmit, useNavigation } from "react-router"
 
-import { Layout } from "antd"
+import { Layout, Spin } from "antd"
 
 import { Sidebar } from "./Sidebar.jsx"
 import { authProvider } from "../routes/auth/authProvider.jsx"
@@ -11,10 +11,12 @@ import { authProvider } from "../routes/auth/authProvider.jsx"
 export function Component() {
     useJwtExpirationTime();
 
+    const navigation = useNavigation();
     const [modalOpen, setModalOpen] = useState({visible: false, modalId: 0});
 
     return (
         <Layout hasSider>
+            {navigation.state === "loading" && <Spin fullscreen delay={50}/>}
             <Sidebar />
             <Outlet context={[modalOpen, setModalOpen]}/>
         </Layout>

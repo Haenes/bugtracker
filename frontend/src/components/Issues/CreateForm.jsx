@@ -28,7 +28,7 @@ export function CreateIssueForm({ errors, setModalOpen }) {
             setModalOpen({visible: false, modalId: 1});
             delete errors.id;
         }
-    }, [errors])
+    }, [errors?.id])
 
     return (
         <Form method="post" name="createIssue" className="flex flex-col gap-y-3 mt-4">

@@ -8,7 +8,7 @@ import { useTranslation } from "react-i18next";
 
 
 
-export function CreateProjectForm({errors, setModalOpen}) {
+export function CreateProjectForm({ errors, setModalOpen }) {
     const { t } = useTranslation();
 
     // Close Modal with form after successful creation.
@@ -17,7 +17,7 @@ export function CreateProjectForm({errors, setModalOpen}) {
             setModalOpen({visible: false, modalId: 1});
             delete errors.id;
         }
-    }, [errors])
+    }, [errors?.id])
 
     return (
         <Form method="post" name="createProject" className="flex flex-col gap-y-3 mt-4">
@@ -40,7 +40,7 @@ export function CreateProjectForm({errors, setModalOpen}) {
 
             <Input
                 name="key"
-                className="w-1/2"
+                className="w-3/5"
                 status={errors?.createKey && "error"}
                 type="text"
                 placeholder={t("createProject_key")}

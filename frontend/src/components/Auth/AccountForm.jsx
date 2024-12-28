@@ -27,10 +27,10 @@ export function AccountForm() {
 
     // Close Modal with form after successful change of password.
     useEffect(() => {
-        if (errors === "passwordChanged") {
+        if (errors?.passwordChanged) {
             setModalOpen({visible: false, modalId: 3});
         }
-    }, [errors])
+    }, [errors?.passwordChanged])
 
     return (
         <Form method="post" name="account" className="flex flex-col gap-y-4 md:w-2/5">

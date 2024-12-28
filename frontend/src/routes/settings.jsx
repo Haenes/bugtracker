@@ -62,8 +62,9 @@ async function changePasswordAction(formData) {
     if (Object.keys(errors).length) return errors;
 
     const result = await editMe(Object.fromEntries(formData));
+    errors.passwordChanged = true;
 
-    return "passwordChanged";
+    return errors;
 }
 
 

@@ -3,7 +3,7 @@ import * as ReactDOM from "react-dom/client";
 import { createBrowserRouter } from "react-router";
 import { RouterProvider } from "react-router/dom";
 
-import { ConfigProvider, Layout, theme } from 'antd';
+import { ConfigProvider, Layout, Spin, theme } from "antd";
 
 import "./index.css";
 import "./i18n/config.js";
@@ -32,6 +32,7 @@ const getColorMode = () => {
 const router = createBrowserRouter([
     {
         lazy: () => import("./components/ErrorPage.jsx"),
+        hydrateFallbackElement: <Spin fullscreen/>,
         children: [
             {
                 path: "/",

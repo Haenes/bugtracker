@@ -74,7 +74,7 @@ async function editProjectAction(projectId, formData) {
     // but because the unchecked checkbox is null (not false!)
     // the project remains a favorite.
     formData.get("starred") === null && formData.set("starred", false);
-    // This check handle case, when user just add project to favorite
+    // Change project key to Uppercase, just bcs it looks better.
     formData.get("key") && formData.set("key", formData.get("key").toUpperCase());
 
     const project = await updateItem(
@@ -82,9 +82,9 @@ async function editProjectAction(projectId, formData) {
         projectId
     );
 
-    return project.detail ?
-        afterSubmitValidation(project, "edit", projectId) :
-        project;
+    return project.detail
+        ? afterSubmitValidation(project, "edit", projectId)
+        : project;
 }
 
 
@@ -104,15 +104,15 @@ function afterSubmitValidation(project, intent) {
     const errors = {};
 
     if (project.detail === "Project with this key already exist!") {
-        intent === "create" ?
-        errors.createKey = i18n.t("error_projectKey") :
-        errors.editKey = i18n.t("error_projectKey");
+        intent === "create"
+        ? errors.createKey = i18n.t("error_projectKey")
+        : errors.editKey = i18n.t("error_projectKey");
 
         return errors;
     } else if (project.detail === "Project with this name already exist!") {
-        intent === "create" ?
-        errors.createName = i18n.t("error_projectName") :
-        errors.editName = i18n.t("error_projectKey");
+        intent === "create"
+        ? errors.createName = i18n.t("error_projectName")
+        : errors.editName = i18n.t("error_projectKey");
 
         return errors;
     }

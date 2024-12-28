@@ -1,12 +1,13 @@
 import { Card, Button, Input } from 'antd';
 
-import { Form, Link } from "react-router";
+import { Form, Link, useNavigation } from "react-router";
 
 import { useTranslation } from "react-i18next";
 
 
 export function ForgotPasswordForm() {
     const { t } = useTranslation();
+    const navigation = useNavigation();
 
     return (
         <div className="flex flex-col h-screen w-screen items-center justify-center">
@@ -27,7 +28,7 @@ export function ForgotPasswordForm() {
                         required
                     />
 
-                    <Button className="my-4" type="primary" htmlType="submit">
+                    <Button loading={navigation.state === "submitting" & 50} className="my-4" type="primary" htmlType="submit">
                         {t("forgotPassword_btn")}    
                     </Button>
 

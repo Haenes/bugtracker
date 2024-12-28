@@ -1,9 +1,9 @@
 import { useState } from 'react';
 
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
-import { Card, Button, Checkbox, Input } from 'antd';
+import { Card, Button, Checkbox, Input, Spin } from 'antd';
 
-import { Form, Link, useActionData } from "react-router";
+import { Form, Link, useActionData, useNavigation } from "react-router";
 
 import { useTranslation } from "react-i18next";
 
@@ -11,10 +11,13 @@ import { useTranslation } from "react-i18next";
 export function LoginForm({ children }) {
     const [passwordVisible, setPasswordVisible] = useState(false);
     const errors = useActionData();
+    const navigation = useNavigation();
     const {t} = useTranslation();
 
     return (
         <div className="flex flex-col h-screen w-screen items-center justify-center">
+            {navigation.state === "loading" && <Spin fullscreen delay={50}/>}
+
             <div className="mb-5">{children}</div>
 
             <Card title={t("login_cardTitle")}>
@@ -53,7 +56,12 @@ export function LoginForm({ children }) {
 
                     <Checkbox name="remember">{t("login_rememberMe")}</Checkbox>
 
-                    <Button block type="primary" htmlType="submit">
+                    <Button
+                        loading={navigation.state === "submitting" & 50}
+                        block
+                        type="primary"
+                        htmlType="submit"
+                    >
                         {t("btn_logIn")}
                     </Button>
 

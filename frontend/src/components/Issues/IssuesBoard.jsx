@@ -1,14 +1,16 @@
 import { useState } from "react";
 
-import { useActionData, useOutletContext, useLoaderData } from "react-router";
+import {
+    useActionData,
+    useOutletContext,
+    useLoaderData,
+} from "react-router";
 
 import { useTranslation } from "react-i18next";
 
 import { Card, Empty } from "antd";
 
-import { CreateModal } from "../ModalProvider.jsx";
-import { CreateIssueForm } from "./CreateForm.jsx"
-import { EditIssueForm } from "./EditForm.jsx";
+import { createModal } from "../ModalProvider.jsx";
 
 
 export function IssuesBoard() {
@@ -21,18 +23,10 @@ export function IssuesBoard() {
     const [modalOpen, setModalOpen] = useOutletContext();
     const [formData, setFormData] = useState(null);
 
-    const createModal = () => {
-        return (
-            <CreateModal modalId={1} title={modalTitle} errors={errors}>
-                <CreateIssueForm errors={errors} setModalOpen={setModalOpen} />
-            </CreateModal>
-        );
-    }
-
     if (!issues) {
         return (
             <>
-                {createModal()}
+                {createModal(1, modalTitle, errors,"createIssue")}
                 <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
             </>
         );
@@ -86,11 +80,8 @@ export function IssuesBoard() {
                 {issueCard(done)}
             </Card>
 
-            {createModal()}
-
-            <CreateModal modalId={2} title={modalTitle} errors={errors}>
-                <EditIssueForm issue={formData} errors={errors} setModalOpen={setModalOpen} />
-            </CreateModal>
+            {createModal(1, modalTitle, errors, "createIssue")}
+            {createModal(2, modalTitle, errors, "editIssue", formData)}
         </div>
     );
 }

@@ -2,7 +2,7 @@ import { useState } from "react";
 
 import {
     Link, useActionData, useLoaderData,
-    useSubmit, useOutletContext
+    useSubmit, useFetcher, useOutletContext
 } from "react-router";
 
 import { useTranslation } from "react-i18next";
@@ -10,10 +10,7 @@ import { useTranslation } from "react-i18next";
 import { List, Card, Button, Pagination } from "antd";
 import { StarFilled, StarOutlined, SettingOutlined } from "@ant-design/icons";
 
-import { CreateProjectForm } from "./CreateForm.jsx";
-import { EditProjectForm } from "./EditForm.jsx";
-
-import { CreateModal } from "../ModalProvider.jsx";
+import { createModal } from "../ModalProvider.jsx";
 
 
 export function ProjectsList() {
@@ -28,19 +25,11 @@ export function ProjectsList() {
     const [modalOpen, setModalOpen] = useOutletContext();
     const [formData, setFormData] = useState(null);
 
-    const createModal = () => {
-        return (
-            <CreateModal modalId={1} title={modalTitle} errors={errors}>
-                <CreateProjectForm errors={errors} setModalOpen={setModalOpen} />
-            </CreateModal>
-        );
-    }
-
     if (!projects) {
         return (
             <>
                 <List />
-                {createModal()}
+                {createModal(1, modalTitle, errors, "createProject")}
             </>
         );
     }
@@ -67,7 +56,6 @@ export function ProjectsList() {
                         <List.Item>
                             <Card
                                 title={<Link to={`${item.id}/issues`}>{item.name}</Link>}
-                                hoverable
                                 styles={{body: {padding: 0}}}
                                 extra={item.key}
                                 actions={[
@@ -83,21 +71,21 @@ export function ProjectsList() {
                 }}
             />
 
-            {createModal()}
-
-            <CreateModal modalId={2} title={modalTitle} errors={errors}>
-                <EditProjectForm project={formData} errors={errors} setModalOpen={setModalOpen} />
-            </CreateModal>
+            {createModal(1, modalTitle, errors, "createProject")}
+            {createModal(2, modalTitle, errors, "editProject", formData)}
         </>
     );
 }
 
 
-function FavoriteButton({data}) {
-    const submit = useSubmit();
+function FavoriteButton({ data }) {
+    const fetcher = useFetcher();
+    const { t } = useTranslation();
+
+    let favorite = fetcher.formData?.get("starred") || data.starred
 
     const handleClick = () => {
-        submit(
+        fetcher.submit(
             {
                 intent: "edit",
                 projectId: data.id,
@@ -111,8 +99,12 @@ function FavoriteButton({data}) {
         <Button
             htmlType="submit"
             name="starred"
-            className="border-0 shadow-none"
-            icon={isFavorite(data.starred)}
+            className="border-0 shadow-none"    
+            icon={
+                favorite
+                ? <StarFilled title={t("projectsList_favoriteTrue")} style={buttonSize}/>
+                : <StarOutlined title={t("projectsList_favoriteFalse")} style={buttonSize}/>
+            }
             onClick={handleClick}
         />
     );
@@ -134,15 +126,6 @@ function SettingsButton({ project, setFuncs }) {
             }}
         />
     );
-}
-
-
-function isFavorite(bool) {
-    const { t } = useTranslation();
-
-    return bool ?
-        <StarFilled title={t("projectsList_favoriteTrue")} style={buttonSize}/> :
-        <StarOutlined title={t("projectsList_favoriteFalse")} style={buttonSize}/>
 }
 
 
