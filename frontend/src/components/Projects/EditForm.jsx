@@ -42,7 +42,7 @@ export function EditProjectForm({ project, errors, setModalOpen }) {
                 />
             </div>
 
-            <div className="flex flex-row items-center w-2/3">
+            <div className="flex flex-row items-center w-3/5 md:w-2/5">
                 <span className="mr-2">{t("editProject_key")}</span>
                 <Input
                     name="key"

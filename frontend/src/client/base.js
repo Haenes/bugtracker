@@ -15,6 +15,20 @@ export async function getItems(page, limit, project_id = null) {
 }
 
 
+export async function searchItems(q) {
+    const url = `http://127.0.0.1:8000/search?q=${q}`;
+
+    try {
+        let rawResponse = await fetch(url, {credentials: "include"});
+        let response = await rawResponse.json();
+
+        return response;
+    } catch(err) {
+        throw new Response("Error", error503);
+    }
+}
+
+
 export async function createItem(data, project_id = null) {
     const url = urlCreateHelper(project_id);
 

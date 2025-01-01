@@ -26,7 +26,7 @@ export function IssuesBoard() {
     if (!issues) {
         return (
             <>
-                {createModal(1, modalTitle, errors,"createIssue")}
+                {createModal(1, "createIssue", modalTitle, errors)}
                 <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
             </>
         );
@@ -37,7 +37,7 @@ export function IssuesBoard() {
     const done = issues.results.filter(issue => issue.status === "Done");
 
     const issueCard = (issueStatus) => {
-        return (Array.from(issueStatus).map((issue, i) => (
+        return (issueStatus.map((issue, i) => (
             <Card
                 title={issue.title}
                 key={issue.id}
@@ -64,11 +64,11 @@ export function IssuesBoard() {
                 </div>
             </Card>
         )));
-    }
+    };
 
     return (
         <div className="grid grid-cols-12 h-full gap-4 md:gap-2 text-center">
-            <Card className="col-span-12 md:col-span-4" title={t("issuesBoard_toDo")}>
+            <Card autoFocus className="focus-visible:focus:*: col-span-12 md:col-span-4" title={t("issuesBoard_toDo")}>
                 {issueCard(toDo)}
             </Card>
 
@@ -80,8 +80,8 @@ export function IssuesBoard() {
                 {issueCard(done)}
             </Card>
 
-            {createModal(1, modalTitle, errors, "createIssue")}
-            {createModal(2, modalTitle, errors, "editIssue", formData)}
+            {createModal(1, "createIssue",  modalTitle, errors)}
+            {createModal(2, "editIssue", modalTitle, errors, formData)}
         </div>
     );
 }

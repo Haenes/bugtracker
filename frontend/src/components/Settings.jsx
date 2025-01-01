@@ -5,8 +5,7 @@ import { SunOutlined, MoonOutlined } from "@ant-design/icons";
 
 import { AccountForm } from "./Auth/AccountForm.jsx";
 import { PageContent } from "../components/PageContent.jsx";
-import { CreateModal } from "../components/ModalProvider.jsx";
-import { ChangePasswordForm } from "../components/Auth/ChangePasswordForm.jsx";
+import { createModal } from "../components/ModalProvider.jsx";
 
 
 export function Settings() {
@@ -28,9 +27,7 @@ export function Settings() {
                 items={items.map((_, i) => {return items[i]})}
             />
 
-            <CreateModal modalId={3} title={t("settings_changePassword")}>
-                <ChangePasswordForm />
-            </CreateModal>
+            {createModal(3, "changePassword", t("settings_changePassword"))}
         </PageContent>
     );
 }

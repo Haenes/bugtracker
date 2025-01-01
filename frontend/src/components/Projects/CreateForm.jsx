@@ -40,7 +40,7 @@ export function CreateProjectForm({ errors, setModalOpen }) {
 
             <Input
                 name="key"
-                className="w-3/5"
+                className="w-1/2 md:w-1/4"
                 status={errors?.createKey && "error"}
                 type="text"
                 placeholder={t("createProject_key")}

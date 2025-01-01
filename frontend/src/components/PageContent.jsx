@@ -5,6 +5,7 @@ import { useOutletContext } from "react-router";
 import { Layout, theme, Button } from "antd";
 import { FormOutlined } from "@ant-design/icons";
 
+import { createModal } from "./ModalProvider.jsx";
 
 const { Content } = Layout;
 
@@ -40,6 +41,8 @@ export function PageContent({ header, children }) {
                     {children}
                 </div>
             </div>
+
+            {createModal(4, "search")}
         </Content>
     );
 }

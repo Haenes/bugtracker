@@ -64,7 +64,7 @@ export function EditIssueForm({ issue, errors, setModalOpen }) {
                     <span className="mr-2">{t("editIssue_type")}</span>
                     <Select
                         defaultValue={issue.type}
-                        className="w-1/3"
+                        className="w-1/3 md:w-1/5"
                         popupMatchSelectWidth={false}
                         options={[
                             {label: t("issue_typeFeature"), value: "Feature"},
@@ -79,7 +79,7 @@ export function EditIssueForm({ issue, errors, setModalOpen }) {
                     <span className="mr-2">{t("editIssue_status")}</span>
                     <Select
                         defaultValue={issue.status}
-                        className="w-2/5"
+                        className="w-2/5 md:w-1/4"
                         popupMatchSelectWidth={false}
                         options={[
                             {label: t("issue_statusToDo"), value: "To do"},
@@ -94,7 +94,7 @@ export function EditIssueForm({ issue, errors, setModalOpen }) {
                 <span className="mr-2">{t("editIssue_priority")}</span>
                 <Select
                     defaultValue={issue.priority}
-                    className="w-2/5"
+                    className="w-1/2 md:w-1/3"
                     popupMatchSelectWidth={false}
                     options={[
                         {label: t("issue_priorityLowest"), value: "Lowest"},

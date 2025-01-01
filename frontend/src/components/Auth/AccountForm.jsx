@@ -89,7 +89,7 @@ export function AccountForm() {
                     onConfirm={handleAccDelete}
                 >
                     <Button danger type="link">
-                        {t("btn_delete")}
+                        {t("settings_deleteAcc")}
                     </Button>
                 </Popconfirm>
 

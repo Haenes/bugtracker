@@ -7,6 +7,8 @@ import { CreateProjectForm } from "./Projects/CreateForm.jsx";
 import { EditProjectForm } from "./Projects/EditForm.jsx";
 import { CreateIssueForm } from "./Issues/CreateForm.jsx";
 import { EditIssueForm } from "./Issues/EditForm.jsx";
+import { SearchForm } from "./SearchForm.jsx";
+import { ChangePasswordForm } from "./Auth/ChangePasswordForm.jsx";
 
 
 export function CreateModal({ modalId, title, errors = null, children }) {
@@ -27,9 +29,10 @@ export function CreateModal({ modalId, title, errors = null, children }) {
 
     return (
         <Modal
-            title={title}
-            width={modalId === 1 && 290}
-            centered
+            title={modalId != 4 && title}
+            width={modalId === 3 ? 315 : 520}
+            centered={modalId != 4}
+            closable={modalId != 4}
             open={modalOpen.modalId === modalId && modalOpen.visible}
             footer={null}
             focusTriggerAfterClose={false}
@@ -45,11 +48,17 @@ export function CreateModal({ modalId, title, errors = null, children }) {
 }
 
 
-export function createModal(id, title, errors, form, item) {
+export function createModal(id, form, title, errors, item) {
     const navigation = useNavigation();
     const [modalOpen, setModalOpen] =  useOutletContext();
 
     switch(form) {
+        case "search":
+            form = <SearchForm setModalOpen={setModalOpen} />;
+            break;
+        case "changePassword":
+            form = <ChangePasswordForm />;
+            break;
         case "createProject":
             form = <CreateProjectForm errors={errors} setModalOpen={setModalOpen} />;
             break;
@@ -61,7 +70,6 @@ export function createModal(id, title, errors, form, item) {
             break;
         case "editIssue":
             form = <EditIssueForm issue={item} errors={errors} setModalOpen={setModalOpen} />;
-            break;
     }
 
     return (

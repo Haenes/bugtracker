@@ -16,7 +16,7 @@ import { ConfigProvider, Layout, Menu } from "antd";
 const { Sider } = Layout;
 
 
-export function Sidebar() {
+export function Sidebar({ setModalOpen }) {
     const submit = useSubmit();
     const { t } = useTranslation();
     const location = useLocation().pathname;
@@ -25,6 +25,10 @@ export function Sidebar() {
 
     const handleClickLogout = () => {
         submit(null, {method: "POST", action: "/logout"});
+    }
+
+    const handleClickSearch = () => {
+        setModalOpen({visible: true, modalId: 4});
     }
 
     const menuItems = [
@@ -37,6 +41,7 @@ export function Sidebar() {
             key: "2",
             label: t("sidebar_search"),
             icon:  <SearchOutlined />,
+            onClick: handleClickSearch
         },
         {
             key: "3",

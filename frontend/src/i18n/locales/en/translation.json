@@ -22,6 +22,7 @@
     "settings_header": "Settings",
     "settings_tab1": "Account",
     "settings_tab2": "Preferences",
+    "settings_deleteAcc": "Delete account",
     "settings_changePassword": "Change password",
     "settings_light": "Light",
     "settings_dark": "Dark",
@@ -34,6 +35,8 @@
     "sidebar_search": "Search",
     "sidebar_settings": "Settings",
     "sidebar_logOut": "Log out",
+
+    "search_title": "Search query...",
 
     "projectsList_header": "Projects",
     "projectsList_modalTitle": "Project",

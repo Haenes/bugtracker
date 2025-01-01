@@ -22,6 +22,7 @@
     "settings_header": "Настройки",
     "settings_tab1": "Аккаунт",
     "settings_tab2": "Предпочтения",
+    "settings_deleteAcc": "Удалить аккаунт",
     "settings_changePassword": "Изменить пароль",
     "settings_light": "Cветлая",
     "settings_dark": "Тёмная",
@@ -34,6 +35,8 @@
     "sidebar_search": "Поиск",
     "sidebar_settings": "Настройки",
     "sidebar_logOut": "Выйти",
+
+    "search_title": "Поисковый запрос...",
 
     "projectsList_header": "Проекты",
     "projectsList_modalTitle": "Проект",

@@ -29,7 +29,7 @@ export function ProjectsList() {
         return (
             <>
                 <List />
-                {createModal(1, modalTitle, errors, "createProject")}
+                {createModal(1, "createProject", modalTitle, errors)}
             </>
         );
     }
@@ -71,8 +71,8 @@ export function ProjectsList() {
                 }}
             />
 
-            {createModal(1, modalTitle, errors, "createProject")}
-            {createModal(2, modalTitle, errors, "editProject", formData)}
+            {createModal(1, "createProject", modalTitle, errors)}
+            {createModal(2, "editProject", modalTitle, errors, formData)}
         </>
     );
 }

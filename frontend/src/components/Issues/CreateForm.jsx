@@ -60,7 +60,7 @@ export function CreateIssueForm({ errors, setModalOpen }) {
 
             <Select
                 placeholder={t("createIssue_type")}
-                className="w-1/2"
+                className="w-2/5 md:w-1/4"
                 status={errors?.createType && "error"}
                 options={[
                     {label: t("issue_typeFeature"), value: "Feature"},
@@ -72,7 +72,7 @@ export function CreateIssueForm({ errors, setModalOpen }) {
 
             <Select
                 placeholder={t("createIssue_priority")}
-                className="w-2/3"
+                className="w-3/5 md:w-2/5"
                 status={errors?.createPriority && "error"}
                 options={[
                     {label: t("issue_priorityLowest"), value: "Lowest"},
