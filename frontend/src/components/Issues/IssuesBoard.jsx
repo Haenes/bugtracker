@@ -10,8 +10,9 @@ import { useTranslation } from "react-i18next";
 
 import { Card, Empty } from "antd";
 
-import { createModal } from "../ModalProvider.jsx";
-
+import { CreateModal } from "../ModalProvider.jsx";
+import { CreateIssueForm } from "./CreateForm.jsx";
+import { EditIssueForm } from "./EditForm.jsx";
 
 export function IssuesBoard() {
     const issues = useLoaderData();
@@ -26,7 +27,9 @@ export function IssuesBoard() {
     if (!issues) {
         return (
             <>
-                {createModal(1, "createIssue", modalTitle, errors)}
+                <CreateModal modalId={1} title={modalTitle} errors={errors}>
+                    <CreateIssueForm setModalOpen={setModalOpen} />
+                </CreateModal>
                 <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
             </>
         );
@@ -80,8 +83,13 @@ export function IssuesBoard() {
                 {issueCard(done)}
             </Card>
 
-            {createModal(1, "createIssue",  modalTitle, errors)}
-            {createModal(2, "editIssue", modalTitle, errors, formData)}
+            <CreateModal modalId={1} title={modalTitle} errors={errors}>
+                <CreateIssueForm errors={errors} setModalOpen={setModalOpen} />
+            </CreateModal>
+
+            <CreateModal modalId={2} title={modalTitle} errors={errors}>
+                <EditIssueForm issue={formData} errors={errors} setModalOpen={setModalOpen} />
+            </CreateModal>
         </div>
     );
 }

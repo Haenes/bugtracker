@@ -66,7 +66,7 @@ export function CreateIssueForm({ errors, setModalOpen }) {
                     {label: t("issue_typeFeature"), value: "Feature"},
                     {label: t("issue_typeBug"), value: "Bug"}
                 ]}
-                onChange={value => {setType(value); handleTypeChange()}}
+                onChange={value => {setType(value); handleTypeChange}}
             />
             <input name="type" type="hidden" value={type} />
 
@@ -81,7 +81,7 @@ export function CreateIssueForm({ errors, setModalOpen }) {
                     {label: t("issue_priorityHigh"), value: "High"},
                     {label: t("issue_priorityHighest"), value: "Highest"}
                 ]}
-                onChange={value => {setPriority(value), handlePriorityChange()}}
+                onChange={value => {setPriority(value), handlePriorityChange}}
             />
             <input name="priority" type="hidden" value={priority} />
 

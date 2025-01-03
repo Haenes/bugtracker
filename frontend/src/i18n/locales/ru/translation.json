@@ -36,7 +36,10 @@
     "sidebar_settings": "Настройки",
     "sidebar_logOut": "Выйти",
 
-    "search_title": "Поисковый запрос...",
+    "search_header": "Поиск",
+    "search_title": "Введите не менее 3 символов",
+    "search_allResults": "Все результаты",
+    "search_noResults": "Поиск не дал результата",
 
     "projectsList_header": "Проекты",
     "projectsList_modalTitle": "Проект",

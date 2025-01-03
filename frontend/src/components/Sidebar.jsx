@@ -41,6 +41,7 @@ export function Sidebar({ setModalOpen }) {
             key: "2",
             label: t("sidebar_search"),
             icon:  <SearchOutlined />,
+            disabled: location === "/search",
             onClick: handleClickSearch
         },
         {
@@ -69,7 +70,10 @@ export function Sidebar({ setModalOpen }) {
             <ConfigProvider theme={{components: menuCompanent}}>
                 <Menu
                     mode="vertical"
-                    selectedKeys={location === "/projects" && "1"}
+                    selectedKeys={
+                        location === "/projects" ? "1"
+                        : location === "/settings" && "3"
+                    }
                     items={menuItems}
                 />
             </ConfigProvider>

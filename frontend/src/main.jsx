@@ -63,10 +63,6 @@ const router = createBrowserRouter([
                 lazy: () => import("./routes/auth/logout.jsx"),
             },
             {
-                path: "/search",
-                lazy: () => import("./routes/search.jsx"),
-            },
-            {
                 lazy: () => import("./components/PageLayout.jsx"),
                 children: [
                     // Add another ErrorPage as pathless route,
@@ -86,6 +82,11 @@ const router = createBrowserRouter([
                             {
                                 path: "/settings",
                                 lazy: () => import("./routes/settings.jsx"),
+                            },
+                            {
+                                path: "/search",
+                                id: "search",
+                                lazy: () => import("./routes/search.jsx"),
                             },
                         ]
                     },

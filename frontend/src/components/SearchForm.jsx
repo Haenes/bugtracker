@@ -1,4 +1,11 @@
-import { Link, useFetcher} from "react-router";
+import { useState } from "react";
+
+import {
+    Link,
+    useFetcher,
+    useLocation,
+    useRouteLoaderData
+} from "react-router";
 
 import { useTranslation } from "react-i18next";
 
@@ -9,7 +16,9 @@ const { Search } = Input;
 
 export function SearchForm({ setModalOpen }) {
     const fetcher = useFetcher();
+    const loaderData = useRouteLoaderData("search");
     const { t } = useTranslation();
+    const [searchQuery, setSearchQuery] = useState("");
 
     const handleChange = (event) => {
         if (event.currentTarget.value.length >= 3) {
@@ -20,6 +29,10 @@ export function SearchForm({ setModalOpen }) {
         }
     };
 
+    const handleClick = () => {
+        setModalOpen({visible: false, modalId: 4});
+    };
+
     return (
         <>
             <fetcher.Form method="POST" action="/search">
@@ -27,94 +40,136 @@ export function SearchForm({ setModalOpen }) {
                     name="q"
                     type="search"
                     placeholder={t("search_title")}
+                    defaultValue={loaderData?.searchQuery}
                     required
                     allowClear
                     loading={fetcher.state === "submitting" & 5}
                     minLength={3}
-                    onChange={(e) => handleChange(e)}
+                    maxLength={50}
+                    onChange={(e) => {
+                        setSearchQuery(e.currentTarget.value);
+                        handleChange(e);
+                    }}
                 />
             </fetcher.Form>
 
-            {fetcher.data &&
-                <div className="mt-3">
-                    {displaySearchResults(t, fetcher.data, setModalOpen)}
-                </div>
+            {showSearchResults(fetcher, loaderData, t, handleClick, searchQuery)}
+        </>
+    );
+}
+
+
+function showSearchResults(fetcher, loaderData, t, handleClick, searchQuery) {
+    const isSearchPage = useLocation().pathname !== "/search";
+    let results;
+    let linkToAllResults;
+
+    if (fetcher.data?.detail) {
+        return (
+            <div className="flex flex-col text-base">
+                <span className="text-center mt-3">
+                    {t("search_noResults")}
+                </span>
+            </div>
+        );
+    } else if (fetcher.data?.projects || fetcher.data?.issues) {
+        results = displaySearchResults(fetcher.data, t, handleClick, false);
+        linkToAllResults = isSearchPage && allResultsLink(
+            fetcher.data, searchQuery, t, handleClick
+        );
+    } else if (loaderData?.searchResults) {
+        results = displaySearchResults(loaderData.searchResults, t, handleClick, true);
+    }
+
+    return (
+        <div className="flex flex-col text-base">
+            {results}
+            {linkToAllResults}
+        </div>
+    )
+}
+
+
+function displaySearchResults(plainResults, t, handleClick, isSearchPage) {
+    const jsxResults = convertResultsToJsx(plainResults, handleClick, isSearchPage);
+    const projects = jsxResults.jsxProjects;
+    const issues = jsxResults.jsxIssues;
+
+    return (
+        <>
+            {projects.length > 0 &&
+                <>
+                    <span className="mt-3">{t("projectsList_header")}:</span>
+                    {projects}
+                </>
+            }
+            {issues.length > 0 &&
+                <>
+                    <span className={projects.length >= 0 && "mt-3"}>
+                        {t("issuesBoard_header")}:
+                    </span>
+                    {issues}
+                </>
             }
         </>
     );
 }
 
 
-function displaySearchResults(t, results, setModalOpen) {
-    // const { t } = useTranslation();
+function convertResultsToJsx(plainResults, handleClick, isSearchPage) {
+    let jsxProjects = [];
+    let jsxIssues = [];
 
-    let projects = [];
-    let issues = [];
+    const fillResultsArray = (array, item) => {
+        array.push(
+            <li key={item.id}>
+                <Link
+                    to={`/projects/${item.project_id || item.id}/issues`}
+                    onClick={handleClick}
+                >
+                    {item.name || item.title}
+                </Link>
+            </li>
+        );
+    }
 
-    const handleClick = () => {
-        setModalOpen({visible: false, modalId: 4});
+    if (plainResults?.projects) {
+        for (let project of plainResults.projects) {
+            if (jsxProjects.length >= 5 && !isSearchPage) break;
+            fillResultsArray(jsxProjects, project)
+        }
+    }
+
+    if (plainResults?.issues) {
+        for (let issue of plainResults.issues) {
+            if (jsxIssues.length >= 5 && !isSearchPage) break;
+            fillResultsArray(jsxIssues, issue);
+        }
+    }
+
+    return {jsxProjects, jsxIssues};
+}
+
+
+function allResultsLink(results, searchQuery, t, handleClick) {
+    const isNeedFullPage = (results) => {
+        if (results?.projects) {
+            return results.projects.length > 5;
+        } else if (results?.issues) {
+            return results.issues.length > 5;
+        }
     };
 
-    if (results?.projects) {
-        for (let project of results.projects) {
-            if (projects.length >= 5) {
-                break;
-            }
-
-            projects.push(
+    if (isNeedFullPage(results)) {
+        return (
+            <span className="text-end">
                 <Link
-                    key={project.id}
-                    to={`/projects/${project.id}/issues`}
+                    to={`/search?q=${searchQuery}`}
                     onClick={handleClick}
                 >
-                    {project.name}
+                    {t("search_allResults")}
                 </Link>
-            );
-        }
+            </span>
+        );
     }
-
-    if (results?.issues) {
-        for (let issue of results.issues) {
-            if (issues.length >= 5) {
-                break;
-            }
-
-            issues.push(
-                <Link
-                    key={issue.id}
-                    to={`/projects/${issue.project_id}/issues`}
-                    onClick={handleClick}
-                >
-                    {issue.title}
-                </Link>
-            );
-        }
-    }
-
-    return (
-        <div className="flex flex-col text-base">
-            {results?.detail &&
-                <div className="text-center">
-                    <span>No results</span>
-                </div>
-            }
-            {projects.length > 0 &&
-                <div className="flex flex-col">
-                    <span>{t("projectsList_header")}:</span>
-                    {projects}
-                </div>
-            }
-            {issues.length > 0 &&
-                <div
-                    className={projects.length > 0
-                        ? "flex flex-col mt-3"
-                        : "flex flex-col"
-                    }
-                >
-                    <span>{t("issuesBoard_header")}:</span>
-                    {issues}
-                </div>
-            }
-        </div>
-    );
 }

@@ -10,7 +10,9 @@ import { useTranslation } from "react-i18next";
 import { List, Card, Button, Pagination } from "antd";
 import { StarFilled, StarOutlined, SettingOutlined } from "@ant-design/icons";
 
-import { createModal } from "../ModalProvider.jsx";
+import { CreateModal } from "../ModalProvider.jsx";
+import { CreateProjectForm } from "./CreateForm.jsx";
+import { EditProjectForm } from "./EditForm.jsx";
 
 
 export function ProjectsList() {
@@ -29,7 +31,9 @@ export function ProjectsList() {
         return (
             <>
                 <List />
-                {createModal(1, "createProject", modalTitle, errors)}
+                <CreateModal modalId={1} title={modalTitle} errors={errors}>
+                    <CreateProjectForm setModalOpen={setModalOpen} />
+                </CreateModal>
             </>
         );
     }
@@ -71,8 +75,13 @@ export function ProjectsList() {
                 }}
             />
 
-            {createModal(1, "createProject", modalTitle, errors)}
-            {createModal(2, "editProject", modalTitle, errors, formData)}
+            <CreateModal modalId={1} title={modalTitle} errors={errors}>
+                <CreateProjectForm  errors={errors} setModalOpen={setModalOpen} />
+            </CreateModal>
+
+            <CreateModal modalId={2} title={modalTitle} errors={errors}>
+                <EditProjectForm project={formData} errors={errors} setModalOpen={setModalOpen} />
+            </CreateModal>
         </>
     );
 }

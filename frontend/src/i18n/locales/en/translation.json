@@ -36,7 +36,10 @@
     "sidebar_settings": "Settings",
     "sidebar_logOut": "Log out",
 
-    "search_title": "Search query...",
+    "search_header": "Search",
+    "search_title": "Enter at least 3 characters",
+    "search_allResults": "See all results",
+    "search_noResults": "No results",
 
     "projectsList_header": "Projects",
     "projectsList_modalTitle": "Project",
