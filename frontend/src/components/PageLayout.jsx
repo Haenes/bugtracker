@@ -16,7 +16,9 @@ export function Component() {
 
     return (
         <Layout hasSider>
-            {navigation.state === "loading" && <Spin fullscreen delay={50}/>}
+            {navigation.state === "loading" && !modalOpen.visible
+                && <Spin fullscreen delay={50}/>
+            }
             <Sidebar setModalOpen={setModalOpen} />
             <Outlet context={[modalOpen, setModalOpen]}/>
         </Layout>

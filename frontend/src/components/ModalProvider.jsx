@@ -36,7 +36,7 @@ export function CreateModal({ modalId, title, errors = null, children }) {
                 clearErrors(errors);
             }}
         >
-            <Spin spinning={navigation.state === "submitting"}>
+            <Spin spinning={navigation.state !== "idle"}>
                 {children}
             </Spin>
         </Modal>
