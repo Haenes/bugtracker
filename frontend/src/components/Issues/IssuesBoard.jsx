@@ -4,11 +4,13 @@ import {
     useActionData,
     useOutletContext,
     useLoaderData,
+    useFetcher,
+    useFetchers
 } from "react-router";
 
 import { useTranslation } from "react-i18next";
 
-import { Card, Empty } from "antd";
+import { Card, Empty, Spin } from "antd";
 
 import { CreateModal } from "../ModalProvider.jsx";
 import { CreateIssueForm } from "./CreateForm.jsx";
@@ -17,6 +19,7 @@ import { EditIssueForm } from "./EditForm.jsx";
 export function IssuesBoard() {
     const issues = useLoaderData();
     const errors = useActionData();
+    const fetchers = useFetchers();
     const { t } = useTranslation();
 
     const modalTitle = t("issuesBoard_modalTitle");
@@ -26,12 +29,11 @@ export function IssuesBoard() {
 
     if (!issues) {
         return (
-            <>
+            <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} >
                 <CreateModal modalId={1} title={modalTitle} errors={errors}>
                     <CreateIssueForm setModalOpen={setModalOpen} />
                 </CreateModal>
-                <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
-            </>
+            </Empty>
         );
     }
 
@@ -39,49 +41,21 @@ export function IssuesBoard() {
     const inProgress = issues.results.filter(issue => issue.status === "In progress");
     const done = issues.results.filter(issue => issue.status === "Done");
 
-    const issueCard = (issueStatus) => {
-        return (issueStatus.map((issue, i) => (
-            <Card
-                title={issue.title}
-                key={issue.id}
-                type="inner"
-                size="small"
-                hoverable
-                className={
-                    issueStatus[i + 1] ?
-                    "text-start mb-4" :
-                    "text-start"
-                }
-                onClick={() => {
-                    setModalOpen({visible: true, modalId: 2});
-                    setFormData(issue)
-                }}
-            >
-                <div className="flex flex-col">
-                    <i>
-                        {t("editIssue_type")} {t("issue_type" + issue.type)}
-                    </i>
-                    <i>
-                        {t("editIssue_priority")} {t("issue_priority" + issue.priority)}
-                    </i>
-                </div>
-            </Card>
-        )));
-    };
-
     return (
         <div className="grid grid-cols-12 h-full gap-4 md:gap-2 text-center">
-            <Card autoFocus className="focus-visible:focus:*: col-span-12 md:col-span-4" title={t("issuesBoard_toDo")}>
-                {issueCard(toDo)}
-            </Card>
+            {fetchers[0] && fetchers[0].state !== "idle" && <Spin fullscreen delay={50}/>}
 
-            <Card className="col-span-12 md:col-span-4" title={t("issuesBoard_inProgress")}>
-                {issueCard(inProgress)}
-            </Card>
+            <StatusCard id="To do" title={t("issuesBoard_toDo")}>
+                {IssueCard(toDo, setModalOpen, setFormData)}
+            </StatusCard>
 
-            <Card className="col-span-12 md:col-span-4" title={t("issuesBoard_done")}>
-                {issueCard(done)}
-            </Card>
+            <StatusCard id="In progress" title={t("issuesBoard_inProgress")}>
+                {IssueCard(inProgress, setModalOpen, setFormData)}
+            </StatusCard>
+
+            <StatusCard id="Done" title={t("issuesBoard_done")}>
+                {IssueCard(done, setModalOpen, setFormData)}
+            </StatusCard>
 
             <CreateModal modalId={1} title={modalTitle} errors={errors}>
                 <CreateIssueForm errors={errors} setModalOpen={setModalOpen} />
@@ -92,4 +66,98 @@ export function IssuesBoard() {
             </CreateModal>
         </div>
     );
+}
+
+
+function StatusCard({ id, title, children }) {
+    const handlers = dragAndDropHandlers("status");
+
+    return (
+        <Card
+            id={id}
+            className="col-span-12 md:col-span-4"
+            title={title} 
+            onDrop={handlers.statusDrop}
+            onDragOver={handlers.statusDragOver}
+        >
+            {children}
+        </Card>
+    );
+}
+
+
+function IssueCard(issueStatus, setModalOpen, setFormData) {
+    const { t } = useTranslation();
+    const handlers = dragAndDropHandlers("card");
+
+    return (issueStatus.map((issue, i) => (
+        <Card
+            id={issue.id}
+            title={issue.title}
+            key={issue.id}
+            type="inner"
+            size="small"
+            hoverable
+            draggable
+            className={
+                issueStatus[i + 1]
+                ? "text-start mb-4"
+                : "text-start"
+            }
+            onClick={() => {
+                setModalOpen({visible: true, modalId: 2});
+                setFormData(issue);
+            }}
+            onDragStart={handlers.cardDragStart}
+            onDragOver={handlers.cardDragOver}
+        >
+            <div className="flex flex-col">
+                <i>
+                    {t("editIssue_type")} {t("issue_type" + issue.type)}
+                </i>
+                <i>
+                    {t("editIssue_priority")} {t("issue_priority" + issue.priority)}
+                </i>
+            </div>
+        </Card>
+    )));
+}
+
+
+function dragAndDropHandlers(item) {
+    const fetcher = useFetcher();
+
+    const statusDrop = (e) => {
+        const cardId = e.dataTransfer.getData("cardId");
+        const sourceStatus = e.dataTransfer.getData("sourceStatus");
+        const targetStatus = e.target.id;
+
+        // Can't block ability to drop the card to it's current status.
+        // At least, don't make a request when this happens.
+        if (sourceStatus != targetStatus) {
+            fetcher.submit(
+                {
+                    intent: "edit",
+                    issueId: cardId,
+                    status: targetStatus
+                },
+                {method: "PATCH"}
+            );
+        }
+    };
+    const statusDragOver = (e) => {
+        if (e.target.className !== "ant-card-head-title") {
+            e.preventDefault();
+        }
+    };
+
+    if (item === "status") return {statusDrop, statusDragOver};
+
+    const cardDragStart = (e) => {
+        e.dataTransfer.setData("cardId", e.target.id);
+        e.dataTransfer.setData("sourceStatus", e.target.offsetParent.id);
+    };
+    const cardDragOver = (e) => e.stopPropagation();
+
+    return {cardDragStart, cardDragOver};
 }
