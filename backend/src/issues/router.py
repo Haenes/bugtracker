@@ -59,7 +59,7 @@ async def create_issue(
 ) -> CreatedIssueSchema:
     """ Create a new issue related to the specified project """
 
-    await cache.delete(f"issues_project_{project_id}")
+    await cache_delete_all(cache, f"issues_project_{project_id}_*")
     return await create_issue_db(session, user.id, project_id, issue)
 
 
@@ -86,7 +86,7 @@ async def update_issue(
 ) -> IssueSchema:
     """ Update an issue related to the specified project """
 
-    await cache.delete(f"issues_project_{project_id}")
+    await cache_delete_all(cache, f"issues_project_{project_id}_*")
     return await update_issue_db(session, user.id, project_id, issue_id, issue)
 
 
@@ -100,5 +100,5 @@ async def delete_issue(
 ):
     """ Delete specified issue from specified project """
 
-    await cache.delete(f"issues_project_{project_id}")
+    await cache_delete_all(cache, f"issues_project_{project_id}_*")
     return await delete_issue_db(session, user.id, project_id, issue_id)
