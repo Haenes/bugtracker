@@ -12,7 +12,7 @@ from utils.cache import (
 )
 from utils.pagination import (
     PaginatedResponse, NoItemsResponse,
-    pagination_params, Pagination
+    pagination_params, ProjectsPagination
 )
 from .schemas import (
     CreateProjectSchema,
@@ -44,7 +44,7 @@ async def projects(
     return await cache_get_or_set(
         cache,
         f"projects_{user.id}_{pagination_params}",
-        Pagination.get_paginated,
+        ProjectsPagination.get_paginated,
         session, Project, pagination_params, user.id
     )
 
