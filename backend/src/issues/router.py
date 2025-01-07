@@ -12,7 +12,7 @@ from utils.cache import (
 from auth.manager import User, current_active_user
 from utils.pagination import (
     PaginatedResponse, NoItemsResponse,
-    pagination_params, Pagination
+    pagination_params, IssuesPagination
 )
 from .schemas import (
     CreateIssueSchema,  UpdateIssueSchema,
@@ -44,7 +44,7 @@ async def get_issues(
     return await cache_get_or_set(
         cache,
         f"issues_project_{project_id}_{pagination_params}",
-        Pagination.get_paginated,
+        IssuesPagination.get_paginated,
         session, Issue, pagination_params, user.id, project_id
     )
 
