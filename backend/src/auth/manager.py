@@ -9,7 +9,8 @@ from fastapi_users import (
 
 from utils.tasks import celery_send_email
 from .config import MANAGER_SECRET, MAX_AGE
-from .cookie_jwt import auth_backend
+from .cookie_jwt import auth_backend as jwt_backend
+from .bearer_redis import auth_backend as bearer_backend
 from .custom import CustomFastAPIUsers, PASSWORD_VALIDATION_ERROR
 from .models import User, get_user_db
 from .schemas import UserCreate, UserRead, UserUpdate
@@ -84,11 +85,21 @@ async def get_user_manager(user_db=Depends(get_user_db)):
     yield UserManager(user_db)
 
 
-fastapi_users = CustomFastAPIUsers[User, int](get_user_manager, [auth_backend])
+fastapi_users = CustomFastAPIUsers[User, int](
+    get_user_manager,
+    [jwt_backend, bearer_backend]
+)
 
 current_active_user = fastapi_users.current_user(active=True)
 
-auth_router = fastapi_users.get_auth_router(auth_backend, requires_verification=True)
+jwt_auth_router = fastapi_users.get_auth_router(
+    jwt_backend,
+    requires_verification=True
+)
+bearer_auth_router = fastapi_users.get_auth_router(
+    bearer_backend,
+    requires_verification=True
+)
 register_router = fastapi_users.get_register_router(UserRead, UserCreate)
 users_router = fastapi_users.get_users_router(UserRead, UserUpdate)
 auth_verify_router = fastapi_users.get_verify_router(UserRead)

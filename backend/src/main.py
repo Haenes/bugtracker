@@ -5,10 +5,10 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from config import REDIS_USER, REDIS_PASSWORD, CeleryConfig
 from auth.manager import (
-    auth_router, auth_verify_router,
-    register_router, users_router,
-    reset_password_router
-    )
+    jwt_auth_router, bearer_auth_router,
+    auth_verify_router, register_router,
+    users_router, reset_password_router
+)
 from projects.router import router as projects_router
 from issues.router import router as issues_router
 from search.router import router as search_router
@@ -48,8 +48,14 @@ app.include_router(search_router)
 
 
 app.include_router(
-    router=auth_router,
+    router=jwt_auth_router,
     prefix="/auth/jwt",
+    tags=["auth"]
+)
+
+app.include_router(
+    router=bearer_auth_router,
+    prefix="/auth/bearer",
     tags=["auth"]
 )
 
