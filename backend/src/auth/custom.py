@@ -22,6 +22,7 @@ PASSWORD_VALIDATION_ERROR = (
     "4) at least one special character"
 )
 
+
 class CustomErrorCode(str, Enum):
     USERNAME_ALREADY_EXISTS = "USERNAME_ALREADY_EXISTS"
 

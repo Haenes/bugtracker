@@ -42,16 +42,18 @@ class UpdateIssueSchema(CreateIssueSchema):
 
 
 class IssueSchema(CreateIssueSchema):
+    id: int
+    project_id: int
     created: datetime
     updated: datetime
 
 
 class PaginationIssue(IssueSchema):
-    id: int
+    pass
 
 
-class CreatedIssueSchema(PaginationIssue):
-    project_id: int
+class CreatedIssueSchema(IssueSchema):
+    pass
 
 
 class SearchIssue(BaseModel):

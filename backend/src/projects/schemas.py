@@ -18,15 +18,16 @@ class UpdateProjectSchema(CreateProjectSchema):
 
 
 class ProjectSchema(CreateProjectSchema):
+    id: int
     created: datetime
     updated: datetime
 
 
 class PaginationProject(ProjectSchema):
-    id: int
+    pass
 
 
-class CreatedProjectSchema(PaginationProject):
+class CreatedProjectSchema(ProjectSchema):
     pass
 
 
