@@ -23,6 +23,24 @@ services:
         condition: service_healthy
     restart: unless-stopped
   
+  frontend:
+    container_name: frontend
+    build:
+      context: ./frontend
+      args:
+        - VITE_BACKEND_URL=${BACKEND_URL}
+    ports:
+      - "5173:5173"
+    depends_on:
+      - backend
+    deploy:
+      resources:
+        limits:
+          memory: 300M
+        reservations:
+          memory: 50M
+    restart: unless-stopped
+  
   celery:
     container_name: api-celery
     build: ./backend

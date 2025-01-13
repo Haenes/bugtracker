@@ -1,4 +1,4 @@
-import { error503 } from "./auth.js";
+import { error503, BACKEND_URL } from "./auth.js";
 
 
 export async function getItems(page, limit, project_id = null) {
@@ -16,7 +16,7 @@ export async function getItems(page, limit, project_id = null) {
 
 
 export async function searchItems(q) {
-    const url = `http://127.0.0.1:8000/search?q=${q}`;
+    const url = `${BACKEND_URL}/search?q=${q}`;
 
     try {
         let rawResponse = await fetch(url, {credentials: "include"});
@@ -102,7 +102,7 @@ export async function deleteItem(project_id, issue_id = null) {
  * @returns url
  */
 function urlSingleHelper(project_id, issue_id) {
-    let url = "http://127.0.0.1:8000/projects";
+    let url = `${BACKEND_URL}/projects`;
 
     if (issue_id) {
         url += `/${project_id}/issues/${issue_id}`
@@ -122,7 +122,7 @@ function urlSingleHelper(project_id, issue_id) {
  * @returns url
  */
 function urlGetAllHelper(page, limit, project_id) {
-    let url = "http://127.0.0.1:8000/projects";
+    let url = `${BACKEND_URL}/projects`;
 
     const pagination = new URLSearchParams([
         ["page", page],
@@ -145,7 +145,7 @@ function urlGetAllHelper(page, limit, project_id) {
  * @returns url
  */
 function urlCreateHelper(project_id) {
-    let url = "http://127.0.0.1:8000/projects";
+    let url = `${BACKEND_URL}/projects`;
 
     if (project_id) {
         url += `/${project_id}/issues`;

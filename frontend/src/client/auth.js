@@ -1,10 +1,10 @@
 export const error503 = {status: 503, statusText: "Service Unavailable"};
-
+export const BACKEND_URL = import.meta.env.VITE_BACKEND_URL
 
 export async function userRegistration(data, language) {
     try {
         let rawResponse = await fetch(
-            `http://127.0.0.1:8000/auth/register?client=browser&lang=${language}`, {
+            `${BACKEND_URL}auth/register?client=browser&lang=${language}`, {
                 method: "POST",
                 headers: {
                     "Accept": "application/json",
@@ -24,7 +24,7 @@ export async function userRegistration(data, language) {
 
 export async function userVerification(token) {
     try {
-        let rawResponse = await fetch("http://127.0.0.1:8000/auth/verify", {
+        let rawResponse = await fetch(`${BACKEND_URL}/auth/verify`, {
             method: "POST",
             headers: {
                 "Accept": "application/json",
@@ -44,7 +44,7 @@ export async function userVerification(token) {
 export async function userForgotPassword(email, language) {
     try {
         let rawResponse = await fetch(
-            `http://127.0.0.1:8000/auth/forgot-password?client=browser&lang=${language}`, {
+            `${BACKEND_URL}/auth/forgot-password?client=browser&lang=${language}`, {
                 method: "POST",
                 headers: {
                     "Accept": "application/json",
@@ -64,7 +64,7 @@ export async function userForgotPassword(email, language) {
 export async function userResetPassword(password, token) {
     try {
         let rawResponse = await fetch(
-            "http://127.0.0.1:8000/auth/reset-password", {
+            `${BACKEND_URL}/auth/reset-password`, {
                 method: "POST",
                 headers: {
                     "Accept": "application/json",
@@ -85,7 +85,7 @@ export async function userResetPassword(password, token) {
 
 export async function userLogin(data) {
     try {
-        let rawResponse = await fetch("http://127.0.0.1:8000/auth/jwt/login", {
+        let rawResponse = await fetch(`${BACKEND_URL}/auth/jwt/login`, {
             method: "POST",
             headers: {
                 "Accept": "application/json"
@@ -103,7 +103,7 @@ export async function userLogin(data) {
 
 export async function userLogout() {
     try {
-        let rawResponse = await fetch("http://127.0.0.1:8000/auth/jwt/logout", {
+        let rawResponse = await fetch(`${BACKEND_URL}/auth/jwt/logout`, {
             method: "POST",
             headers: {
                 "Accept": "application/json",
@@ -120,7 +120,7 @@ export async function userLogout() {
 
 export async function getMe() {
     try {
-        let rawResponse = await fetch("http://127.0.0.1:8000/users/me", {
+        let rawResponse = await fetch(`${BACKEND_URL}/users/me`, {
             headers: {
                 "Accept": "application/json",
             },
@@ -136,7 +136,7 @@ export async function getMe() {
 
 export async function editMe(data) {
     try {
-        let rawResponse = await fetch("http://127.0.0.1:8000/users/me", {
+        let rawResponse = await fetch(`${BACKEND_URL}/users/me`, {
             method: "PATCH",
             headers: {
                 "Accept": "application/json",
@@ -155,7 +155,7 @@ export async function editMe(data) {
 
 export async function deleteMe() {
     try {
-        let rawResponse = await fetch("http://127.0.0.1:8000/users/me", {
+        let rawResponse = await fetch(`${BACKEND_URL}/users/me`, {
             method: "DELETE",
             headers: {
                 "Accept": "application/json",
