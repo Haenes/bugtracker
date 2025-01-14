@@ -11,13 +11,9 @@ COPY . .
 RUN npm run build
 
 
-FROM node:23.6-alpine AS prod
+FROM nginx:1.27.3-alpine AS prod
 
-WORKDIR /frontend
+COPY --from=build /frontend/dist /usr/share/nginx/html
+COPY default.conf /etc/nginx/conf.d/default.conf
 
-COPY package*.json .
-RUN npm install --omit=dev && npm install vite
-COPY --from=build /frontend/dist ./dist
-COPY --from=build /frontend/package*.json /frontend/vite.config.js ./
-
-CMD ["npm", "run", "preview"]
+CMD ["nginx", "-g", "daemon off;"]

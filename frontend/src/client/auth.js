@@ -4,7 +4,7 @@ export const BACKEND_URL = import.meta.env.VITE_BACKEND_URL
 export async function userRegistration(data, language) {
     try {
         let rawResponse = await fetch(
-            `${BACKEND_URL}auth/register?client=browser&lang=${language}`, {
+            `${BACKEND_URL}/auth/register?client=browser&lang=${language}`, {
                 method: "POST",
                 headers: {
                     "Accept": "application/json",

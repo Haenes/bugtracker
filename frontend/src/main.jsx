@@ -7,6 +7,7 @@ import { ConfigProvider, Layout, Spin, theme } from "antd";
 
 import "./index.css";
 import "./i18n/config.js";
+import { ErrorBoundary } from "./components/ErrorPage.jsx";
 
 
 const getColorMode = () => {
@@ -31,7 +32,7 @@ const getColorMode = () => {
 
 const router = createBrowserRouter([
     {
-        lazy: () => import("./components/ErrorPage.jsx"),
+        ErrorBoundary: ErrorBoundary,
         hydrateFallbackElement: <Spin fullscreen/>,
         children: [
             {
@@ -69,7 +70,8 @@ const router = createBrowserRouter([
                     // for use inside PageLayout Outlet. Thus,
                     // in case of an error, the sidebar will be visible. 
                     {
-                        lazy: () => import("./components/ErrorPage.jsx"),
+                        // lazy: () => import("./components/ErrorPage.jsx"),
+                        ErrorBoundary: ErrorBoundary,
                         children: [
                             {
                                 path: "/projects",
