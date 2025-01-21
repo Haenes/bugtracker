@@ -73,7 +73,7 @@ async function editProjectAction(projectId, formData) {
     // Handles the case, when you want to unfavorite project,
     // but because the unchecked checkbox is null (not false!)
     // the project remains a favorite.
-    formData.get("starred") === null && formData.set("starred", false);
+    formData.get("favorite") === null && formData.set("favorite", false);
     // Change project key to Uppercase, just bcs it looks better.
     formData.get("key") && formData.set("key", formData.get("key").toUpperCase());
 

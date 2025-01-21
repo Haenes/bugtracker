@@ -23,16 +23,6 @@ async def test_create_projects(user_client: httpx.AsyncClient):
     assert r2.status_code == 201
 
 
-async def test_create_project_exist_name(user_client: httpx.AsyncClient):
-    r = await user_client.post("projects", json={
-        "name": "test_name",
-        "key": "test_key3"
-    })
-
-    assert r.json()["detail"] == "Project with this name already exist!"
-    assert r.status_code == 400
-
-
 async def test_create_project_exist_key(user_client: httpx.AsyncClient):
     r = await user_client.post("projects", json={
         "name": "test_name3",
@@ -94,15 +84,8 @@ async def test_get_not_exist_project(user_client: httpx.AsyncClient):
 
 
 async def test_update_project(user_client: httpx.AsyncClient):
-    r = await user_client.patch("projects/1", json={"starred": True})
+    r = await user_client.patch("projects/1", json={"favorite": True})
     assert r.status_code == 200
-
-
-async def test_update_project_exist_name(user_client: httpx.AsyncClient):
-    r = await user_client.patch("projects/2", json={"name": "test_name"})
-
-    assert r.json()["detail"] == "Project with this name already exist!"
-    assert r.status_code == 400
 
 
 async def test_update_project_exist_key(user_client: httpx.AsyncClient):
@@ -113,7 +96,7 @@ async def test_update_project_exist_key(user_client: httpx.AsyncClient):
 
 
 async def test_update_not_exist_project(user_client: httpx.AsyncClient):
-    r = await user_client.patch("projects/999", json={"starred": True})
+    r = await user_client.patch("projects/999", json={"favorite": True})
 
     assert r.json()["detail"] == "The project for the update doesn't exist!"
     assert r.status_code == 400

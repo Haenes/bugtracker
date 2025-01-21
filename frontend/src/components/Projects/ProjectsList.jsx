@@ -63,7 +63,7 @@ export function ProjectsList() {
                                 styles={{body: {padding: 0}}}
                                 extra={item.key}
                                 actions={[
-                                    <FavoriteButton data={{id: item.id, starred: item.starred}} />,
+                                    <FavoriteButton data={{id: item.id, favorite: item.favorite}} />,
                                     <SettingsButton
                                         project={{...item}}
                                         setFuncs={[setModalOpen, setFormData]}
@@ -91,14 +91,14 @@ function FavoriteButton({ data }) {
     const fetcher = useFetcher();
     const { t } = useTranslation();
 
-    let favorite = fetcher.formData?.get("starred") || data.starred
+    let favorite = fetcher.formData?.get("favorite") || data.favorite
 
     const handleClick = () => {
         fetcher.submit(
             {
                 intent: "edit",
                 projectId: data.id,
-                starred: !data.starred
+                favorite: !data.favorite
             },
             {method: "PATCH"}
         );
@@ -107,7 +107,7 @@ function FavoriteButton({ data }) {
     return (
         <Button
             htmlType="submit"
-            name="starred"
+            name="favorite"
             className="border-0 shadow-none"    
             icon={
                 favorite

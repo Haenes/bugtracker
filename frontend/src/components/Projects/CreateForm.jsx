@@ -49,7 +49,7 @@ export function CreateProjectForm({ errors, setModalOpen }) {
                 maxLength={10}
             />
 
-            <Checkbox name="starred">{t("createProject_favorite")}</Checkbox>
+            <Checkbox name="favorite">{t("createProject_favorite")}</Checkbox>
 
             <Button
                 name="intent"

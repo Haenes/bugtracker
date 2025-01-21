@@ -46,7 +46,6 @@ async def handleDbUniqueError(session: AsyncSession, stmt):
         errors_dict = {
             "issue_unique_title": "Issue with this title already exist!",
             "project_unique_key": "Project with this key already exist!",
-            "project_unique_name": "Project with this name already exist!"
         }
 
         for k, v in errors_dict.items():

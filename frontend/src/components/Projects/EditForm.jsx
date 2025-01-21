@@ -57,7 +57,7 @@ export function EditProjectForm({ project, errors, setModalOpen }) {
 
             <div>
                 <span className="mr-2">{t("editProject_favorite")}</span>
-                <Checkbox name="starred" defaultChecked={project.starred} />
+                <Checkbox name="favorite" defaultChecked={project.favorite} />
             </div>
 
             <div>

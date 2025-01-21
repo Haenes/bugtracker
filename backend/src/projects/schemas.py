@@ -8,13 +8,13 @@ class CreateProjectSchema(BaseModel):
 
     name: str = Field(min_length=3, max_length=255)
     key: str = Field(min_length=3, max_length=10)
-    starred: bool = False
+    favorite: bool = False
 
 
 class UpdateProjectSchema(CreateProjectSchema):
     name: str | None = Field(min_length=3, max_length=255, default=None)
     key: str | None = Field(min_length=3, max_length=10, default=None)
-    starred: bool | None = None
+    favorite: bool | None = None
 
 
 class ProjectSchema(CreateProjectSchema):

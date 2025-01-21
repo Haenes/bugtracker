@@ -152,7 +152,7 @@ class ProjectsPagination(PaginationInterface):
         results_query = (
             select(model)
             .where(model.author_id == user_id)
-            .order_by(model.starred.desc(), model.created)
+            .order_by(model.favorite.desc(), model.created)
             .offset(offset)
             .limit(limit)
         )
