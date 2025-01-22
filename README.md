@@ -1,16 +1,13 @@
-# API
-New API written in FastAPI for [BugTracker](https://github.com/Haenes/bugtracker) and [telegram-bot](https://github.com/Haenes/telegram-bot).
+# BugTracker
+Initially, this repository was exclusively for the new asynchronous API written in FastAPI.\
+Which was supposed to replace the old api written in [DRF](https://github.com/Haenes/bugtracker-old/tree/main/app/api).\
+But then the idea came up to write frontend on a new technology stack (React + react-router + Tailwind CSS), which is based on this API.\
+Thus, it's now a repository for a completely new BugTracker.
 
-The main goal of the project is to write an asynchronous API for an asynchronous bot, as well as to explore a new technology.
-
-The main changes compared to the previous version (written in DRF), in addition to asynchrony, are:
-1) A new endpoint structure that matches the structure of the main application for a more convenient and understandable operation
-   (it will help a lot in the future when adding [aiogram-dialog](https://github.com/Tishka17/aiogram_dialog) to the bot);
-3) Authentication via JWT.
-
-<b>Immediate plans:</b>
-1) Add caching;
-3) Add React or similar to the front-end.
+The main changes with the [old version](https://github.com/Haenes/bugtracker-old), apart from the technology stack, are as follows:
+1) Asynchrony;
+2) Improved API endpoint structure for clearer usage;
+3) Authorization by JWT (for frontend) and Bearer Token (for API + [telegram-bot](https://github.com/Haenes/telegram-bot)).
 
 <h2>License</h2>
 
