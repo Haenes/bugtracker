@@ -1,0 +1,38 @@
+services:
+
+  backend:
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/backend
+    extends:
+      file: common-services.yml
+      service: backend
+  
+  frontend:
+    build:
+      args:
+        - VITE_BACKEND_URL=${DEV_BACKEND_URL}
+      target: dev
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend:/frontend
+    extends:
+      file: common-services.yml
+      service: frontend
+  
+  celery:
+    extends:
+      file: common-services.yml
+      service: celery
+
+  db:
+    extends:
+      file: common-services.yml
+      service: db
+
+  redis:
+    extends:
+      file: common-services.yml
+      service: redis

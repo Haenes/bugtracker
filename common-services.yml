@@ -4,8 +4,6 @@ services:
     container_name: backend
     build: ./backend
     entrypoint: sh ./entrypoint.sh
-    volumes:
-      - ./backend:/backend
     env_file:
       - .env
     deploy:
@@ -23,10 +21,7 @@ services:
   
   frontend:
     container_name: frontend
-    build:
-      context: ./frontend
-      args:
-        - VITE_BACKEND_URL=${BACKEND_URL}
+    build: ./frontend
     depends_on:
       - backend
     deploy:
@@ -51,7 +46,7 @@ services:
           memory: 100M
     depends_on:
       redis:
-        condition: service_healthy
+        condition: service_healthy 
     restart: unless-stopped
 
   db:
@@ -92,20 +87,4 @@ services:
       interval: 1s
       timeout: 5s
       retries: 10
-    restart: unless-stopped
-  
-  nginx:
-    container_name: nginx
-    build: ./backend/deploy/nginx
-    ports:
-      - "80:80"
-    deploy:
-      resources:
-        limits:
-          memory: 100M
-        reservations:
-          memory: 6M
-    depends_on:
-      - backend
-      - frontend
     restart: unless-stopped

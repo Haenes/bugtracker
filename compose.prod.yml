@@ -1,0 +1,41 @@
+services:
+
+  backend:
+    extends:
+      file: common-services.yml
+      service: backend
+  frontend:
+    build:
+      args:
+        - VITE_BACKEND_URL=${PROD_BACKEND_URL}
+      target: prod
+    extends:
+      file: common-services.yml
+      service: frontend
+  celery:
+    extends:
+      file: common-services.yml
+      service: celery
+  db:
+    extends:
+      file: common-services.yml
+      service: db
+  redis:
+    extends:
+      file: common-services.yml
+      service: redis
+  nginx:
+    container_name: nginx
+    build: ./backend/deploy/nginx
+    ports:
+      - "80:80"
+    deploy:
+      resources:
+        limits:
+          memory: 100M
+        reservations:
+          memory: 6M
+    depends_on:
+      - backend
+      - frontend
+    restart: unless-stopped
