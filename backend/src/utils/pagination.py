@@ -198,7 +198,7 @@ class IssuesPagination(PaginationInterface):
         )
         count = await session.scalar(count_query)
 
-        if count == 0 and project_id:
+        if count == 0:
             return NoItemsResponse(
                 results="You don't have any issues for this project!"
             )

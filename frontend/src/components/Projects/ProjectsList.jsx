@@ -22,7 +22,8 @@ export function ProjectsList() {
 
     const { t } = useTranslation();
 
-    const modalTitle = t("projectsList_modalTitle");
+    const createModalTitle = t("createProject_header");
+    const editModalTitle = t("projectsList_modalTitle");
 
     const [modalOpen, setModalOpen] = useOutletContext();
     const [formData, setFormData] = useState(null);
@@ -31,7 +32,7 @@ export function ProjectsList() {
         return (
             <>
                 <List />
-                <CreateModal modalId={1} title={modalTitle} errors={errors}>
+                <CreateModal modalId={1} title={createModalTitle} errors={errors}>
                     <CreateProjectForm setModalOpen={setModalOpen} />
                 </CreateModal>
             </>
@@ -59,7 +60,11 @@ export function ProjectsList() {
                     return (
                         <List.Item>
                             <Card
-                                title={<Link to={`${item.id}/issues`}>{item.name}</Link>}
+                                title={
+                                    <Link to={`${item.name}-${item.id}/issues`}>
+                                        {item.name}
+                                    </Link>
+                                }
                                 styles={{body: {padding: 0}}}
                                 extra={item.key}
                                 actions={[
@@ -75,11 +80,11 @@ export function ProjectsList() {
                 }}
             />
 
-            <CreateModal modalId={1} title={modalTitle} errors={errors}>
+            <CreateModal modalId={1} title={createModalTitle} errors={errors}>
                 <CreateProjectForm  errors={errors} setModalOpen={setModalOpen} />
             </CreateModal>
 
-            <CreateModal modalId={2} title={modalTitle} errors={errors}>
+            <CreateModal modalId={2} title={editModalTitle} errors={errors}>
                 <EditProjectForm project={formData} errors={errors} setModalOpen={setModalOpen} />
             </CreateModal>
         </>

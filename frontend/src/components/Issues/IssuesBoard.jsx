@@ -22,7 +22,8 @@ export function IssuesBoard() {
     const fetchers = useFetchers();
     const { t } = useTranslation();
 
-    const modalTitle = t("issuesBoard_modalTitle");
+    const createModalTitle = t("createIssue_header");
+    const editModalTitle = t("issuesBoard_modalTitle");
 
     const [modalOpen, setModalOpen] = useOutletContext();
     const [formData, setFormData] = useState(null);
@@ -30,7 +31,7 @@ export function IssuesBoard() {
     if (!issues) {
         return (
             <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} >
-                <CreateModal modalId={1} title={modalTitle} errors={errors}>
+                <CreateModal modalId={1} title={createModalTitle} errors={errors}>
                     <CreateIssueForm setModalOpen={setModalOpen} />
                 </CreateModal>
             </Empty>
@@ -57,11 +58,11 @@ export function IssuesBoard() {
                 {IssueCard(done, setModalOpen, setFormData)}
             </StatusCard>
 
-            <CreateModal modalId={1} title={modalTitle} errors={errors}>
+            <CreateModal modalId={1} title={createModalTitle} errors={errors}>
                 <CreateIssueForm errors={errors} setModalOpen={setModalOpen} />
             </CreateModal>
 
-            <CreateModal modalId={2} title={modalTitle} errors={errors}>
+            <CreateModal modalId={2} title={editModalTitle} errors={errors}>
                 <EditIssueForm issue={formData} errors={errors} setModalOpen={setModalOpen} />
             </CreateModal>
         </div>

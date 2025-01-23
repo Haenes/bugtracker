@@ -52,6 +52,7 @@
     "project_typeBackend": "Back-end",
     "project_typeFrontend": "Front-end",
 
+    "createProject_header": "Новый проект",
     "createProject_name": "Название проекта",
     "createProject_key": "Ключ проекта",
     "createProject_type": "Тип проекта",
@@ -63,7 +64,6 @@
     "editProject_favorite": "Избранное:",
 
     "issuesBoard_projectNotFound": "Проект не найден.",
-    "issuesBoard_header": "Задачи",
     "issuesBoard_modalTitle": "Задача",
     "issuesBoard_toDo": "СДЕЛАТЬ",
     "issuesBoard_inProgress": "В ПРОЦЕССЕ",
@@ -82,6 +82,7 @@
     "issue_priorityHigh": "Высокий",
     "issue_priorityHighest": "Высочайший",
 
+    "createIssue_header": "Новая задача",
     "createIssue_title": "Заголовок задачи",
     "createIssue_description": "Описание задачи",
     "createIssue_type": "Тип задачи",

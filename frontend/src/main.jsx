@@ -70,7 +70,6 @@ const router = createBrowserRouter([
                     // for use inside PageLayout Outlet. Thus,
                     // in case of an error, the sidebar will be visible. 
                     {
-                        // lazy: () => import("./components/ErrorPage.jsx"),
                         ErrorBoundary: ErrorBoundary,
                         children: [
                             {

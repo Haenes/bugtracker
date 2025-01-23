@@ -52,6 +52,7 @@
     "project_typeBackend": "Back-end",
     "project_typeFrontend": "Front-end",
 
+    "createProject_header": "New project",
     "createProject_name": "Project name",
     "createProject_key": "Project key",
     "createProject_type": "Project type",
@@ -63,7 +64,6 @@
     "editProject_favorite": "Favorite:",
 
     "issuesBoard_projectNotFound": "Project not found.",
-    "issuesBoard_header": "Issues",
     "issuesBoard_modalTitle": "Issue",
     "issuesBoard_toDo": "TO DO",
     "issuesBoard_inProgress": "IN PROGRESS",
@@ -82,6 +82,7 @@
     "issue_priorityHigh": "High",
     "issue_priorityHighest": "Highest",
 
+    "createIssue_header": "New issue",
     "createIssue_title": "Issue title",
     "createIssue_description": "Issue description",
     "createIssue_type": "Issue type",

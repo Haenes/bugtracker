@@ -10,7 +10,7 @@ import { authProvider } from "./auth/authProvider.jsx";
 
 export function Component() {
     return (
-        <PageContent header={i18n.t("issuesBoard_header")}>
+        <PageContent>
             <IssuesBoard />
         </PageContent>
     );
@@ -24,6 +24,7 @@ export async function loader({ request, params }) {
     }
 
     const urlParams = new URL(request.url)?.searchParams;
+    const projectId = params.projectId.split("-")[1];
     let page;
     let limit;
 
@@ -35,7 +36,7 @@ export async function loader({ request, params }) {
         limit = 100;
     }
 
-    const issues = await getItems(page, limit, params.projectId);
+    const issues = await getItems(page, limit, projectId);
 
     if (issues.results === "You don't have any issues for this project!") {
         return false;
