@@ -1,4 +1,4 @@
-FROM node:23.6-alpine AS base
+FROM node:23.6.1-alpine AS base
 
 ARG VITE_BACKEND_URL
 ENV VITE_BACKEND_URL=$VITE_BACKEND_URL
