@@ -127,7 +127,7 @@ function convertResultsToJsx(plainResults, handleClick, isSearchPage) {
                     to={`/projects/${item.project_id || item.id}/issues`}
                     onClick={handleClick}
                 >
-                    {item.name || item.title}
+                    {item.name || item.title} {item?.key && `[${item.key}]`}
                 </Link>
             </li>
         );

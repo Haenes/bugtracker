@@ -14,7 +14,7 @@ async def fulltext_search(
 ) -> SearchResultsResponse | NoItemsResponse:
 
     projects_query = (
-        select(Project.id, Project.name)
+        select(Project.id, Project.name, Project.key)
         .where(
             Project.author_id == user_id,
             to_tsvector("name", "key", regconfig="english").bool_op("@@")(

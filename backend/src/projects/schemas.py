@@ -34,3 +34,4 @@ class CreatedProjectSchema(ProjectSchema):
 class SearchProject(BaseModel):
     id: int
     name: str
+    key: str
