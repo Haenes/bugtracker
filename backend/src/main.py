@@ -2,6 +2,7 @@ from celery import Celery
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.middleware.gzip import GZipMiddleware
 
 from config import REDIS_USER, REDIS_PASSWORD, CeleryConfig
 from auth.manager import (
@@ -42,6 +43,7 @@ app.add_middleware(
     allow_methods=["GET", "POST", "PATCH", "DELETE"],
     allow_headers=["*"],
 )
+app.add_middleware(GZipMiddleware, compresslevel=6)
 
 celery = Celery("tasks", broker=f"redis://{REDIS_USER}:{REDIS_PASSWORD}@redis")
 celery.config_from_object(CeleryConfig)
