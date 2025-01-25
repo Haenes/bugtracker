@@ -51,7 +51,7 @@ export async function loader({ request, params }) {
 export async function action({ request, params }) {
     const formData = await request.formData();
 
-    const projectId = params.projectId;
+    const projectId = params.projectId.split("-")[1];
     const issueId = formData.get("issueId")
     const intent = formData.get("intent");
 
