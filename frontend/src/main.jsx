@@ -99,7 +99,7 @@ const router = createBrowserRouter([
 
 
 ReactDOM.createRoot(document.getElementById("root")).render(
-    <ConfigProvider theme={{algorithm: getColorMode(), token:{paddingLG: 16}}}>
+    <ConfigProvider csp={{nonce: "CSP_NONCE"}} theme={{algorithm: getColorMode(), token:{paddingLG: 16}}}>
         <Layout>
             <RouterProvider router={router} />
         </Layout>

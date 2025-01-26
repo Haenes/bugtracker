@@ -63,6 +63,7 @@
     "editProject_type": "Type:",
     "editProject_favorite": "Favorite:",
 
+    "issuesBoard_header": "Issues",
     "issuesBoard_projectNotFound": "Project not found.",
     "issuesBoard_modalTitle": "Issue",
     "issuesBoard_toDo": "TO DO",

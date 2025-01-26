@@ -4,6 +4,7 @@ services:
     extends:
       file: common-services.yml
       service: backend
+
   frontend:
     build:
       args:
@@ -12,18 +13,22 @@ services:
     extends:
       file: common-services.yml
       service: frontend
+
   celery:
     extends:
       file: common-services.yml
       service: celery
+
   db:
     extends:
       file: common-services.yml
       service: db
+
   redis:
     extends:
       file: common-services.yml
       service: redis
+
   nginx:
     container_name: nginx
     build: ./backend/deploy/nginx

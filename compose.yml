@@ -8,7 +8,7 @@ services:
     extends:
       file: common-services.yml
       service: backend
-  
+
   frontend:
     build:
       args:
@@ -17,11 +17,12 @@ services:
     ports:
       - "5173:5173"
     volumes:
-      - ./frontend:/frontend
+      - ./frontend/src:/frontend/src
+      - node_modules:/frontend/node_modules
     extends:
       file: common-services.yml
       service: frontend
-  
+
   celery:
     extends:
       file: common-services.yml
@@ -36,3 +37,6 @@ services:
     extends:
       file: common-services.yml
       service: redis
+
+volumes:
+  node_modules:

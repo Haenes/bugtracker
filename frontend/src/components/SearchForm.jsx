@@ -121,13 +121,21 @@ function convertResultsToJsx(plainResults, handleClick, isSearchPage) {
     let jsxIssues = [];
 
     const fillResultsArray = (array, item) => {
+        let url_part;
+
+        if (item?.name) {
+            url_part = item.name + "-" + item.id;
+        } else {
+            url_part = item.project_name + "-" + item.project_id;
+        }
+
         array.push(
             <li key={item.id}>
                 <Link
-                    to={`/projects/${item.project_id || item.id}/issues`}
+                    to={`/projects/${url_part}/issues`}
                     onClick={handleClick}
                 >
-                    {item.name || item.title} {item?.key && `[${item.key}]`}
+                    {item?.name || item?.title} {item?.key && `[${item.key}]`}
                 </Link>
             </li>
         );

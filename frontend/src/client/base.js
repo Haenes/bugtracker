@@ -15,6 +15,20 @@ export async function getItems(page, limit, project_id = null) {
 }
 
 
+export async function getItem(project_id) {
+    const url = urlSingleHelper(project_id);
+
+    try {
+        let rawResponse = await fetch(url, {credentials: "include"});
+        let response = await rawResponse.json();
+
+        return response;
+    } catch(err) {
+        throw new Response("Error", error503);
+    }
+}
+
+
 export async function searchItems(q) {
     const url = `${BACKEND_URL}/search?q=${q}`;
 
