@@ -30,6 +30,12 @@ const getColorMode = () => {
     }
 };
 
+const getCSP = () => {
+    // Return the CSP nonce value set for index.css
+    // to use it for antd inline-styles.
+    return document.head.lastChild.nonce
+}
+
 const router = createBrowserRouter([
     {
         ErrorBoundary: ErrorBoundary,
@@ -99,7 +105,7 @@ const router = createBrowserRouter([
 
 
 ReactDOM.createRoot(document.getElementById("root")).render(
-    <ConfigProvider csp={{nonce: "CSP_NONCE"}} theme={{algorithm: getColorMode(), token:{paddingLG: 16}}}>
+    <ConfigProvider csp={{nonce: getCSP()}} theme={{algorithm: getColorMode(), token:{paddingLG: 16}}}>
         <Layout>
             <RouterProvider router={router} />
         </Layout>
