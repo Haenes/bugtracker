@@ -53,7 +53,6 @@ export function CreateIssueForm({ errors, setModalOpen }) {
 
             <TextArea
                 name="description"
-                autoSize={{ minRows: 1, maxRows: 4 }}
                 maxLength={255}
                 placeholder={t("createIssue_description")}
             />

@@ -47,7 +47,7 @@ export function PageContent({ header, children }) {
                     }
                 </div>
 
-                <div className="flex-grow mt-3">
+                <div className="flex-grow mt-2">
                     {children}
                 </div>
             </div>

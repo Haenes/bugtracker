@@ -53,7 +53,6 @@ export function EditIssueForm({ issue, errors, setModalOpen }) {
 
                 <TextArea
                     name="description"
-                    autoSize={{ minRows: 1, maxRows: 4 }}
                     defaultValue={issue.description}
                     className="my-3"
                     placeholder={t("editIssue_description")}

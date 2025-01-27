@@ -77,7 +77,8 @@ function StatusCard({ id, title, children }) {
         <Card
             id={id}
             className="col-span-12 md:col-span-4"
-            title={title} 
+            title={title}
+            classNames={{body: "status"}}
             onDrop={handlers.statusDrop}
             onDragOver={handlers.statusDragOver}
         >
@@ -131,7 +132,9 @@ function dragAndDropHandlers(item) {
     const statusDrop = (e) => {
         const cardId = e.dataTransfer.getData("cardId");
         const sourceStatus = e.dataTransfer.getData("sourceStatus");
-        const targetStatus = e.target.id;
+        // Support drop inside the ant-card-body div (inner div of status card)
+        // If this is the case, get the parent's ID.
+        const targetStatus = e.target.id || e.target.offsetParent.id;
 
         // Can't block ability to drop the card to it's current status.
         // At least, don't make a request when this happens.

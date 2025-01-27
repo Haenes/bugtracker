@@ -24,3 +24,21 @@ input:-webkit-autofill:focus {
 input[data-autocompleted] {
     background-color: transparent !important;
 }
+
+.status {
+    overflow-y: auto;
+    scrollbar-width: thin;
+    padding-bottom: 0;
+}
+
+@media (max-width: 600px) {
+    .status {
+        max-height: 40vh;
+    }
+}
+
+@media (min-width: 600px) {
+    .status {
+        max-height: 80vh;
+    }
+}
