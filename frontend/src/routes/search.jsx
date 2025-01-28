@@ -38,18 +38,18 @@ export async function action({ request }) {
 
 async function addProjectNameToIssueResults(searchResults) {
     // Help to decrease requests to API, if project name is already known.
-    let knownProjectNames = {};
+    let knownProjectNames = new Map();
 
     if (searchResults?.issues) {
         for (let issue of searchResults?.issues) {
 
-            if (knownProjectNames[issue.project_id]) {
-                issue["project_name"] = knownProjectNames[issue.project_id];
+            if (knownProjectNames.get(issue.project_id)) {
+                issue["project_name"] = knownProjectNames.get(issue.project_id);
                 continue;
             }
 
             const project = await getItem(issue.project_id);
-            knownProjectNames[project.id] = project.name;
+            knownProjectNames.set(project.id, project.name);
             issue["project_name"] = project.name;
         }
     }

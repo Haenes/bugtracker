@@ -2,15 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-    font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
-    line-height: 1.5;
-    font-weight: 400;
-    font-synthesis: none;
-    text-rendering: optimizeLegibility;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-}
 
 html,
 body {
@@ -41,4 +32,16 @@ input[data-autocompleted] {
     .status {
         max-height: 80vh;
     }
+}
+
+#landing-main {
+    min-height: calc(100vh - (32px + 16px) - (19px + 16px));
+    padding-bottom: 10vh;
+    border-bottom: 1px solid;
+    border-top: 1px solid;
+}
+
+img {
+    justify-self: center;
+    border-radius: 1%;
 }
