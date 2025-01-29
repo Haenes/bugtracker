@@ -24,7 +24,7 @@ export async function loader({ request, params }) {
     }
 
     const urlParams = new URL(request.url)?.searchParams;
-    const projectId = params.projectId.split("-")[1];
+    const projectId = params.projectId.split("-").at(-1);
     let page;
     let limit;
 
@@ -42,7 +42,7 @@ export async function loader({ request, params }) {
         return false;
     }
     else if (issues.detail === "Project not found!") {
-        throw({status: 404, statusText: i18n.t("issuesBoard_projectNotFound")})
+        throw({status: 404, statusText: i18n.t("issuesBoard_projectNotFound")});
     }
     return issues;
 }
@@ -51,7 +51,7 @@ export async function loader({ request, params }) {
 export async function action({ request, params }) {
     const formData = await request.formData();
 
-    const projectId = params.projectId.split("-")[1];
+    const projectId = params.projectId.split("-").at(-1);
     const issueId = formData.get("issueId")
     const intent = formData.get("intent");
 

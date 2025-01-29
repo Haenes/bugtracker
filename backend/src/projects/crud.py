@@ -1,3 +1,5 @@
+import re
+
 from fastapi import HTTPException
 
 from sqlalchemy import select, insert, update, delete
@@ -13,6 +15,8 @@ async def create_project_db(
     user_id: int,
     project: ProjectSchema
 ) -> CreatedProjectSchema:
+
+    is_valid_project_name(project.name)
 
     stmt = (
         insert(Project)
@@ -46,6 +50,9 @@ async def update_project_db(
     project_id: int,
     project: UpdateProjectSchema
 ) -> ProjectSchema:
+
+    if project.name is not None:
+        is_valid_project_name(project.name)
 
     stmt = (
         update(Project)
@@ -83,3 +90,18 @@ async def delete_project_db(
     else:
         await session.commit()
         return {"results": "Success"}
+
+
+def is_valid_project_name(project_name):
+    """
+    Raises an error if one of these characters is in the project name:
+    back/forward slash, :, ?
+    """
+    pattern = re.compile(r"[\/\\:?]")
+
+    if pattern.search(project_name):
+        raise HTTPException(
+            400,
+            "Slashes, ':' and '?' not allowed in project name!"
+        )
+    return True

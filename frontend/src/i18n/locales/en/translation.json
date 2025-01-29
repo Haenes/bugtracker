@@ -133,7 +133,7 @@
     "error_forgotPassword": "Validation Error.",
     "error_projectType": "Please, select the project type!",
     "error_projectKey":"Project with this key already exist!",
-    "error_projectName": "Project with this name already exist!",
+    "error_projectName": "/, \\, : and ? not allowed in project name!",
     "error_issueTitle": "Issue with this title already exist!",
     "error_issueType": "Please, select the issue type!",
     "error_issuePriority": "Please, select the priority of the issue!",

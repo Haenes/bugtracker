@@ -21,8 +21,11 @@ export function PageContent({ header, children }) {
         background: colorBgContainer,
         borderRadius: borderRadiusLG,
     };
-
-    let isProjectName = params?.projectId?.split("-")[0]
+    
+    // Examples:
+    // project-132 -> ["project", "132"] -> "project"
+    // project-name-132 -> ["project", "name", "132"] -> "project-name"
+    let isProjectName = params?.projectId?.split("-").slice(0,-1).join("-");
 
     return (
         <Content className="m-2">

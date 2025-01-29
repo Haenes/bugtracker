@@ -33,6 +33,45 @@ async def test_create_project_exist_key(user_client: httpx.AsyncClient):
     assert r.status_code == 400
 
 
+async def test_create_projects_forbidden_chars(user_client: httpx.AsyncClient):
+    r1 = await user_client.post("projects", json={
+        "name": "test_name/",
+        "key": "test_key3"
+    })
+    r2 = await user_client.post("projects", json={
+        "name": "test_name\\",
+        "key": "test_key4"
+    })
+    r3 = await user_client.post("projects", json={
+        "name": "test_name:",
+        "key": "test_key5"
+    })
+    r4 = await user_client.post("projects", json={
+        "name": "test_name?",
+        "key": "test_key6"
+    })
+
+    assert r1.json()["detail"] == (
+        "Slashes, ':' and '?' not allowed in project name!"
+    )
+    assert r1.status_code == 400
+
+    assert r2.json()["detail"] == (
+        "Slashes, ':' and '?' not allowed in project name!"
+    )
+    assert r2.status_code == 400
+
+    assert r3.json()["detail"] == (
+        "Slashes, ':' and '?' not allowed in project name!"
+    )
+    assert r3.status_code == 400
+
+    assert r4.json()["detail"] == (
+        "Slashes, ':' and '?' not allowed in project name!"
+    )
+    assert r4.status_code == 400
+
+
 async def test_pagination_page_less_then_zero(user_client: httpx.AsyncClient):
     r = await user_client.get("projects?page=-1")
     results = r.json()["detail"]
@@ -93,6 +132,33 @@ async def test_update_project_exist_key(user_client: httpx.AsyncClient):
 
     assert r.json()["detail"] == "Project with this key already exist!"
     assert r.status_code == 400
+
+
+async def test_update_project_forbidden_chars(user_client: httpx.AsyncClient):
+    r1 = await user_client.patch("projects/1", json={"name": "test_name/"})
+    r2 = await user_client.patch("projects/1", json={"name": "test_name\\"})
+    r3 = await user_client.patch("projects/1", json={"name": "test_name:"})
+    r4 = await user_client.patch("projects/1", json={"name": "test_name?"})
+
+    assert r1.json()["detail"] == (
+        "Slashes, ':' and '?' not allowed in project name!"
+    )
+    assert r1.status_code == 400
+
+    assert r2.json()["detail"] == (
+        "Slashes, ':' and '?' not allowed in project name!"
+    )
+    assert r2.status_code == 400
+
+    assert r3.json()["detail"] == (
+        "Slashes, ':' and '?' not allowed in project name!"
+    )
+    assert r3.status_code == 400
+
+    assert r4.json()["detail"] == (
+        "Slashes, ':' and '?' not allowed in project name!"
+    )
+    assert r4.status_code == 400
 
 
 async def test_update_not_exist_project(user_client: httpx.AsyncClient):
@@ -180,7 +246,10 @@ async def test_update_issue_exist_title(user_client: httpx.AsyncClient):
 
 
 async def test_update_not_exist_issue(user_client: httpx.AsyncClient):
-    r = await user_client.patch("projects/999/issues/999", json={"status": "Done"})
+    r = await user_client.patch(
+        "projects/999/issues/999",
+        json={"status": "Done"}
+    )
 
     assert r.json()["detail"] == "The issue for the update doesn't exist!"
     assert r.status_code == 400
@@ -195,7 +264,9 @@ async def test_search_projects(user_client: httpx.AsyncClient):
     r = await user_client.get("search?q=test_name")
     results = r.json()
 
-    assert results["projects"] == [{"id": 1, "name": "test_name"}]
+    assert results["projects"] == [{
+        "id": 1, "name": "test_name", "key": "test_key"
+    }]
     assert results["issues"] == []
 
 
@@ -215,8 +286,8 @@ async def test_search_results(user_client: httpx.AsyncClient):
     results = r.json()
 
     assert results["projects"] == [
-        {"id": 1, "name": "test_name"},
-        {"id": 2, "name": "test_name2"}
+        {"id": 1, "name": "test_name", "key": "test_key"},
+        {"id": 2, "name": "test_name2", "key": "test_key2"}
     ]
     assert results["issues"] == [
         {"id": 1, "project_id": 1, "title": "Test issue"},

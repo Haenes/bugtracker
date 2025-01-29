@@ -109,10 +109,10 @@ function afterSubmitValidation(project, intent) {
         : errors.editKey = i18n.t("error_projectKey");
 
         return errors;
-    } else if (project.detail === "Project with this name already exist!") {
+    } else if (project.detail === "Slashes, ':' and '?' not allowed in project name!") {
         intent === "create"
         ? errors.createName = i18n.t("error_projectName")
-        : errors.editName = i18n.t("error_projectKey");
+        : errors.editName = i18n.t("error_projectName");
 
         return errors;
     }
