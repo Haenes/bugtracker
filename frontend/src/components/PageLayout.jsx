@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 
 import { Outlet, useSubmit, useNavigation } from "react-router";
 
-import { Layout, Spin } from "antd";
+import { Spin } from "antd";
 
 import { Sidebar } from "./Sidebar.jsx";
 import { authProvider } from "../routes/auth/authProvider.jsx";
@@ -15,13 +15,13 @@ export function Component() {
     const [modalOpen, setModalOpen] = useState({visible: false, modalId: 0});
 
     return (
-        <Layout hasSider>
+        <>
             {navigation.state === "loading" && !modalOpen.visible
                 && <Spin fullscreen delay={50}/>
             }
             <Sidebar setModalOpen={setModalOpen} />
             <Outlet context={[modalOpen, setModalOpen]}/>
-        </Layout>
+        </>
     );
 }
 

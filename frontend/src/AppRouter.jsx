@@ -101,6 +101,7 @@ const router = createBrowserRouter([
     },
 ]);
 
+
 export const AppRouter = () => {
     return (
         <ConfigProvider csp={{nonce: getCSP()}} theme={{algorithm: getColorMode(), token:{paddingLG: 16}}}>
