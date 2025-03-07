@@ -9,6 +9,10 @@ The main changes with the [old version](https://github.com/Haenes/bugtracker-old
 2) Improved API endpoint structure for clearer usage;
 3) Authorization by JWT (for frontend) and Bearer Token (for API + [telegram-bot](https://github.com/Haenes/telegram-bot)).
 
+<h2>Installation</h2>
+
+See the [INSTALL](INSTALL.md) file for installation instruction.
+
 <h2>License</h2>
 
 See the [LICENSE](LICENSE) file for license rights and limitations (MIT).
