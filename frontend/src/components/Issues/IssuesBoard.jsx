@@ -20,6 +20,7 @@ export function IssuesBoard() {
     const issues = useLoaderData();
     const errors = useActionData();
     const fetchers = useFetchers();
+    const fetcher = useFetcher();
     const { t } = useTranslation();
 
     const createModalTitle = t("createIssue_header");
@@ -46,16 +47,24 @@ export function IssuesBoard() {
         <div className="grid grid-cols-12 h-full gap-4 md:gap-2 text-center">
             {fetchers[0] && fetchers[0].state !== "idle" && <Spin fullscreen delay={50}/>}
 
-            <StatusCard id="To do" title={t("issuesBoard_toDo")}>
-                {IssueCard(toDo, setModalOpen, setFormData)}
+            <StatusCard id="To do" title={t("issuesBoard_toDo")} fetcher={fetcher}>
+                {IssueCard(toDo, setModalOpen, setFormData, t, fetcher)}
             </StatusCard>
 
-            <StatusCard id="In progress" title={t("issuesBoard_inProgress")}>
-                {IssueCard(inProgress, setModalOpen, setFormData)}
+            <StatusCard
+                id="In progress"
+                title={t("issuesBoard_inProgress")}
+                fetcher={fetcher}
+            >
+                {IssueCard(inProgress, setModalOpen, setFormData, t, fetcher)}
             </StatusCard>
 
-            <StatusCard id="Done" title={t("issuesBoard_done")}>
-                {IssueCard(done, setModalOpen, setFormData)}
+            <StatusCard
+                id="Done"
+                title={t("issuesBoard_done")}
+                fetcher={fetcher}
+            >
+                {IssueCard(done, setModalOpen, setFormData, t, fetcher)}
             </StatusCard>
 
             <CreateModal modalId={1} title={createModalTitle} errors={errors}>
@@ -63,15 +72,19 @@ export function IssuesBoard() {
             </CreateModal>
 
             <CreateModal modalId={2} title={editModalTitle} errors={errors}>
-                <EditIssueForm issue={formData} errors={errors} setModalOpen={setModalOpen} />
+                <EditIssueForm
+                    issue={formData}
+                    errors={errors} 
+                    setModalOpen={setModalOpen}
+                />
             </CreateModal>
         </div>
     );
 }
 
 
-function StatusCard({ id, title, children }) {
-    const handlers = dragAndDropHandlers("status");
+function StatusCard({ id, title, children, fetcher }) {
+    const handlers = dragAndDropHandlers("status", fetcher);
 
     return (
         <Card
@@ -88,9 +101,8 @@ function StatusCard({ id, title, children }) {
 }
 
 
-function IssueCard(issueStatus, setModalOpen, setFormData) {
-    const { t } = useTranslation();
-    const handlers = dragAndDropHandlers("card");
+function IssueCard(issueStatus, setModalOpen, setFormData, t, fetcher) {
+    const handlers = dragAndDropHandlers("card", fetcher);
 
     return (issueStatus.map((issue, i) => (
         <Card
@@ -126,9 +138,7 @@ function IssueCard(issueStatus, setModalOpen, setFormData) {
 }
 
 
-function dragAndDropHandlers(item) {
-    const fetcher = useFetcher();
-
+function dragAndDropHandlers(item, fetcher) {
     const statusDrop = (e) => {
         const cardId = e.dataTransfer.getData("cardId");
         const sourceStatus = e.dataTransfer.getData("sourceStatus");
