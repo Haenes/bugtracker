@@ -4,7 +4,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.gzip import GZipMiddleware
 
-from config import REDIS_USER, REDIS_PASSWORD, CeleryConfig
+from config import settings, CeleryConfig
 from auth.manager import (
     jwt_auth_router, bearer_auth_router,
     auth_verify_router, register_router,
@@ -45,7 +45,7 @@ app.add_middleware(
 )
 app.add_middleware(GZipMiddleware, compresslevel=6)
 
-celery = Celery("tasks", broker=f"redis://{REDIS_USER}:{REDIS_PASSWORD}@redis")
+celery = Celery(main="tasks", broker=settings.get_redis_url())
 celery.config_from_object(CeleryConfig)
 celery.autodiscover_tasks()
 

@@ -9,7 +9,7 @@ from sqlalchemy.ext.asyncio import (
     async_sessionmaker, create_async_engine
 )
 
-from config import DB_URI
+from config import settings
 
 
 intpk = Annotated[int, mapped_column(primary_key=True, index=True)]
@@ -19,7 +19,7 @@ class Base(DeclarativeBase):
     pass
 
 
-engine = create_async_engine(url=DB_URI)
+engine = create_async_engine(url=settings.get_db_url())
 async_session_maker = async_sessionmaker(engine, expire_on_commit=False)
 
 

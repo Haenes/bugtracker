@@ -13,7 +13,7 @@ from sqlalchemy.ext.asyncio import (
 
 from redis.asyncio import ConnectionPool, Redis
 
-from config import TEST_DB_URI, REDIS_USER, REDIS_PASSWORD
+from config import settings
 from main import app
 from auth.models import User
 from auth.manager import UserManager, current_active_user
@@ -21,11 +21,11 @@ from utils.db import get_async_session, Base
 from utils.cache import get_redis_client
 
 
-engine_test = create_async_engine(TEST_DB_URI, poolclass=NullPool)
+engine_test = create_async_engine(settings.get_db_url(is_test=True), poolclass=NullPool)
 async_session_maker = async_sessionmaker(engine_test, expire_on_commit=False)
 
 pool = ConnectionPool.from_url(
-    f"redis://{REDIS_USER}:{REDIS_PASSWORD}@redis/2",
+    url=settings.get_redis_url(),
     decode_responses=True,
     max_connections=10
 )

@@ -4,12 +4,12 @@ from typing import AsyncGenerator, Callable
 
 from redis.asyncio import ConnectionPool, Redis
 
-from config import REDIS_USER, REDIS_PASSWORD, REDIS_EXPIRE_TIME
+from config import settings
 from .pagination import PaginatedResponse, NoItemsResponse
 
 
 pool = ConnectionPool.from_url(
-    f"redis://{REDIS_USER}:{REDIS_PASSWORD}@redis",
+    url=settings.get_redis_url(),
     decode_responses=True,
     max_connections=10
 )
@@ -38,7 +38,7 @@ async def cache_get_or_set(
     else:
         result = await func(*args_for_func)
 
-        await cache.set(key, result.model_dump_json(), ex=REDIS_EXPIRE_TIME)
+        await cache.set(key, result.model_dump_json(), ex=settings.REDIS_EXPIRE_TIME)
         return result
 
 
