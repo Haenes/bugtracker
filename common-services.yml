@@ -18,7 +18,7 @@ services:
       redis:
         condition: service_healthy
     restart: unless-stopped
-  
+
   frontend:
     container_name: frontend
     build: ./frontend
@@ -31,7 +31,7 @@ services:
         reservations:
           memory: 50M
     restart: unless-stopped
-  
+
   celery:
     container_name: api-celery
     build: ./backend
@@ -46,7 +46,7 @@ services:
           memory: 100M
     depends_on:
       redis:
-        condition: service_healthy 
+        condition: service_healthy
     restart: unless-stopped
 
   db:
@@ -61,7 +61,7 @@ services:
         reservations:
           memory: 50M
     volumes:
-      - ./backend/deploy/db/data:/var/lib/postgresql/data
+      - db-data:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U$$POSTGRES_USER -d$$POSTGRES_DB"]
       interval: 1s
@@ -81,10 +81,14 @@ services:
         reservations:
           memory: 10M
     volumes:
-      - ./backend/deploy/redis/data:/data
+      - redis-data:/data
     healthcheck:
       test: ["CMD-SHELL", "redis-cli -a ${REDIS_PASSWORD} ping | grep PONG"]
       interval: 1s
       timeout: 5s
       retries: 10
     restart: unless-stopped
+
+volumes:
+  db-data:
+  redis-data:

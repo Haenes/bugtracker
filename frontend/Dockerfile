@@ -1,4 +1,4 @@
-FROM node:23.6.1-alpine AS base
+FROM node:23.11-alpine AS base
 
 ARG VITE_BACKEND_URL
 ENV VITE_BACKEND_URL=$VITE_BACKEND_URL
@@ -17,7 +17,7 @@ FROM base AS build
 RUN npm run build
 
 
-FROM nginx:1.27.3-alpine AS prod
+FROM nginx:1.28-alpine AS prod
 
 COPY --from=build /frontend/dist /usr/share/nginx/html
 COPY default.conf /etc/nginx/conf.d/default.conf

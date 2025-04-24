@@ -10,7 +10,7 @@ class Settings(BaseSettings):
     DB_HOST: str = Field(validation_alias='POSTGRES_HOST')
     DB_PORT: int = Field(validation_alias='POSTGRES_PORT')
     DB_NAME: str = Field(validation_alias='POSTGRES_DB')
-    TEST_DB_NAME: str
+    TEST_DB_NAME: str = Field(validation_alias='POSTGRES_TEST_DB')
 
     REDIS_USER: str
     REDIS_PASSWORD: str

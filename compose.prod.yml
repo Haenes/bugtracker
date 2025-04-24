@@ -44,3 +44,7 @@ services:
       - backend
       - frontend
     restart: unless-stopped
+
+volumes:
+  db-data:
+  redis-data:
