@@ -5,7 +5,7 @@ from fastapi_users.authentication import (
 )
 from redis.asyncio import Redis
 
-from utils.cache import pool
+from src.utils.cache import pool
 
 
 bearer_transport = BearerTransport("auth/bearer/login")

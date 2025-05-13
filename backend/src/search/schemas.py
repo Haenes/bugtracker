@@ -1,19 +1,19 @@
 from pydantic import BaseModel
 
-from projects.schemas import SearchProject
-from issues.schemas import SearchIssue
+from src.projects.schemas import SearchProject
+from src.tasks.schemas import SearchTask
 
 
 class SearchResultsResponse(BaseModel):
     """ Response schema with search results. """
 
     projects: list[SearchProject] | list[None]
-    issues: list[SearchIssue] | list[None]
+    tasks: list[SearchTask] | list[None]
 
 
 class NoItemsResponse(BaseModel):
     """
     Response schema where search doesn't find any item
-    for both projects and issues.
+    for both projects and tasks.
     """
     detail: str

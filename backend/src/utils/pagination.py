@@ -1,19 +1,22 @@
 from typing import Annotated
+from uuid import UUID
 
 from fastapi import Depends, HTTPException
 
 from sqlalchemy import select, func
+from sqlalchemy.orm import joinedload
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from pydantic import BaseModel
 
-from projects.schemas import ProjectSchema, PaginationProject
-from projects.models import Project
-from issues.schemas import IssueSchema, PaginationIssue
+from src.projects.schemas import ProjectSchema, PaginationProject
+from src.projects.models import Project
+from src.tasks.models import Task
+from src.tasks.schemas import PaginationTask
 
 
 async def pagination_query_params(page: int = 1, limit: int = 10):
-    return {"page": page, "limit": limit}
+    return {'page': page, 'limit': limit}
 
 
 pagination_params = Annotated[dict, Depends(pagination_query_params)]
@@ -25,7 +28,7 @@ class PaginatedResponse(BaseModel):
     next_page: int | None
     prev_page: int | None
     total_pages: int | float
-    results: list[PaginationProject] | list[PaginationIssue]
+    results: list[PaginationProject] | list[PaginationTask]
 
 
 class NoItemsResponse(BaseModel):
@@ -48,7 +51,7 @@ class PaginationInterface:
         )
 
         if total_pages < page:
-            raise HTTPException(404, "This page does not exist!")
+            raise HTTPException(404, 'This page does not exist!')
         else:
             next_page = page + 1 if total_pages - page != 0 else None
             previous_page = (
@@ -62,36 +65,35 @@ class PaginationInterface:
     @staticmethod
     def _count_query(
         session: AsyncSession,
-        model: ProjectSchema | IssueSchema,
-        user_id: int,
-        project_id: int | None = None,
+        model: ProjectSchema | Task,
+        user_id: UUID,
+        project_id: UUID | None = None,
     ): ...
 
     def _items_query(
         session: AsyncSession,
-        model: ProjectSchema | IssueSchema,
-        user_id: int,
+        model: ProjectSchema | Task,
+        user_id: UUID,
         offset: int,
         limit: int,
-        project_id: int | None = None,
+        project_id: UUID | None = None,
     ): ...
 
     @classmethod
     async def get_paginated(
         cls,
         session: AsyncSession,
-        model: ProjectSchema | IssueSchema,
+        model: Project | Task,
         pagination_params: pagination_params,
-        user_id: int,
-        project_id: int | None = None
+        user_id: UUID,
+        project_id: UUID | None = None
     ) -> PaginatedResponse | NoItemsResponse:
-
-        page, limit = pagination_params["page"], pagination_params["limit"]
+        page, limit = pagination_params['page'], pagination_params['limit']
 
         if page < 0 or limit < 0:
             raise HTTPException(
-                400,
-                "The page and/or limit cannot be less than zero!"
+                status_code=400,
+                detail='The page and/or limit cannot be less than zero!'
             )
         offset = (page - 1) * limit
 
@@ -126,13 +128,13 @@ class ProjectsPagination(PaginationInterface):
     async def _count_query(
         session: AsyncSession,
         model: ProjectSchema,
-        user_id: int,
-        project_id: int | None = None,
+        user_id: UUID,
+        project_id: UUID | None = None,
     ):
         count_query = (
             select(func.count())
             .select_from(model)
-            .where(model.author_id == user_id)
+            .where(model.creator_id == user_id)
         )
         count = await session.scalar(count_query)
 
@@ -144,47 +146,47 @@ class ProjectsPagination(PaginationInterface):
     async def _items_query(
         session: AsyncSession,
         model: ProjectSchema,
-        user_id: int,
+        user_id: UUID,
         offset: int,
         limit: int,
-        project_id: int | None = None,
+        project_id: UUID | None = None,
     ):
         results_query = (
             select(model)
-            .where(model.author_id == user_id)
-            .order_by(model.favorite.desc(), model.created)
+            .where(model.creator_id == user_id)
+            .order_by(model.is_favorite.desc(), model.created_at)
             .offset(offset)
             .limit(limit)
         )
         return await session.scalars(results_query)
 
 
-class IssuesPagination(PaginationInterface):
+class TasksPagination(PaginationInterface):
 
     @staticmethod
     async def _is_project_exist_query(
         session: AsyncSession,
-        model: IssueSchema,
-        user_id: int,
-        project_id: int,
+        model: Task,
+        user_id: UUID,
+        project_id: UUID,
     ):
         _is_project_exist_query = (
             select(Project)
-            .where(Project.author_id == user_id, Project.id == project_id)
+            .where(Project.creator_id == user_id, Project.id == project_id)
         )
         is_project_exist = await session.scalar(_is_project_exist_query)
 
         if not is_project_exist:
-            raise HTTPException(404, "Project not found!")
+            raise HTTPException(404, 'Project not found!')
 
     @staticmethod
     async def _count_query(
         session: AsyncSession,
-        model: IssueSchema,
-        user_id: int,
-        project_id: int,
+        model: Task,
+        user_id: UUID,
+        project_id: UUID,
     ):
-        await IssuesPagination._is_project_exist_query(
+        await TasksPagination._is_project_exist_query(
             session,
             model,
             user_id,
@@ -194,29 +196,37 @@ class IssuesPagination(PaginationInterface):
         count_query = (
             select(func.count())
             .select_from(model)
-            .where(model.author_id == user_id, model.project_id == project_id)
+            .where(model.creator_id == user_id, model.project_id == project_id)
         )
         count = await session.scalar(count_query)
 
         if count == 0:
             return NoItemsResponse(
-                results="You don't have any issues for this project!"
+                results="You don't have any tasks for this project!"
             )
         return count
 
     @staticmethod
     async def _items_query(
         session: AsyncSession,
-        model: IssueSchema,
-        user_id: int,
+        model: Task,
+        user_id: UUID,
         offset: int,
         limit: int,
-        project_id: int
+        project_id: UUID
     ):
         results_query = (
             select(model)
-            .where(model.author_id == user_id, model.project_id == project_id)
-            .order_by(model.type, model.created)
+            .options(
+                joinedload(model.status_rel),
+                joinedload(model.priority_rel),
+                joinedload(model.type_rel)
+            )
+            .where(
+                model.creator_id == user_id,
+                model.project_id == project_id,
+            )
+            .order_by(model.type_id, model.created_at)
             .offset(offset)
             .limit(limit)
         )

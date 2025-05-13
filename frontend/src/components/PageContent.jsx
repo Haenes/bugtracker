@@ -23,9 +23,8 @@ export function PageContent({ header, children }) {
     };
     
     // Examples:
-    // project-132 -> ["project", "132"] -> "project"
-    // project-name-132 -> ["project", "name", "132"] -> "project-name"
-    let isProjectName = params?.projectId?.split("-").slice(0,-1).join("-");
+    // projectName=*PROJECT UUID* -> ["projectName", "*PROJECT UUID*"] -> "projectName"
+    let isProjectName = params?.projectId?.split("=").slice(0,-1);
 
     return (
         <Content className="m-2">

@@ -72,7 +72,7 @@ function showSearchResults(fetcher, loaderData, t, handleClick, searchQuery) {
                 </span>
             </div>
         );
-    } else if (fetcher.data?.projects || fetcher.data?.issues) {
+    } else if (fetcher.data?.projects || fetcher.data?.tasks) {
         results = displaySearchResults(fetcher.data, t, handleClick, false);
         linkToAllResults = isSearchPage && allResultsLink(
             fetcher.data, searchQuery, t, handleClick
@@ -93,7 +93,7 @@ function showSearchResults(fetcher, loaderData, t, handleClick, searchQuery) {
 function displaySearchResults(plainResults, t, handleClick, isSearchPage) {
     const jsxResults = convertResultsToJsx(plainResults, handleClick, isSearchPage);
     const projects = jsxResults.jsxProjects;
-    const issues = jsxResults.jsxIssues;
+    const tasks = jsxResults.jsxTasks;
 
     return (
         <>
@@ -103,12 +103,12 @@ function displaySearchResults(plainResults, t, handleClick, isSearchPage) {
                     {projects}
                 </>
             }
-            {issues.length > 0 &&
+            {tasks.length > 0 &&
                 <>
                     <span className={projects.length >= 0 && "mt-3"}>
-                        {t("issuesBoard_header")}:
+                        {t("tasksBoard_header")}:
                     </span>
-                    {issues}
+                    {tasks}
                 </>
             }
         </>
@@ -118,7 +118,7 @@ function displaySearchResults(plainResults, t, handleClick, isSearchPage) {
 
 function convertResultsToJsx(plainResults, handleClick, isSearchPage) {
     let jsxProjects = [];
-    let jsxIssues = [];
+    let jsxTasks = [];
 
     const fillResultsArray = (array, item) => {
         let url_part;
@@ -132,10 +132,12 @@ function convertResultsToJsx(plainResults, handleClick, isSearchPage) {
         array.push(
             <li key={item.id}>
                 <Link
-                    to={`/projects/${url_part}/issues`}
+                    to={`/projects/${url_part}/tasks`}
                     onClick={handleClick}
                 >
-                    {item?.name || item?.title} {item?.key && `[${item.key}]`}
+                    {/* TODO: Нужно разобраться с этим, ибо у задач теперь нет поля title! */}
+                    {/* {item?.name || item?.title} {item?.key && `[${item.key}]`} */}
+                    {item?.name && item?.key || item?.name} {item?.key && `[${item.key}]`}
                 </Link>
             </li>
         );
@@ -148,14 +150,14 @@ function convertResultsToJsx(plainResults, handleClick, isSearchPage) {
         }
     }
 
-    if (plainResults?.issues) {
-        for (let issue of plainResults.issues) {
-            if (jsxIssues.length >= 5 && !isSearchPage) break;
-            fillResultsArray(jsxIssues, issue);
+    if (plainResults?.tasks) {
+        for (let task of plainResults.tasks) {
+            if (jsxTasks.length >= 5 && !isSearchPage) break;
+            fillResultsArray(jsxTasks, task);
         }
     }
 
-    return {jsxProjects, jsxIssues};
+    return {jsxProjects, jsxTasks};
 }
 
 
@@ -163,8 +165,8 @@ function allResultsLink(results, searchQuery, t, handleClick) {
     const isNeedFullPage = (results) => {
         if (results?.projects) {
             return results.projects.length > 5;
-        } else if (results?.issues) {
-            return results.issues.length > 5;
+        } else if (results?.tasks) {
+            return results.tasks.length > 5;
         }
     };
 

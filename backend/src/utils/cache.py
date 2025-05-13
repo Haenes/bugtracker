@@ -4,7 +4,7 @@ from typing import AsyncGenerator, Callable
 
 from redis.asyncio import ConnectionPool, Redis
 
-from config import settings
+from src.config import settings
 from .pagination import PaginatedResponse, NoItemsResponse
 
 

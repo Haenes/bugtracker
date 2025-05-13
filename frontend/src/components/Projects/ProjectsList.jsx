@@ -61,14 +61,14 @@ export function ProjectsList() {
                         <List.Item>
                             <Card
                                 title={
-                                    <Link to={`${item.name}-${item.id}/issues`}>
+                                    <Link to={`${item.name}=${item.id}/tasks`}>
                                         {item.name}
                                     </Link>
                                 }
                                 styles={{body: {padding: 0}}}
                                 extra={item.key}
                                 actions={[
-                                    <FavoriteButton data={{id: item.id, favorite: item.favorite}} />,
+                                    <FavoriteButton data={{id: item.id, is_favorite: item.is_favorite}} />,
                                     <SettingsButton
                                         project={{...item}}
                                         setFuncs={[setModalOpen, setFormData]}
@@ -96,14 +96,14 @@ function FavoriteButton({ data }) {
     const fetcher = useFetcher();
     const { t } = useTranslation();
 
-    let favorite = fetcher.formData?.get("favorite") || data.favorite
+    let is_favorite = fetcher.formData?.get("is_favorite") || data.is_favorite
 
     const handleClick = () => {
         fetcher.submit(
             {
                 intent: "edit",
                 projectId: data.id,
-                favorite: !data.favorite
+                is_favorite: !data.is_favorite
             },
             {method: "PATCH"}
         );
@@ -115,7 +115,7 @@ function FavoriteButton({ data }) {
             name="favorite"
             className="border-0 shadow-none"    
             icon={
-                favorite
+                is_favorite
                 ? <StarFilled title={t("projectsList_favoriteTrue")} style={buttonSize}/>
                 : <StarOutlined title={t("projectsList_favoriteFalse")} style={buttonSize}/>
             }

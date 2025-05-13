@@ -1,8 +1,6 @@
-import os
-from dotenv import load_dotenv
+from src.config import settings
 
-load_dotenv()
 
-JWT_SECRET = os.environ.get("JWT_SECRET")
+JWT_SECRET = settings.JWT_SECRET
 MAX_AGE = 10800
-MANAGER_SECRET = os.environ.get("MANAGER_SECRET")
+MANAGER_SECRET = settings.MANAGER_SECRET

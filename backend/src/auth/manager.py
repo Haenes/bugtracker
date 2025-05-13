@@ -1,13 +1,14 @@
 import re
+from uuid import UUID
 
 from fastapi import Depends, Request
 from fastapi_users import (
     BaseUserManager,
     InvalidPasswordException,
-    IntegerIDMixin
+    UUIDIDMixin
 )
 
-from utils.tasks import celery_send_email
+from src.utils.tasks import celery_send_email
 from .config import MANAGER_SECRET, MAX_AGE
 from .cookie_jwt import auth_backend as jwt_backend
 from .bearer_redis import auth_backend as bearer_backend
@@ -16,7 +17,7 @@ from .models import User, get_user_db
 from .schemas import UserCreate, UserRead, UserUpdate
 
 
-class UserManager(IntegerIDMixin, BaseUserManager[User, int]):
+class UserManager(UUIDIDMixin, BaseUserManager[User, UUID]):
     reset_password_token_secret = MANAGER_SECRET
     verification_token_secret = MANAGER_SECRET
 

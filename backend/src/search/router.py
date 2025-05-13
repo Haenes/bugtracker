@@ -4,8 +4,8 @@ from fastapi import APIRouter, Query, Depends
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from auth.manager import User, current_active_user
-from utils.db import get_async_session
+from src.auth.manager import User, current_active_user
+from src.utils.db import get_async_session
 from .schemas import SearchResultsResponse, NoItemsResponse
 from .crud import fulltext_search
 

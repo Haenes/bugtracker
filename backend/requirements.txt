@@ -1,4 +1,5 @@
 alembic==1.15.2
+black==25.1.0
 celery[gevent]==5.5.1
 email-validator==2.2.0
 fastapi==0.115.12

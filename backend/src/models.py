@@ -1,25 +1,26 @@
 from datetime import datetime
+from uuid import UUID
 
 from sqlalchemy import DateTime, ForeignKey, func, text, literal
 from sqlalchemy.orm import Mapped, mapped_column
 
-from utils.db import Base, intpk
+from src.utils.db import Base, UUID_PK
 
 
 class BaseClass(Base):
     __abstract__ = True
 
-    id: Mapped[intpk]
-    author_id: Mapped[int] = mapped_column(
-        ForeignKey("auth_user.id", ondelete="CASCADE")
+    id: Mapped[UUID_PK]
+    creator_id: Mapped[UUID] = mapped_column(
+        ForeignKey('user.id', ondelete='CASCADE')
     )
-    created: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), server_default=text("CURRENT_TIMESTAMP")
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=text('CURRENT_TIMESTAMP')
     )
-    updated: Mapped[datetime] = mapped_column(
+    updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
-        onupdate=text("CURRENT_TIMESTAMP"),
-        server_default=text("CURRENT_TIMESTAMP")
+        onupdate=text('CURRENT_TIMESTAMP'),
+        server_default=text('CURRENT_TIMESTAMP')
     )
 
 

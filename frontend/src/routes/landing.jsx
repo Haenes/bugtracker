@@ -31,8 +31,8 @@ export function Component() {
                 <Carousel dotPosition="top">
                     <GetSlide item="projects" imgColor={imgColor}/>
                     <GetSlide item="project" imgColor={imgColor}/>
-                    <GetSlide item="issues" imgColor={imgColor}/>
-                    <GetSlide item="issue" imgColor={imgColor}/>
+                    <GetSlide item="tasks" imgColor={imgColor}/>
+                    <GetSlide item="task" imgColor={imgColor}/>
                 </Carousel>
             </main>
 
@@ -48,11 +48,11 @@ function GetSlide({ item, imgColor }) {
     let src = "images/";
 
     if (item.startsWith("i")) {
-        src += "issue/";
+        src += "task/";
     } else {
         src += "project/";
     }
-    // Example: images/issue/issues.
+    // Example: images/task/tasks.
     src += item;
 
     return (

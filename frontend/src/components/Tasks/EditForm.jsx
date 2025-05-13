@@ -11,112 +11,113 @@ import { convertDate } from "../PageLayout.jsx";
 const { TextArea } = Input;
 
 
-export function EditIssueForm({ issue, errors, setModalOpen }) {
+export function EditTaskForm({ task, errors, setModalOpen }) {
     const fetcher = useFetcher();
     const { t } = useTranslation();
 
-    const [type, setType] = useState(issue.type);
-    const [issueStatus, setIssueStatus] = useState(issue.status);
-    const [priority, setPriority] = useState(issue.priority);
+    const [type, setType] = useState(task.type_id);
+    const [taskStatus, setTaskStatus] = useState(task.status_id);
+    const [priority, setPriority] = useState(task.priority_id);
 
     const handleDelete = () => {
         setModalOpen({visible: false, modalId: 2});
         fetcher.submit(
-            {intent: "delete", issueId: issue.id},
+            {intent: "delete", taskId: task.id},
             {method: "POST"}
         );
     };
 
     return (
-        <Form method="post" name="editIssue" className="grid grid-cols-2 gap-x-8 mt-4">
-            <input name="issueId" value={issue.id} type="hidden" />
+        <Form method="post" name="editTask" className="grid grid-cols-2 gap-x-8 mt-4">
+            <input name="taskId" value={task.id} type="hidden" />
 
             <div className="col-span-2">
 
-                {errors?.editTitle ?
+                {errors?.editName ?
                     <div className='text-center text-red-500'>
                         <span className='text-center text-red-500'>
-                            {errors.editTitle}
+                            {errors.editName}
                         </span>
                     </div> : <></>
                 }
 
                 <Input
-                    name="title"
-                    status={errors?.editTitle && "error"}
+                    name="name"
+                    status={errors?.editName && "error"}
                     type="text"
-                    defaultValue={issue.title}
+                    defaultValue={task.name}
                     required
                     minLength={3}
-                    maxLength={255}
+                    maxLength={100}
                 />
 
                 <TextArea
                     name="description"
-                    defaultValue={issue.description}
+                    defaultValue={task.description}
                     className="my-3"
-                    placeholder={t("editIssue_description")}
-                    maxLength={255}
+                    placeholder={t("editTask_description")}
                 />
 
                 <div>
-                    <span className="mr-2">{t("editIssue_type")}</span>
+                    <span className="mr-2">{t("editTask_type")}</span>
                     <Select
-                        defaultValue={issue.type}
-                        className="w-1/3 md:w-1/5"
+                        defaultValue={task.type_id}
+                        className="w-1/3 md:w-1/3"
                         popupMatchSelectWidth={false}
                         options={[
-                            {label: t("issue_typeFeature"), value: "Feature"},
-                            {label: t("issue_typeBug"), value: "Bug"}
+                            {label: t("task_typeFeature"), value: 3},
+                            {label: t("task_typeMisc"), value: 4},
+                            {label: t("task_typeFix"), value: 2},
+                            {label: t("task_typeBug"), value: 1}
                         ]}
                         onChange={value => setType(value)}
                     />
-                    <input name="type" type="hidden" value={type} />
+                    <input name="type_id" type="hidden" value={type} />
                 </div>
 
                 <div className="my-3">
-                    <span className="mr-2">{t("editIssue_status")}</span>
+                    <span className="mr-2">{t("editTask_status")}</span>
                     <Select
-                        defaultValue={issue.status}
-                        className="w-2/5 md:w-1/4"
+                        defaultValue={task.status_id}
+                        className="w-2/5 md:w-1/3"
                         popupMatchSelectWidth={false}
                         options={[
-                            {label: t("issue_statusToDo"), value: "To do"},
-                            {label: t("issue_statusInProgress"), value: "In progress"},
-                            {label: t("issue_statusDone"), value: "Done"}
+                            {label: t("taskStatus_notAssign"), value: 1},
+                            {label: t("taskStatus_toDo"), value: 2},
+                            {label: t("taskStatus_inProgress"), value: 3},
+                            {label: t("taskStatus_done"), value: 4}
                         ]}
-                        onChange={value => setIssueStatus(value)}
+                        onChange={value => setTaskStatus(value)}
                     />
-                    <input name="status" type="hidden" value={issueStatus} />
+                    <input name="status_id" type="hidden" value={taskStatus || 999} />
                 </div>
 
-                <span className="mr-2">{t("editIssue_priority")}</span>
+                <span className="mr-2">{t("editTask_priority")}</span>
                 <Select
-                    defaultValue={issue.priority}
+                    defaultValue={task.priority_id}
                     className="w-1/2 md:w-1/3"
                     popupMatchSelectWidth={false}
                     options={[
-                        {label: t("issue_priorityLowest"), value: "Lowest"},
-                        {label: t("issue_priorityLow"), value: "Low"},
-                        {label: t("issue_priorityMedium"), value: "Medium"},
-                        {label: t("issue_priorityHigh"), value: "High"},
-                        {label: t("issue_priorityHighest"), value: "Highest"}
+                        {label: t("task_priorityLow"), value: 1},
+                        {label: t("task_priorityMedium"), value: 2},
+                        {label: t("task_priorityHigh"), value: 3},
+                        {label: t("task_priorityCritical"), value: 4}
                     ]}
                     onChange={value => setPriority(value)}
                 />
-                <input name="priority" type="hidden" value={priority} />
+                <input name="priority_id" type="hidden" value={priority} />
 
                 <div className="my-3">
                     <span className="mr-2">{t("editCreated")}</span>
-                    {convertDate(issue.created)}
+                    {convertDate(task.created_at)}
                 </div>
 
                 <div className="mb-4">
                     <span className="mr-1">{t("editUpdated")}</span>
                     {/* Get updated datetime from PATCH response to synchronize data */}
-                    {errors?.created == issue.created ?
-                    convertDate(errors.updated) :
-                    convertDate(issue.updated)
+                    {errors?.created_at == task.created_at ?
+                    convertDate(errors.updated_at) :
+                    convertDate(task.updated_at)
                 }
                 </div>
 

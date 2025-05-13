@@ -1,12 +1,13 @@
 from datetime import datetime
+from uuid import UUID
 
 from fastapi_users import schemas
 
 
-class UserRead(schemas.BaseUser[int]):
+class UserRead(schemas.BaseUser[UUID]):
     username: str
     first_name: str
-    date_joined: datetime
+    created_at: datetime
 
 
 class UserCreate(schemas.BaseUserCreate):

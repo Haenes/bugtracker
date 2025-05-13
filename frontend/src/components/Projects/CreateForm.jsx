@@ -36,6 +36,7 @@ export function CreateProjectForm({ errors, setModalOpen }) {
                 placeholder={t("createProject_name")}
                 required
                 minLength={3}
+                maxLength={100}
             />
 
             <Input
@@ -49,7 +50,7 @@ export function CreateProjectForm({ errors, setModalOpen }) {
                 maxLength={10}
             />
 
-            <Checkbox name="favorite">{t("createProject_favorite")}</Checkbox>
+            <Checkbox name="is_favorite">{t("createProject_favorite")}</Checkbox>
 
             <Button
                 name="intent"

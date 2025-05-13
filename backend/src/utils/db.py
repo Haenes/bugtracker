@@ -1,25 +1,48 @@
 from typing import AsyncGenerator, Annotated
+from uuid import UUID
 
 from fastapi import HTTPException
 
+from sqlalchemy import SMALLINT, BIGINT, MetaData, text
 from sqlalchemy.orm import DeclarativeBase, mapped_column
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import (
     AsyncSession,
-    async_sessionmaker, create_async_engine
+    async_sessionmaker,
+    create_async_engine
 )
 
-from config import settings
+from src.config import settings
 
 
-intpk = Annotated[int, mapped_column(primary_key=True, index=True)]
+SMALLINT_PK = Annotated[int, mapped_column(SMALLINT, primary_key=True, index=True)]
+INT_PK = Annotated[int, mapped_column(primary_key=True, index=True)]
+BIGINT_PK = Annotated[int, mapped_column(BIGINT, primary_key=True, index=True)]
+UUID_PK = Annotated[
+    UUID,
+    mapped_column(
+        primary_key=True,
+        index=True,
+        server_default=text("gen_random_uuid()")
+    )
+]
 
 
 class Base(DeclarativeBase):
-    pass
+    metadata = MetaData(naming_convention={
+        'ix': 'ix_%(column_0_label)s',
+        'uq': 'uq_%(table_name)s_%(column_0_name)s',
+        'ck': 'ck_%(table_name)s_`%(constraint_name)s`',
+        'fk': 'fk_%(table_name)s_%(column_0_name)s_%(referred_table_name)s',
+        'pk': 'pk_%(table_name)s'
+    })
+
+    def __repr__(self):
+        cols = [f'{col}={getattr(self, col)}' for col in self.__table__.columns.keys()]
+        return f'{self.__class__.__name__}({', '.join(cols)})'
 
 
-engine = create_async_engine(url=settings.get_db_url())
+engine = create_async_engine(url=settings.get_db_url(), echo=True)
 async_session_maker = async_sessionmaker(engine, expire_on_commit=False)
 
 
@@ -28,7 +51,7 @@ async def get_async_session() -> AsyncGenerator[AsyncSession, None]:
         yield session
 
 
-async def handleDbUniqueError(session: AsyncSession, stmt):
+async def handleDbUniqueError(session: AsyncSession, stmt, is_create: bool = False):
     """
     Performs an operation that may result in a uniqueness error
     on the part of the database and processes it
@@ -44,8 +67,8 @@ async def handleDbUniqueError(session: AsyncSession, stmt):
         error = repr(e.orig.__cause__)
 
         errors_dict = {
-            "issue_unique_title": "Issue with this title already exist!",
-            "project_unique_key": "Project with this key already exist!",
+            'uq_task_name': 'Task with this name already exist!',
+            'uq_project_key': 'Project with this key already exist!',
         }
 
         for k, v in errors_dict.items():
@@ -53,4 +76,7 @@ async def handleDbUniqueError(session: AsyncSession, stmt):
                 raise HTTPException(400, v)
     else:
         await session.commit()
+
+        if is_create:
+            return {"id": result}
         return result

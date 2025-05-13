@@ -35,7 +35,7 @@ services:
   celery:
     container_name: api-celery
     build: ./backend
-    command: sh -c "cd src && celery --app main:celery worker --loglevel INFO --pool gevent"
+    command: sh -c "celery --app main:celery worker --loglevel INFO --pool gevent"
     env_file:
       - .env
     deploy:

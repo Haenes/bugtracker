@@ -73,7 +73,7 @@ async function editProjectAction(projectId, formData) {
     // Handles the case, when you want to unfavorite project,
     // but because the unchecked checkbox is null (not false!)
     // the project remains a favorite.
-    formData.get("favorite") === null && formData.set("favorite", false);
+    formData.get("is_favorite") === null && formData.set("is_favorite", false);
     // Change project key to Uppercase, just bcs it looks better.
     formData.get("key") && formData.set("key", formData.get("key").toUpperCase());
 
@@ -109,7 +109,7 @@ function afterSubmitValidation(project, intent) {
         : errors.editKey = i18n.t("error_projectKey");
 
         return errors;
-    } else if (project.detail === "Slashes, ':' and '?' not allowed in project name!") {
+    } else if (project.detail === "Slashes, ':', '?' and '=' not allowed in project name!") {
         intent === "create"
         ? errors.createName = i18n.t("error_projectName")
         : errors.editName = i18n.t("error_projectName");

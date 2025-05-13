@@ -9,13 +9,13 @@ from sqlalchemy.ext.asyncio import async_engine_from_config
 
 from alembic import context
 
-sys.path.append(os.path.join(sys.path[0], 'src'))
+# sys.path.append(os.path.join(sys.path[0], 'src'))
 
-# from src.config import DB_URI
 from src.config import settings
-from src.auth.models import User
-from src.projects.models import BaseClass as projects
-from src.issues.models import BaseClass
+from src.models import BaseClass
+from src.auth.models import User, Role, UserProjectRole
+from src.projects.models import Project, ProjectInvite
+from src.tasks.models import Task, TaskPriority, TaskStatus, TaskType, TaskComment, TaskHistory
 
 
 # this is the Alembic Config object, which provides
@@ -31,7 +31,13 @@ if config.config_file_name is not None:
 # add your model's MetaData object here
 # for 'autogenerate' support
 target_metadata = [BaseClass.metadata]
-target_tables_list = ["issue", "project", "auth_user"]
+target_tables_list = [
+    "user", "role", "user_project_role",
+    "project", "project_invite",
+    "task", "task_priority", "task_type",
+    "task_status", "task_history", "task_comment",
+    "auth_user", "issue",
+]
 
 
 def include_object(object, name, type_, reflected, compare_to):
@@ -62,6 +68,7 @@ def run_migrations_offline() -> None:
     context.configure(
         url=url,
         target_metadata=target_metadata,
+        include_object=include_object,
         compare_server_default=True,
         literal_binds=True,
         dialect_opts={"paramstyle": "named"},

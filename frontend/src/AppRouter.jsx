@@ -81,8 +81,8 @@ const router = createBrowserRouter([
                                 lazy: () => import("./routes/projects.jsx"),
                             },
                             {
-                                path: "/projects/:projectId/issues",
-                                lazy: () => import("./routes/issues.jsx"),
+                                path: "/projects/:projectId/tasks",
+                                lazy: () => import("./routes/tasks.jsx"),
                             },
                             {
                                 path: "/settings",

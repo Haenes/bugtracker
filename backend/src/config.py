@@ -32,7 +32,7 @@ class Settings(BaseSettings):
 
     model_config = SettingsConfigDict(
         extra='ignore',
-        env_file=os.path.join(os.path.abspath(os.pardir + '/..'), ".env"),
+        env_file=os.path.join(os.path.abspath(os.pardir), ".env"),
         env_file_encoding='utf-8'
     )
 

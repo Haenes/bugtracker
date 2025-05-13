@@ -3,9 +3,7 @@
 echo "----------- Run migrations -----------"
 alembic upgrade head
 
-cd src
-
-echo "----------- Run api -----------"
+echo "----------- Run API -----------"
 
 if test $ENV = "DEV"
 then

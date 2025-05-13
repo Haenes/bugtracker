@@ -65,8 +65,8 @@ export async function createItem(data, project_id = null) {
 }
 
 
-export async function updateItem(data, project_id, issue_id = null) {
-    const url = urlSingleHelper(project_id, issue_id);
+export async function updateItem(data, project_id, task_id = null) {
+    const url = urlSingleHelper(project_id, task_id);
 
     try {
         let rawResponse = await fetch(url, {
@@ -87,8 +87,8 @@ export async function updateItem(data, project_id, issue_id = null) {
 }
 
 
-export async function deleteItem(project_id, issue_id = null) {
-    const url = urlSingleHelper(project_id, issue_id);
+export async function deleteItem(project_id, task_id = null) {
+    const url = urlSingleHelper(project_id, task_id);
 
     try {
         let rawResponse = await fetch(url, {
@@ -112,14 +112,14 @@ export async function deleteItem(project_id, issue_id = null) {
  * Returns the API endpoint for the one item
  * to get, update or delete it.
  * @param {string | number} project_id 
- * @param {string | number} issue_id 
+ * @param {string | number} task_id 
  * @returns url
  */
-function urlSingleHelper(project_id, issue_id) {
+function urlSingleHelper(project_id, task_id) {
     let url = `${BACKEND_URL}/projects`;
 
-    if (issue_id) {
-        url += `/${project_id}/issues/${issue_id}`
+    if (task_id) {
+        url += `/${project_id}/tasks/${task_id}`
     } else {
         url += `/${project_id}`
     }
@@ -144,7 +144,7 @@ function urlGetAllHelper(page, limit, project_id) {
     ]);
 
     if (project_id) {
-        url += `/${project_id}/issues?${pagination}`;
+        url += `/${project_id}/tasks?${pagination}`;
     } else {
         url += `?${pagination}`;
     }
@@ -162,7 +162,7 @@ function urlCreateHelper(project_id) {
     let url = `${BACKEND_URL}/projects`;
 
     if (project_id) {
-        url += `/${project_id}/issues`;
+        url += `/${project_id}/tasks`;
     }
 
     return url;

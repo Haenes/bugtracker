@@ -1,40 +1,40 @@
 import re
+from uuid import UUID
 
 from fastapi import HTTPException
 
 from sqlalchemy import select, insert, update, delete
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from utils.db import handleDbUniqueError
+from src.utils.db import handleDbUniqueError
 from .schemas import ProjectSchema, CreatedProjectSchema, UpdateProjectSchema
 from .models import Project
 
 
 async def create_project_db(
     session: AsyncSession,
-    user_id: int,
+    user_id: UUID,
     project: ProjectSchema
 ) -> CreatedProjectSchema:
-
     is_valid_project_name(project.name)
 
     stmt = (
         insert(Project)
-        .values(**project.model_dump(), author_id=user_id)
-        .returning(Project)
+        .values(**project.model_dump(), creator_id=user_id)
+        .returning(Project.id)
     )
-    return await handleDbUniqueError(session, stmt)
+    return await handleDbUniqueError(session, stmt, is_create=True)
 
 
 async def get_project_db(
     session: AsyncSession,
-    user_id: int,
-    project_id: int
+    user_id: UUID,
+    project_id: UUID
 ) -> ProjectSchema:
 
     query = (
         select(Project)
-        .where(Project.author_id == user_id, Project.id == project_id)
+        .where(Project.creator_id == user_id, Project.id == project_id)
     )
     project = await session.scalar(query)
 
@@ -46,8 +46,8 @@ async def get_project_db(
 
 async def update_project_db(
     session: AsyncSession,
-    user_id: int,
-    project_id: int,
+    user_id: UUID,
+    project_id: UUID,
     project: UpdateProjectSchema
 ) -> ProjectSchema:
 
@@ -56,7 +56,7 @@ async def update_project_db(
 
     stmt = (
         update(Project)
-        .where(Project.author_id == user_id, Project.id == project_id)
+        .where(Project.creator_id == user_id, Project.id == project_id)
         .values(**project.model_dump(exclude_none=True))
         .returning(Project)
     )
@@ -73,13 +73,13 @@ async def update_project_db(
 
 async def delete_project_db(
     session: AsyncSession,
-    user_id: int,
-    project_id: int
+    user_id: UUID,
+    project_id: UUID
 ) -> dict[str, str]:
 
     stmt = (
         delete(Project)
-        .where(Project.author_id == user_id, Project.id == project_id)
+        .where(Project.creator_id == user_id, Project.id == project_id)
         .returning(Project)
     )
     result = await session.scalar(stmt)
@@ -97,11 +97,11 @@ def is_valid_project_name(project_name):
     Raises an error if one of these characters is in the project name:
     back/forward slash, :, ?
     """
-    pattern = re.compile(r"[\/\\:?]")
+    pattern = re.compile(r"[\/\\:?=]")
 
     if pattern.search(project_name):
         raise HTTPException(
-            400,
-            "Slashes, ':' and '?' not allowed in project name!"
+            status_code=400,
+            detail="Slashes, ':', '?' and '=' not allowed in project name!"
         )
     return True

@@ -9,7 +9,7 @@ import { Form } from "react-router";
 const { TextArea } = Input;
 
 
-export function CreateIssueForm({ errors, setModalOpen }) {
+export function CreateTaskForm({ errors, setModalOpen }) {
     const { t } = useTranslation();
     const [type, setType] = useState("");
     const [priority, setPriority] = useState("");
@@ -31,58 +31,58 @@ export function CreateIssueForm({ errors, setModalOpen }) {
     }, [errors?.id])
 
     return (
-        <Form method="post" name="createIssue" className="flex flex-col gap-y-3 mt-4">
+        <Form method="post" name="createTask" className="flex flex-col gap-y-3 mt-4">
 
-            {errors?.createTitle || errors?.createType || errors?.createPriority ?
+            {errors?.createName || errors?.createType || errors?.createPriority ?
                 <div className='flex flex-col text-center text-red-500'>
-                    {errors?.createTitle}
+                    {errors?.createName}
                     {errors?.createType && <span>{errors.createType}</span>}
                     {errors?.createPriority && <span>{errors.createPriority}</span>}
                 </div> : <></>
             }
 
             <Input
-                name="title"
-                status={errors?.createTitle && "error"}
+                name="name"
+                status={errors?.createName && "error"}
                 type="text"
                 required
-                placeholder={t("createIssue_title")}
+                placeholder={t("createTask_name")}
                 minLength={3}
-                maxLength={255}
+                maxLength={100}
             />
 
             <TextArea
                 name="description"
-                maxLength={255}
-                placeholder={t("createIssue_description")}
+                placeholder={t("createTask_description")}
             />
 
             <Select
-                placeholder={t("createIssue_type")}
-                className="w-2/5 md:w-1/4"
+                placeholder={t("createTask_type")}
+                className="w-2/5 md:w-1/3"
                 status={errors?.createType && "error"}
                 options={[
-                    {label: t("issue_typeFeature"), value: "Feature"},
-                    {label: t("issue_typeBug"), value: "Bug"}
+                    {label: t("task_typeFeature"), value: 3},
+                    {label: t("task_typeMisc"), value: 4},
+                    {label: t("task_typeFix"), value: 2},
+                    {label: t("task_typeBug"), value: 1},
                 ]}
                 onChange={value => {setType(value); handleTypeChange}}
             />
-            <input name="type" type="hidden" value={type} />
+            <input name="type_id" type="hidden" value={type} />
 
             <Select
-                placeholder={t("createIssue_priority")}
+                placeholder={t("createTask_priority")}
                 className="w-3/5 md:w-2/5"
                 status={errors?.createPriority && "error"}
                 options={[
-                    {label: t("issue_priorityLowest"), value: "Lowest"},
-                    {label: t("issue_priorityLow"), value: "Low"},
-                    {label: t("issue_priorityMedium"), value: "Medium"},
-                    {label: t("issue_priorityHigh"), value: "High"},
-                    {label: t("issue_priorityHighest"), value: "Highest"}
+                    {label: t("task_priorityLow"), value: 1},
+                    {label: t("task_priorityMedium"), value:2},
+                    {label: t("task_priorityHigh"), value: 3},
+                    {label: t("task_priorityCritical"), value: 4}
                 ]}
                 onChange={value => {setPriority(value), handlePriorityChange}}
             />
-            <input name="priority" type="hidden" value={priority} />
+            <input name="priority_id" type="hidden" value={priority} />
 
             <Button
                 name="intent"

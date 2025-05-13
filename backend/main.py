@@ -4,15 +4,15 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.gzip import GZipMiddleware
 
-from config import settings, CeleryConfig
-from auth.manager import (
+from src.config import settings, CeleryConfig
+from src.auth.manager import (
     jwt_auth_router, bearer_auth_router,
     auth_verify_router, register_router,
     users_router, reset_password_router
 )
-from projects.router import router as projects_router
-from issues.router import router as issues_router
-from search.router import router as search_router
+from src.projects.router import router as projects_router
+from src.tasks.router import router as tasks_router
+from src.search.router import router as search_router
 
 app = FastAPI(
     root_path="/api",
@@ -50,7 +50,7 @@ celery.config_from_object(CeleryConfig)
 celery.autodiscover_tasks()
 
 app.include_router(projects_router)
-app.include_router(issues_router)
+app.include_router(tasks_router)
 app.include_router(search_router)
 
 

@@ -3,7 +3,7 @@ import { replace } from "react-router";
 import i18n from "../i18n/config.js";
 import { getItems, updateItem, deleteItem, createItem } from "../client/base.js";
 
-import { IssuesBoard } from "../components/Issues/IssuesBoard.jsx";
+import { TasksBoard } from "../components/Tasks/TasksBoard.jsx";
 import { PageContent } from "../components/PageContent.jsx";
 import { authProvider } from "./auth/authProvider.jsx";
 
@@ -11,7 +11,7 @@ import { authProvider } from "./auth/authProvider.jsx";
 export function Component() {
     return (
         <PageContent>
-            <IssuesBoard />
+            <TasksBoard />
         </PageContent>
     );
 }
@@ -24,7 +24,7 @@ export async function loader({ request, params }) {
     }
 
     const urlParams = new URL(request.url)?.searchParams;
-    const projectId = params.projectId.split("-").at(-1);
+    const projectId = params.projectId.split("=").at(-1);
     let page;
     let limit;
 
@@ -36,72 +36,72 @@ export async function loader({ request, params }) {
         limit = 100;
     }
 
-    const issues = await getItems(page, limit, projectId);
+    const tasks = await getItems(page, limit, projectId);
 
-    if (issues.results === "You don't have any issues for this project!") {
+    if (tasks.results === "You don't have any tasks for this project!") {
         return false;
     }
-    else if (issues.detail === "Project not found!") {
-        throw({status: 404, statusText: i18n.t("issuesBoard_projectNotFound")});
+    else if (tasks.detail === "Project not found!") {
+        throw({status: 404, statusText: i18n.t("tasksBoard_projectNotFound")});
     }
-    return issues;
+    return tasks;
 }
 
 
 export async function action({ request, params }) {
     const formData = await request.formData();
 
-    const projectId = params.projectId.split("-").at(-1);
-    const issueId = formData.get("issueId")
+    const projectId = params.projectId.split("=").at(-1);
+    const taskId = formData.get("taskId")
     const intent = formData.get("intent");
 
     switch (intent) {
         case "create": {
-            return await createIssueAction(projectId, formData);
+            return await createTaskAction(projectId, formData);
         }
         case "edit": {
-            return await editIssueAction(projectId, issueId, formData);
+            return await editTaskAction(projectId, taskId, formData);
         }
         case "delete": {
-            return await deleteIssueAction(projectId, issueId);
+            return await deleteTaskAction(projectId, taskId);
         }
     }
 }
 
 
-async function createIssueAction(projectId, formData) {
+async function createTaskAction(projectId, formData) {
     const errors = selectValidation(formData);
     if (Object.keys(errors).length) return errors;
 
-    const issue = await createItem(Object.fromEntries(formData), projectId);
+    const task = await createItem(Object.fromEntries(formData), projectId);
 
-    if (issue.detail == "Issue with this title already exist!") {
-        errors.createTitle = i18n.t("error_issueTitle");
+    if (task.detail == "Task with this name already exist!") {
+        errors.createName = i18n.t("error_taskName");
         return errors;
     }
-    return issue;
+    return task;
 }
 
 
-async function editIssueAction(projectId, issueId, formData) {
+async function editTaskAction(projectId, taskId, formData) {
     const errors = {};
 
-    const issue = await updateItem(
+    const task = await updateItem(
         Object.fromEntries(formData),
         projectId,
-        issueId
+        taskId
     );
 
-    if (issue.detail) {
-        errors.editTitle = i18n.t("error_issueTitle");
+    if (task.detail) {
+        errors.editName = i18n.t("error_taskName");
         return errors;
     }
-    return issue;
+    return task;
 }
 
 
-async function deleteIssueAction(projectId, issueId) {
-    const results = await deleteItem(projectId, issueId);
+async function deleteTaskAction(projectId, taskId) {
+    const results = await deleteItem(projectId, taskId);
     return results.results === "Success" && replace("");
 }
 
@@ -115,14 +115,14 @@ async function deleteIssueAction(projectId, issueId) {
 function selectValidation(formData) {
     const errors = {};
 
-    const type = formData.get("type");
-    const priority = formData.get("priority");
+    const type = formData.get("type_id");
+    const priority = formData.get("priority_id");
 
     if (!type) {
-        errors.createType = i18n.t("error_issueType");
+        errors.createType = i18n.t("error_taskType");
     }
     if (!priority) {
-        errors.createPriority = i18n.t("error_issuePriority");
+        errors.createPriority = i18n.t("error_taskPriority");
     }
     return errors;
 }

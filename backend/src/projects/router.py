@@ -1,16 +1,16 @@
-from typing import Annotated
+from uuid import UUID
 
-from fastapi import APIRouter, Depends, Path
+from fastapi import APIRouter, Depends
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from auth.manager import User, current_active_user
-from utils.db import get_async_session
-from utils.cache import (
+from src.auth.manager import User, current_active_user
+from src.utils.db import get_async_session
+from src.utils.cache import (
     Redis, get_redis_client,
     cache_get_or_set, cache_delete_all
 )
-from utils.pagination import (
+from src.utils.pagination import (
     PaginatedResponse, NoItemsResponse,
     pagination_params, ProjectsPagination
 )
@@ -64,7 +64,7 @@ async def create_project(
 
 @router.get("/{project_id}")
 async def get_project(
-    project_id: Annotated[int, Path(ge=1)],
+    project_id: UUID,
     session: AsyncSession = Depends(get_async_session),
     user: User = Depends(current_active_user)
 ) -> ProjectSchema:
@@ -75,7 +75,7 @@ async def get_project(
 
 @router.patch("/{project_id}")
 async def update_project(
-    project_id: Annotated[int, Path(ge=1)],
+    project_id: UUID,
     project: UpdateProjectSchema,
     session: AsyncSession = Depends(get_async_session),
     user: User = Depends(current_active_user),
@@ -89,7 +89,7 @@ async def update_project(
 
 @router.delete("/{project_id}")
 async def delete_project(
-    project_id: Annotated[int, Path(ge=1)],
+    project_id: UUID,
     session: AsyncSession = Depends(get_async_session),
     user: User = Depends(current_active_user),
     cache: Redis = Depends(get_redis_client)

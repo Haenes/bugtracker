@@ -15,7 +15,7 @@ export function EditProjectForm({ project, errors, setModalOpen }) {
         setModalOpen({visible: false, modalId: 2});
         fetcher.submit(
             {intent: "delete", projectId: project.id},
-            {method: "POST"}
+            {method: "DELETE"}
         );
     };
 
@@ -57,20 +57,20 @@ export function EditProjectForm({ project, errors, setModalOpen }) {
 
             <div>
                 <span className="mr-2">{t("editProject_favorite")}</span>
-                <Checkbox name="favorite" defaultChecked={project.favorite} />
+                <Checkbox name="is_favorite" defaultChecked={project.is_favorite} />
             </div>
 
             <div>
                 <span className="mr-2">{t("editCreated")}</span>
-                {convertDate(project.created)}
+                {convertDate(project.created_at)}
             </div>
 
             <div>
                 <span className="mr-2">{t("editUpdated")}</span>
                 {/* Get updated datetime from PATCH response to synchronize data */}
-                {errors?.created == project.created ?
-                    convertDate(errors.updated) :
-                    convertDate(project.updated)
+                {errors?.created_at == project.created_at ?
+                    convertDate(errors.updated_at) :
+                    convertDate(project.updated_at)
                 }
             </div>
 
