@@ -26,10 +26,6 @@ class ProjectSchema(CreateProjectSchema):
     updated_at: datetime
 
 
-class PaginationProject(ProjectSchema):
-    pass
-
-
 class CreatedProjectSchema(BaseModel):
     id: UUID
 

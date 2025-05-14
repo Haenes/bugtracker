@@ -45,13 +45,39 @@ async def create_task_db(
         return await handleDbUniqueError(session, stmt, is_create=True)
 
 
+async def get_tasks_db(
+    session: AsyncSession,
+    model: Task,
+    user_id: UUID,
+    offset: int,
+    limit: int,
+    project_id: UUID
+) -> list[TaskSchemaGet]:
+    tasks_query = (
+        select(model)
+        .options(
+            joinedload(model.status_rel),
+            joinedload(model.priority_rel),
+            joinedload(model.type_rel)
+        )
+        .where(
+            model.creator_id == user_id,
+            model.project_id == project_id,
+        )
+        .order_by(model.type_id, model.created_at)
+        .offset(offset)
+        .limit(limit)
+    )
+    return await session.scalars(tasks_query)
+
+
 async def get_task_db(
     session: AsyncSession,
     user_id: UUID,
     project_id: UUID,
     task_id: UUID
 ) -> TaskSchemaGet:
-    query = (
+    task_query = (
         select(Task)
         .options(
             joinedload(Task.status_rel),
@@ -65,7 +91,7 @@ async def get_task_db(
         )
     )
 
-    task = await session.scalar(query)
+    task = await session.scalar(task_query)
 
     if task is None:
         raise HTTPException(

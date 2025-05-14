@@ -52,10 +52,6 @@ class TaskType(BaseModel):
     name: str
 
 
-class PaginationTask(TaskSchemaGet):
-    model_config = ConfigDict(from_attributes=True)
-
-
 class CreatedTaskSchema(BaseModel):
     id: UUID
 

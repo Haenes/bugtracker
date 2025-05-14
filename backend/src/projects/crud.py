@@ -26,17 +26,34 @@ async def create_project_db(
     return await handleDbUniqueError(session, stmt, is_create=True)
 
 
+async def get_projects_db(
+    session: AsyncSession,
+    model: ProjectSchema,
+    user_id: UUID,
+    offset: int,
+    limit: int,
+) -> list[ProjectSchema]:
+    projects_query = (
+        select(model)
+        .where(model.creator_id == user_id)
+        .order_by(model.is_favorite.desc(), model.created_at)
+        .offset(offset)
+        .limit(limit)
+    )
+    return await session.scalars(projects_query)
+
+
 async def get_project_db(
     session: AsyncSession,
     user_id: UUID,
     project_id: UUID
 ) -> ProjectSchema:
 
-    query = (
+    project_query = (
         select(Project)
         .where(Project.creator_id == user_id, Project.id == project_id)
     )
-    project = await session.scalar(query)
+    project = await session.scalar(project_query)
 
     if project is None:
         raise HTTPException(404, "Project not found!")

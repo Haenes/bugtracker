@@ -38,7 +38,6 @@ export function TasksBoard() {
             </Empty>
         );
     }
-    console.log(tasks);
 
     const notAssign = tasks.results.filter(task => task.status === "Not assign");
     const toDo = tasks.results.filter(task => task.status === "To do");

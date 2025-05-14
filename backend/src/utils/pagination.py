@@ -4,15 +4,16 @@ from uuid import UUID
 from fastapi import Depends, HTTPException
 
 from sqlalchemy import select, func
-from sqlalchemy.orm import joinedload
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from pydantic import BaseModel
 
-from src.projects.schemas import ProjectSchema, PaginationProject
+from src.projects.crud import get_projects_db
 from src.projects.models import Project
+from src.projects.schemas import ProjectSchema
+from src.tasks.crud import get_tasks_db
 from src.tasks.models import Task
-from src.tasks.schemas import PaginationTask
+from src.tasks.schemas import TaskSchemaGet
 
 
 async def pagination_query_params(page: int = 1, limit: int = 10):
@@ -28,7 +29,7 @@ class PaginatedResponse(BaseModel):
     next_page: int | None
     prev_page: int | None
     total_pages: int | float
-    results: list[PaginationProject] | list[PaginationTask]
+    results: list[ProjectSchema] | list[TaskSchemaGet]
 
 
 class NoItemsResponse(BaseModel):
@@ -65,14 +66,14 @@ class PaginationInterface:
     @staticmethod
     def _count_query(
         session: AsyncSession,
-        model: ProjectSchema | Task,
+        model: Project | Task,
         user_id: UUID,
         project_id: UUID | None = None,
     ): ...
 
     def _items_query(
         session: AsyncSession,
-        model: ProjectSchema | Task,
+        model: Project | Task,
         user_id: UUID,
         offset: int,
         limit: int,
@@ -127,7 +128,7 @@ class ProjectsPagination(PaginationInterface):
     @staticmethod
     async def _count_query(
         session: AsyncSession,
-        model: ProjectSchema,
+        model: Project,
         user_id: UUID,
         project_id: UUID | None = None,
     ):
@@ -145,20 +146,13 @@ class ProjectsPagination(PaginationInterface):
     @staticmethod
     async def _items_query(
         session: AsyncSession,
-        model: ProjectSchema,
+        model: Project,
         user_id: UUID,
         offset: int,
         limit: int,
         project_id: UUID | None = None,
     ):
-        results_query = (
-            select(model)
-            .where(model.creator_id == user_id)
-            .order_by(model.is_favorite.desc(), model.created_at)
-            .offset(offset)
-            .limit(limit)
-        )
-        return await session.scalars(results_query)
+        return await get_projects_db(session, model, user_id, offset, limit)
 
 
 class TasksPagination(PaginationInterface):
@@ -215,19 +209,4 @@ class TasksPagination(PaginationInterface):
         limit: int,
         project_id: UUID
     ):
-        results_query = (
-            select(model)
-            .options(
-                joinedload(model.status_rel),
-                joinedload(model.priority_rel),
-                joinedload(model.type_rel)
-            )
-            .where(
-                model.creator_id == user_id,
-                model.project_id == project_id,
-            )
-            .order_by(model.type_id, model.created_at)
-            .offset(offset)
-            .limit(limit)
-        )
-        return await session.scalars(results_query)
+        return await get_tasks_db(session, model, user_id, offset, limit, project_id)
