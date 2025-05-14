@@ -5,6 +5,8 @@ PROJECT2_ID = None
 TASK_ID = None
 TASK2_ID = None
 INCORRECT_ID = '1fbe7f08-79ff-4c60-9c68-267f5cce8f84'
+INVITE_TOKEN = 't7qvFh8Fmqy0-d1eWNMdlw'
+INCORRECT_INVITE_TOKEN = 'a0aaAa0Aaaa0-a1aAAAaaa'
 
 
 async def test_pagination_zero_projects(user_client: AsyncClient):
@@ -31,6 +33,17 @@ async def test_create_projects(user_client: AsyncClient):
     assert r2.status_code == 201
     PROJECT_ID = r.json()['id']
     PROJECT2_ID = r2.json()['id']
+
+
+async def test_join_to_project(user_client: AsyncClient):
+    r = await user_client.post(f'projects/join-to/{INVITE_TOKEN}')
+    assert r.json()['status'] == 'Success'
+
+
+async def test_join_to_project_incorrect(user_client: AsyncClient):
+    r = await user_client.post(f'projects/join-to/{INCORRECT_INVITE_TOKEN}')
+    assert r.status_code == 400
+    assert r.json()['detail'] == 'Incorrect invite token!'
 
 
 async def test_create_project_exist_key(user_client: AsyncClient):

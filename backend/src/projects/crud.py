@@ -1,20 +1,75 @@
-import re
+from re import compile as re_compile
 from uuid import UUID
 
 from fastapi import HTTPException
 
-from sqlalchemy import select, insert, update, delete
+from sqlalchemy import func, or_, select, insert, update, delete
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from src.auth.models import UserProjectRole
 from src.utils.db import handleDbUniqueError
 from .schemas import ProjectSchema, CreatedProjectSchema, UpdateProjectSchema
-from .models import Project
+from .models import Project, ProjectInvite
+
+
+async def is_correct_invite_token(session: AsyncSession, invite_token: str):
+    invite_query = (
+        select(ProjectInvite)
+        .where(
+            ProjectInvite.invite_token == invite_token,
+            or_(
+                ProjectInvite.max_uses.is_(None),
+                ProjectInvite.use_count + 1 < ProjectInvite.max_uses
+            ),
+            or_(
+                ProjectInvite.expires_at.is_(None),
+                ProjectInvite.expires_at > func.now()
+            )
+        )
+    )
+    invite = await session.scalar(invite_query)
+
+    if invite:
+        return invite.project_id, invite.role_id
+    raise HTTPException(400, "Incorrect invite token!")
+
+
+async def add_to_project(session: AsyncSession, invite_token: str, user_id: UUID):
+    project_id, role_id = await is_correct_invite_token(session, invite_token)
+    is_added = await UserProjectRole.add(session, user_id, project_id, role_id)
+
+    if is_added:
+        return {'status': 'Success'}
+    raise HTTPException(500, 'Unexpected error, try later')
+
+
+async def create_project_invite_token(
+    session: AsyncSession,
+    user_id: UUID,
+    project_id: UUID,
+    invite_token: str
+):
+    stmt = (
+        insert(ProjectInvite)
+        .values({
+            'creator_id': user_id,
+            'project_id': project_id,
+            'role_id': 3,
+            'invite_token': invite_token,
+            # TODO: SET DEFAULT VALUE OF 0 FOR use_count in ProjectInvite model!
+            'use_count': 0
+        })
+        .returning(ProjectInvite.id)
+    )
+    await session.scalar(stmt)
+    await session.commit()
 
 
 async def create_project_db(
     session: AsyncSession,
     user_id: UUID,
-    project: ProjectSchema
+    project: ProjectSchema,
+    invite_token: str,
 ) -> CreatedProjectSchema:
     is_valid_project_name(project.name)
 
@@ -23,19 +78,29 @@ async def create_project_db(
         .values(**project.model_dump(), creator_id=user_id)
         .returning(Project.id)
     )
-    return await handleDbUniqueError(session, stmt, is_create=True)
+    created_project = await handleDbUniqueError(session, stmt, is_create=True)
+
+    await UserProjectRole.add(session, user_id, created_project['id'])
+    await create_project_invite_token(
+        session=session,
+        user_id=user_id,
+        project_id=created_project['id'],
+        invite_token=invite_token
+    )
+    return created_project
 
 
 async def get_projects_db(
     session: AsyncSession,
-    model: ProjectSchema,
+    model: Project,
     user_id: UUID,
     offset: int,
     limit: int,
 ) -> list[ProjectSchema]:
     projects_query = (
         select(model)
-        .where(model.creator_id == user_id)
+        .join(UserProjectRole, model.id == UserProjectRole.project_id)
+        .where(user_id == UserProjectRole.user_id)
         .order_by(model.is_favorite.desc(), model.created_at)
         .offset(offset)
         .limit(limit)
@@ -114,7 +179,7 @@ def is_valid_project_name(project_name):
     Raises an error if one of these characters is in the project name:
     back/forward slash, :, ?
     """
-    pattern = re.compile(r"[\/\\:?=]")
+    pattern = re_compile(r"[\/\\:?=]")
 
     if pattern.search(project_name):
         raise HTTPException(

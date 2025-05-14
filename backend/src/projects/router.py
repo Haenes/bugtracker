@@ -1,3 +1,4 @@
+from secrets import token_urlsafe
 from uuid import UUID
 
 from fastapi import APIRouter, Depends
@@ -21,7 +22,7 @@ from .schemas import (
 )
 from .models import Project
 from .crud import (
-    get_project_db, create_project_db,
+    add_to_project, get_project_db, create_project_db,
     update_project_db, delete_project_db
 )
 
@@ -40,7 +41,6 @@ async def projects(
     cache: Redis = Depends(get_redis_client)
 ) -> PaginatedResponse | NoItemsResponse:
     """ Return all user projects with pagination. """
-
     return await cache_get_or_set(
         cache,
         f"projects_{user.id}_{pagination_params}",
@@ -57,9 +57,19 @@ async def create_project(
     cache: Redis = Depends(get_redis_client)
 ) -> CreatedProjectSchema:
     """ Create a new project. """
-
     await cache_delete_all(cache, f"projects_{user.id}_*")
-    return await create_project_db(session, user.id, project)
+    return await create_project_db(session, user.id, project, token_urlsafe(16))
+
+
+@router.post("/join-to/{invite_token}")
+async def join_to_project(
+    invite_token: str,
+    session: AsyncSession = Depends(get_async_session),
+    user: User = Depends(current_active_user),
+    cache: Redis = Depends(get_redis_client)
+) -> dict[str, str]:
+    await cache_delete_all(cache, f"projects_{user.id}_*")
+    return await add_to_project(session, invite_token, user.id)
 
 
 @router.get("/{project_id}")
@@ -69,7 +79,6 @@ async def get_project(
     user: User = Depends(current_active_user)
 ) -> ProjectSchema:
     """ Return specified project. """
-
     return await get_project_db(session, user.id, project_id)
 
 
@@ -82,7 +91,6 @@ async def update_project(
     cache: Redis = Depends(get_redis_client)
 ) -> ProjectSchema:
     """ Update already exists project via PATCH request. """
-
     await cache_delete_all(cache, f"projects_{user.id}_*")
     return await update_project_db(session, user.id, project_id, project)
 
@@ -95,6 +103,5 @@ async def delete_project(
     cache: Redis = Depends(get_redis_client)
 ) -> dict[str, str]:
     """ Delete specified project. """
-
     await cache_delete_all(cache, f"projects_{user.id}_*")
     return await delete_project_db(session, user.id, project_id)

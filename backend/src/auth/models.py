@@ -6,7 +6,7 @@ from fastapi import Depends
 
 from fastapi_users.db import SQLAlchemyUserDatabase
 
-from sqlalchemy import ForeignKey, VARCHAR, DateTime, false, true, text
+from sqlalchemy import ForeignKey, VARCHAR, DateTime, false, insert, true, text
 from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -52,6 +52,25 @@ class UserProjectRole(Base):
         DateTime(timezone=True),
         server_default=text('CURRENT_TIMESTAMP')
     )
+
+    async def add(
+        session: AsyncSession,
+        user_id: UUID,
+        project_id: UUID,
+        role_id: int = 1
+    ):
+        stmt = (
+            insert(UserProjectRole)
+            .values({
+                'user_id': user_id,
+                'project_id': project_id,
+                'role_id': role_id
+            })
+            .returning(UserProjectRole.joined_at)
+        )
+        await session.scalar(stmt)
+        await session.commit()
+        return True
 
 
 class Role(Base):

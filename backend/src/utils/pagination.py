@@ -8,6 +8,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from pydantic import BaseModel
 
+from src.auth.models import UserProjectRole
 from src.projects.crud import get_projects_db
 from src.projects.models import Project
 from src.projects.schemas import ProjectSchema
@@ -105,12 +106,12 @@ class PaginationInterface:
 
         total_pages, next_page, previous_page = cls._validate_params(count, limit, page)
         results = await cls._items_query(
-            session,
-            model,
-            user_id,
-            offset,
-            limit,
-            project_id
+            session=session,
+            model=model,
+            user_id=user_id,
+            offset=offset,
+            limit=limit,
+            project_id=project_id
         )
 
         return PaginatedResponse(
@@ -133,9 +134,10 @@ class ProjectsPagination(PaginationInterface):
         project_id: UUID | None = None,
     ):
         count_query = (
-            select(func.count())
+            select(func.count(model.id))
             .select_from(model)
-            .where(model.creator_id == user_id)
+            .join(UserProjectRole, UserProjectRole.user_id == user_id)
+            .where(model.id == UserProjectRole.project_id,)
         )
         count = await session.scalar(count_query)
 
@@ -181,14 +183,14 @@ class TasksPagination(PaginationInterface):
         project_id: UUID,
     ):
         await TasksPagination._is_project_exist_query(
-            session,
-            model,
-            user_id,
-            project_id
+            session=session,
+            model=model,
+            user_id=user_id,
+            project_id=project_id
         )
 
         count_query = (
-            select(func.count())
+            select(func.count(model.id))
             .select_from(model)
             .where(model.creator_id == user_id, model.project_id == project_id)
         )
