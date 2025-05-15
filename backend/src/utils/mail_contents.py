@@ -1,9 +1,4 @@
-from config import (
-    VERIFY_URL_BACKEND,
-    VERIFY_URL_FRONTEND,
-    PASSWORD_RESET_URL_BACKEND,
-    PASSWORD_RESET_URL_FRONTEND
-)
+from src.config import settings
 
 
 RESET_BROWSER_EN = (
@@ -17,7 +12,7 @@ RESET_BROWSER_EN = (
     "<br><br>"
     "Please go to this page and enter a new password:"
     "<br><br>"
-    f"{PASSWORD_RESET_URL_FRONTEND}"
+    f"{settings.PASSWORD_RESET_URL_FRONTEND}"
     "/{token}"
     "</p>"
     "</div>"
@@ -34,7 +29,7 @@ RESET_BROWSER_RU = (
     "<br><br>"
     "Пожалуйста, перейдите по этой ссылке и введите новый пароль:"
     "<br><br>"
-    f"{PASSWORD_RESET_URL_FRONTEND}"
+    f"{settings.PASSWORD_RESET_URL_FRONTEND}"
     "/{token}"
     "</p>"
     "</div>"
@@ -50,7 +45,7 @@ RESET_API = (
     "BugTracker."
     "<br><br>"
     "Make a POST request to "
-    f"{PASSWORD_RESET_URL_BACKEND} in json format with data:"
+    f"{settings.PASSWORD_RESET_URL_BACKEND} in json format with data:"
     "<br><br>"
     '"token": "{token}",'
     "<br>"
@@ -66,7 +61,7 @@ VERIFY_BROWSER_EN = (
     "<br>"
     "Please, click on the link below to verify your email: "
     "<br><br>"
-    f"{VERIFY_URL_FRONTEND}"
+    f"{settings.VERIFY_URL_FRONTEND}"
     "/{token}"
     "</p>"
     "</div>"
@@ -80,7 +75,7 @@ VERIFY_BROWSER_RU = (
     "Пожалуйста, перейдите по ссылке ниже, чтобы "
     "подтвердить вашу почту: "
     "<br><br>"
-    f"{VERIFY_URL_FRONTEND}"
+    f"{settings.VERIFY_URL_FRONTEND}"
     "/{token}"
     "</p>"
     "</div>"
@@ -92,9 +87,59 @@ VERIFY_API = (
     "Hello, {name}!"
     "<br>"
     "Please, make a POST request to verify your email to: "
-    f"{VERIFY_URL_BACKEND} in json format with data:"
+    f"{settings.VERIFY_URL_BACKEND} in json format with data:"
     "<br><br>"
     '"token": "{token}"'
+    "</p>"
+    "</div>"
+)
+
+PROJECT_INVITE_BROWSER_EN = (
+    "<div>"
+    "<p>"
+    "Hello, {name}!"
+    "<br>"
+    "You're receiving this email because you have been invited to join the project."
+    "<br><br>"
+    "Please go to this page if you want to join:"
+    "<br><br>"
+    f"{settings.PROJECT_INVITE_URL_FRONTEND}""/{token}"
+    "<br><br>"
+    "Otherwise, ignore this email."
+    "</p>"
+    "</div>"
+)
+
+PROJECT_INVITE_BROWSER_RU = (
+    "<div>"
+    "<p>"
+    "Привет, {name}!"
+    "<br>"
+    "Вы получили это письмо потому, что вы были приглашены присоединиться к проекту."
+    "<br><br>"
+    "Пожалуйста, перейдите по этой ссылке, если вы хотите присоединиться:"
+    "<br><br>"
+    f"{settings.PROJECT_INVITE_URL_FRONTEND}""/{token}"
+    "<br><br>"
+    "Иначе проигнорируйте это письмо."
+    "</p>"
+    "</div>"
+)
+
+PROJECT_INVITE_API = (
+    "<div>"
+    "<p>"
+    "Hello, {name}!"
+    "<br>"
+    "You're receiving this email because you have been invited to join the project."
+    "<br><br>"
+    "Make a POST request to "
+    f"{settings.PROJECT_INVITE_URL_BACKEND} if you want to join "
+    "in json format with data:"
+    "<br><br>"
+    '"token": "{token}"'
+    "<br><br>"
+    "Otherwise, ignore this email."
     "</p>"
     "</div>"
 )

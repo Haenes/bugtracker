@@ -30,6 +30,9 @@ class Settings(BaseSettings):
     PASSWORD_RESET_URL_FRONTEND: str
     PASSWORD_RESET_URL_BACKEND: str
 
+    PROJECT_INVITE_URL_FRONTEND: str
+    PROJECT_INVITE_URL_BACKEND: str
+
     model_config = SettingsConfigDict(
         extra='ignore',
         env_file=os.path.join(os.path.abspath(os.pardir), ".env"),

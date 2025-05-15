@@ -39,37 +39,31 @@ async def add_to_project(session: AsyncSession, invite_token: str, user_id: UUID
     is_added = await UserProjectRole.add(session, user_id, project_id, role_id)
 
     if is_added:
+        await increment_invite_use_count(session, invite_token)
         return {'status': 'Success'}
     raise HTTPException(500, 'Unexpected error, try later')
 
 
-async def create_project_invite_token(
-    session: AsyncSession,
-    user_id: UUID,
-    project_id: UUID,
-    invite_token: str
-):
-    stmt = (
-        insert(ProjectInvite)
-        .values({
-            'creator_id': user_id,
-            'project_id': project_id,
-            'role_id': 3,
-            'invite_token': invite_token,
-            # TODO: SET DEFAULT VALUE OF 0 FOR use_count in ProjectInvite model!
-            'use_count': 0
-        })
-        .returning(ProjectInvite.id)
+async def increment_invite_use_count(session: AsyncSession, invite_token: str):
+    update_use_count_stmt = (
+        update(ProjectInvite)
+        .values(use_count=ProjectInvite.use_count + 1)
+        .where(ProjectInvite.invite_token == invite_token)
+        .returning(ProjectInvite.use_count)
     )
-    await session.scalar(stmt)
-    await session.commit()
+    invite_use_count = await session.scalar(update_use_count_stmt)
+
+    if invite_use_count:
+        await session.commit()
+        return True
+    await session.rollback()
+    raise HTTPException(500, 'Unexpected error, try later')
 
 
 async def create_project_db(
     session: AsyncSession,
     user_id: UUID,
     project: ProjectSchema,
-    invite_token: str,
 ) -> CreatedProjectSchema:
     is_valid_project_name(project.name)
 
@@ -81,12 +75,7 @@ async def create_project_db(
     created_project = await handleDbUniqueError(session, stmt, is_create=True)
 
     await UserProjectRole.add(session, user_id, created_project['id'])
-    await create_project_invite_token(
-        session=session,
-        user_id=user_id,
-        project_id=created_project['id'],
-        invite_token=invite_token
-    )
+    await ProjectInvite.add(session, created_project['id'], user_id)
     return created_project
 
 

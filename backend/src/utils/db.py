@@ -69,6 +69,7 @@ async def handleDbUniqueError(session: AsyncSession, stmt, is_create: bool = Fal
         errors_dict = {
             'uq_task_name': 'Task with this name already exist!',
             'uq_project_key': 'Project with this key already exist!',
+            'pk_user_project_role': 'This user has already joined the project!'
         }
 
         for k, v in errors_dict.items():

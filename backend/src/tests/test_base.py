@@ -1,11 +1,13 @@
 from httpx import AsyncClient
 
+
 PROJECT_ID = None
 PROJECT2_ID = None
 TASK_ID = None
 TASK2_ID = None
 INCORRECT_ID = '1fbe7f08-79ff-4c60-9c68-267f5cce8f84'
 INVITE_TOKEN = 't7qvFh8Fmqy0-d1eWNMdlw'
+INVITE_ID = None
 INCORRECT_INVITE_TOKEN = 'a0aaAa0Aaaa0-a1aAAAaaa'
 
 
@@ -44,6 +46,12 @@ async def test_join_to_project_incorrect(user_client: AsyncClient):
     r = await user_client.post(f'projects/join-to/{INCORRECT_INVITE_TOKEN}')
     assert r.status_code == 400
     assert r.json()['detail'] == 'Incorrect invite token!'
+
+
+async def test_join_to_project_already_joined(user_client: AsyncClient):
+    r = await user_client.post(f'projects/join-to/{INVITE_TOKEN}')
+    assert r.status_code == 400
+    assert r.json()['detail'] == 'This user has already joined the project!'
 
 
 async def test_create_project_exist_key(user_client: AsyncClient):
@@ -221,6 +229,53 @@ async def test_update_not_exist_project(user_client: AsyncClient):
     assert r.status_code == 400
 
 
+async def test_get_project_invites(user_client: AsyncClient):
+    global INVITE_ID
+    r = await user_client.get(f'projects/{PROJECT_ID}/invite-links')
+
+    assert r.status_code == 200
+    assert r.json()[0]['id'] == 2
+
+
+async def test_create_project_invite(user_client: AsyncClient):
+    r = await user_client.post(
+        url=f'projects/{PROJECT_ID}/invite-links',
+        json={'role_id': 2, 'max_uses': 1}
+    )
+    assert r.status_code == 200
+    assert r.json()['id'] == 4
+
+
+async def test_update_invite(user_client: AsyncClient):
+    r = await user_client.patch(
+        url=f'projects/{PROJECT_ID}/invite-links/4',
+        json={'max_uses': 666}
+    )
+    assert r.status_code == 200
+    assert r.json()['max_uses'] == 666
+
+
+async def test_update_not_exist_invite(user_client: AsyncClient):
+    r = await user_client.patch(
+        url=f'projects/{PROJECT_ID}/invite-links/444',
+        json={'role_id': 2, 'max_uses': 666}
+    )
+    assert r.status_code == 400
+    assert r.json()['detail'] == "The invite for the update doesn't exist!"
+
+
+async def test_delete_invite(user_client: AsyncClient):
+    r = await user_client.delete(f'projects/{PROJECT_ID}/invite-links/4')
+    assert r.status_code == 200
+    assert r.json()['status'] == 'Success'
+
+
+async def test__delete_not_exist_invite(user_client: AsyncClient):
+    r = await user_client.delete(f'projects/{PROJECT_ID}/invite-links/444')
+    assert r.status_code == 400
+    assert r.json()['detail'] == "The invite to delete doesn't exist!"
+
+
 async def test_create_tasks(user_client: AsyncClient):
     global TASK_ID, TASK2_ID
 
@@ -385,3 +440,27 @@ async def test_delete_not_exist_project(user_client: AsyncClient):
 
     assert r.json()["detail"] == "The project to delete doesn't exist!"
     assert r.status_code == 400
+
+
+async def test_search_user(user_client: AsyncClient):
+    r1 = await user_client.get('search/user?q=test_default')
+    r2 = await user_client.get('search/user?q=user_default@')
+
+    assert r1.status_code == 200
+    assert r2.status_code == 200
+    assert r1.json() == {
+        'id': '12344321-1234-5678-1234-567812344321',
+        'first_name': 'test_default_fname'
+    }
+    assert r2.json() == {
+        'id': '12344321-1234-5678-1234-567812344321',
+        'first_name': 'test_default_fname'
+    }
+
+
+async def test_search_user_incorrect(user_client: AsyncClient):
+    r1 = await user_client.get('search/user?q=not_exist')
+    r2 = await user_client.get('search/user?q=user_default_not_exist@')
+
+    assert r1.json()["detail"] == 'No results'
+    assert r2.json()["detail"] == 'No results'

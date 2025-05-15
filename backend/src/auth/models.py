@@ -6,11 +6,14 @@ from fastapi import Depends
 
 from fastapi_users.db import SQLAlchemyUserDatabase
 
-from sqlalchemy import ForeignKey, VARCHAR, DateTime, false, insert, true, text
+from sqlalchemy import ForeignKey, VARCHAR, DateTime, false, insert, select, true, text
 from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.utils.db import Base, get_async_session, SMALLINT_PK, UUID_PK
+from src.utils.db import (
+    Base, get_async_session,
+    handleDbUniqueError, SMALLINT_PK, UUID_PK
+)
 
 
 USER_STATUS = Annotated[bool, mapped_column(server_default=false())]
@@ -31,6 +34,11 @@ class User(Base):
         DateTime(timezone=True),
         server_default=text('CURRENT_TIMESTAMP')
     )
+
+    async def get_email(session: AsyncSession, user_id: UUID) -> str:
+        user_email_query = select(User.email).where(User.id == user_id)
+        user_email = await session.scalar(user_email_query)
+        return user_email
 
 
 class UserProjectRole(Base):
@@ -59,7 +67,7 @@ class UserProjectRole(Base):
         project_id: UUID,
         role_id: int = 1
     ):
-        stmt = (
+        add_user_stmt = (
             insert(UserProjectRole)
             .values({
                 'user_id': user_id,
@@ -68,9 +76,7 @@ class UserProjectRole(Base):
             })
             .returning(UserProjectRole.joined_at)
         )
-        await session.scalar(stmt)
-        await session.commit()
-        return True
+        return await handleDbUniqueError(session, add_user_stmt)
 
 
 class Role(Base):

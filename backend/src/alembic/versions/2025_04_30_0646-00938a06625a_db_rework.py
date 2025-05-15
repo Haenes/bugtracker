@@ -228,7 +228,7 @@ def upgrade() -> None:
         sa.Column("role_id", sa.SMALLINT(), nullable=False),
         sa.Column("invite_token", sa.VARCHAR(length=255), nullable=False),
         sa.Column("max_uses", sa.Integer(), nullable=True),
-        sa.Column("use_count", sa.Integer(), nullable=False),
+        sa.Column("use_count", sa.Integer(), nullable=False, default=0),
         sa.Column(
             "created_at",
             sa.DateTime(timezone=True),

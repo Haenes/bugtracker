@@ -3,6 +3,7 @@ from uuid import UUID
 from sqlalchemy import select, func
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from src.auth.models import User
 from src.projects.models import Project
 from src.tasks.models import Task
 from src.models import to_tsvector
@@ -45,3 +46,21 @@ async def fulltext_search(
     if not results["projects"] and not results["tasks"]:
         return NoItemsResponse(detail="No results")
     return results
+
+
+async def user_search(q: str, session: AsyncSession, user_id):
+    if '@' in q:
+        get_user_query = (
+            select(User.id, User.first_name)
+            .where(User.email.ilike(f'%{q}%'), User.id != user_id)
+        )
+    else:
+        get_user_query = (
+            select(User.id, User.first_name)
+            .where(User.username.ilike(f'%{q}%'), User.id != user_id)
+        )
+    result = await session.execute(get_user_query)
+
+    if user := result.first():
+        return {'id': user[0], 'first_name': user[1]}
+    return NoItemsResponse(detail="No results")
