@@ -78,8 +78,6 @@ class EmailInterface():
             to_email=user.email,
             content=content
         )
-        print(subject)
-        print(content)
         cls._smtp_server(email)
 
 

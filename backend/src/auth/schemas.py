@@ -21,6 +21,21 @@ class UserUpdate(schemas.BaseUserUpdate):
     first_name: str | None = None
 
 
-class SearchUser(BaseModel):
+class SearchUserSchema(BaseModel):
     id: UUID
     first_name: str
+
+
+class UsersInProjectSchema(BaseModel):
+    user_id: UUID
+    username: str
+    role_id: int
+    joined_at: datetime
+
+
+class NoUsersInProjectSchema(BaseModel):
+    detail: str
+
+
+class UpdateUserInProjectSchema(BaseModel):
+    role_id: int = Field(gt=0, le=3, default=3)

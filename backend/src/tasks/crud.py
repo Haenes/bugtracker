@@ -6,6 +6,7 @@ from sqlalchemy import select, insert, update, delete
 from sqlalchemy.orm import joinedload
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from src.auth.models import UserProjectRole
 from src.projects.models import Project
 from src.utils.db import handleDbUniqueError
 from .models import Task
@@ -20,9 +21,11 @@ async def create_task_db(
 ) -> CreatedTaskSchema:
 
     # Query to check if there is a project with the received id
+    # TODO: Check user role before create project
     project_query = (
         select(Project.id)
-        .where(Project.creator_id == user_id, Project.id == project_id)
+        # Project.creator_id == user_id,
+        .where(Project.id == project_id)
     )
     project = await session.scalar(project_query)
 
@@ -61,14 +64,22 @@ async def get_tasks_db(
             joinedload(model.type_rel)
         )
         .where(
-            model.creator_id == user_id,
             model.project_id == project_id,
         )
         .order_by(model.type_id, model.created_at)
         .offset(offset)
         .limit(limit)
     )
-    return await session.scalars(tasks_query)
+    role_id_query = (
+        select(UserProjectRole.role_id)
+        .where(
+            UserProjectRole.user_id == user_id,
+            UserProjectRole.project_id == project_id
+        )
+    )
+    tasks_result = await session.scalars(tasks_query)
+    role_id_result = await session.scalar(role_id_query)
+    return tasks_result.all(), role_id_result
 
 
 async def get_task_db(

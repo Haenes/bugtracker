@@ -8,8 +8,6 @@ def celery_send_email(func: str, *func_args, **func_kwargs):
     try:
         email_module = import_module("src.utils.mail")
         email_class = getattr(email_module, func)
-        print("EMAIL MODULE", email_module)
-        print("EMAIL CLASS", email_class)
     except AttributeError:
         raise
     else:

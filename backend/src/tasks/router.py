@@ -11,7 +11,7 @@ from src.utils.cache import (
 )
 from src.auth.manager import User, current_active_user
 from src.utils.pagination import (
-    PaginatedResponse, NoItemsResponse,
+    PaginatedTasksResponse, NoTasksResponse,
     pagination_params, TasksPagination
 )
 from .schemas import (
@@ -38,7 +38,7 @@ async def get_tasks(
     session: AsyncSession = Depends(get_async_session),
     user: User = Depends(current_active_user),
     cache: Redis = Depends(get_redis_client)
-) -> PaginatedResponse | NoItemsResponse:
+) -> PaginatedTasksResponse | NoTasksResponse:
     """ Return all tasks related with specified project with pagination. """
     return await cache_get_or_set(
         cache,

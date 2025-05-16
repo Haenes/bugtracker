@@ -3,7 +3,7 @@ from uuid import UUID
 
 from pydantic import BaseModel, Field, ConfigDict
 
-from src.auth.schemas import SearchUser
+from src.auth.schemas import SearchUserSchema
 
 
 class CreateProjectSchema(BaseModel):
@@ -28,6 +28,10 @@ class ProjectSchema(CreateProjectSchema):
     updated_at: datetime
 
 
+class ProjectsSchema(ProjectSchema):
+    role_id: int
+
+
 class CreatedProjectSchema(BaseModel):
     id: UUID
 
@@ -39,7 +43,7 @@ class SearchProject(BaseModel):
 
 
 class DataForInviteSchema(BaseModel):
-    user: SearchUser
+    user: SearchUserSchema
     invite_token: str
 
 

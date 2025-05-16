@@ -34,6 +34,16 @@ class Project(BaseClass):
         Index('ix_project_fts', to_tsvector('name', 'key'), postgresql_using='gin'),
     )
 
+    def columns_to_dict(self):
+        '''Convert Project Row to dict when using execute()
+        with field(s) from other models (tables).
+        '''
+        columns_dict = {}
+
+        for key in self.__mapper__.c.keys():
+            columns_dict[key] = getattr(self, key)
+        return columns_dict
+
 
 class ProjectInvite(Base):
     __tablename__ = 'project_invite'

@@ -11,7 +11,7 @@ from pydantic import BaseModel
 from src.auth.models import UserProjectRole
 from src.projects.crud import get_projects_db
 from src.projects.models import Project
-from src.projects.schemas import ProjectSchema
+from src.projects.schemas import ProjectsSchema
 from src.tasks.crud import get_tasks_db
 from src.tasks.models import Task
 from src.tasks.schemas import TaskSchemaGet
@@ -30,11 +30,19 @@ class PaginatedResponse(BaseModel):
     next_page: int | None
     prev_page: int | None
     total_pages: int | float
-    results: list[ProjectSchema] | list[TaskSchemaGet]
+    results: list[ProjectsSchema] | list[TaskSchemaGet]
+
+
+class PaginatedTasksResponse(PaginatedResponse):
+    role_id: int
 
 
 class NoItemsResponse(BaseModel):
     results: str
+
+
+class NoTasksResponse(NoItemsResponse):
+    role_id: int
 
 
 class PaginationInterface:
@@ -120,7 +128,7 @@ class PaginationInterface:
             next_page=next_page,
             prev_page=previous_page,
             total_pages=total_pages,
-            results=results.all()
+            results=results
         )
 
 
@@ -137,7 +145,7 @@ class ProjectsPagination(PaginationInterface):
             select(func.count(model.id))
             .select_from(model)
             .join(UserProjectRole, UserProjectRole.user_id == user_id)
-            .where(model.id == UserProjectRole.project_id,)
+            .where(model.id == UserProjectRole.project_id)
         )
         count = await session.scalar(count_query)
 
@@ -168,7 +176,8 @@ class TasksPagination(PaginationInterface):
     ):
         _is_project_exist_query = (
             select(Project)
-            .where(Project.creator_id == user_id, Project.id == project_id)
+            # Project.creator_id == user_id,
+            .where(Project.id == project_id)
         )
         is_project_exist = await session.scalar(_is_project_exist_query)
 
@@ -192,13 +201,17 @@ class TasksPagination(PaginationInterface):
         count_query = (
             select(func.count(model.id))
             .select_from(model)
-            .where(model.creator_id == user_id, model.project_id == project_id)
+            # model.creator_id == user_id,
+            .where(model.project_id == project_id)
         )
         count = await session.scalar(count_query)
 
         if count == 0:
-            return NoItemsResponse(
-                results="You don't have any tasks for this project!"
+            role_id = await UserProjectRole.get(session, user_id, project_id)
+
+            return NoTasksResponse(
+                results="You don't have any tasks for this project!",
+                role_id=role_id
             )
         return count
 
@@ -212,3 +225,46 @@ class TasksPagination(PaginationInterface):
         project_id: UUID
     ):
         return await get_tasks_db(session, model, user_id, offset, limit, project_id)
+
+    @classmethod
+    async def get_paginated(
+        cls,
+        session: AsyncSession,
+        model: Project | Task,
+        pagination_params: pagination_params,
+        user_id: UUID,
+        project_id: UUID | None = None
+    ) -> PaginatedResponse | NoTasksResponse:
+        page, limit = pagination_params['page'], pagination_params['limit']
+
+        if page < 0 or limit < 0:
+            raise HTTPException(
+                status_code=400,
+                detail='The page and/or limit cannot be less than zero!'
+            )
+        offset = (page - 1) * limit
+
+        count = await cls._count_query(session, model, user_id, project_id)
+
+        if not isinstance(count, int):
+            return count
+
+        total_pages, next_page, previous_page = cls._validate_params(count, limit, page)
+        results = await cls._items_query(
+            session=session,
+            model=model,
+            user_id=user_id,
+            offset=offset,
+            limit=limit,
+            project_id=project_id
+        )
+
+        return PaginatedTasksResponse(
+            role_id=results[1],
+            count=count,
+            page=page,
+            next_page=next_page,
+            prev_page=previous_page,
+            total_pages=total_pages,
+            results=results[0]
+        )

@@ -17,6 +17,7 @@ import { EditProjectForm } from "./EditForm.jsx";
 
 export function ProjectsList() {
     const projects = useLoaderData();
+    console.log(projects);
     const errors = useActionData();
     const submit = useSubmit();
 
@@ -67,13 +68,19 @@ export function ProjectsList() {
                                 }
                                 styles={{body: {padding: 0}}}
                                 extra={item.key}
-                                actions={[
-                                    <FavoriteButton data={{id: item.id, is_favorite: item.is_favorite}} />,
-                                    <SettingsButton
-                                        project={{...item}}
-                                        setFuncs={[setModalOpen, setFormData]}
-                                    />
-                                ]}
+                                actions={
+                                    item.role_id != 1 ?
+                                    [
+                                        <FavoriteButton data={{id: item.id, is_favorite: item.is_favorite}} />,
+                                    ] :
+                                    [
+                                        <FavoriteButton data={{id: item.id, is_favorite: item.is_favorite}} />,
+                                        <SettingsButton
+                                            project={{...item}}
+                                            setFuncs={[setModalOpen, setFormData]}
+                                        />
+                                    ]
+                                }
                             />
                         </List.Item>
                     );

@@ -5,7 +5,7 @@ from fastapi import APIRouter, Query, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.auth.manager import User, current_active_user
-from src.auth.schemas import SearchUser
+from src.auth.schemas import SearchUserSchema
 from src.utils.db import get_async_session
 from .schemas import SearchResultsResponse, NoItemsResponse
 from .crud import fulltext_search, user_search
@@ -32,5 +32,5 @@ async def search_user(
     q: Annotated[str, Query(min_length=4)],
     session: AsyncSession = Depends(get_async_session),
     user: User = Depends(current_active_user),
-) -> SearchUser | NoItemsResponse:
+) -> SearchUserSchema | NoItemsResponse:
     return await user_search(q, session, user.id)

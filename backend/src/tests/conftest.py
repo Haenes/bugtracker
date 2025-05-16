@@ -17,7 +17,7 @@ from redis.asyncio import ConnectionPool, Redis
 
 from src.config import settings
 from main import app
-from src.auth.models import User, Role
+from src.auth.models import User, Role, UserProjectRole
 from src.auth.manager import UserManager, current_active_user
 from src.projects.models import Project, ProjectInvite
 from src.tasks.models import TaskStatus, TaskPriority, TaskType
@@ -85,18 +85,29 @@ async def set_initial_data(conn: AsyncConnection):
         'username': 'test_default_username',
         'first_name': 'test_default_fname'
     }
+    initial_user2 = {
+        'id': UUID('12355321123456781234567812344321'),
+        'email': 'user_default2@test.com',
+        'hashed_password': initial_user['hashed_password'],
+        'username': 'test_default_username2',
+        'first_name': 'test_default_fname2'
+    }
     initial_project = {
         'id': UUID('87654321123456788765432112345678'),
-        'creator_id': UUID('12344321123456781234567812344321'),
+        'creator_id': initial_user['id'],
         'name': 'Default',
         'key': 'DEF',
     }
     initial_project_invite = {
-        'creator_id': UUID('12344321123456781234567812344321'),
-        'project_id': UUID('87654321123456788765432112345678'),
+        'creator_id': initial_user['id'],
+        'project_id': initial_project['id'],
         'role_id': 3,
         'invite_token': 't7qvFh8Fmqy0-d1eWNMdlw',
-        'use_count': 0,
+    }
+    initial_joined_user = {
+        'user_id': initial_user2['id'],
+        'project_id': initial_project['id'],
+        'role_id': initial_project_invite['role_id']
     }
     initial_task_types = [
         {'id': 1, 'name': 'Bug'},
@@ -134,9 +145,11 @@ async def set_initial_data(conn: AsyncConnection):
     ]
 
     await conn.execute(insert(User).values(initial_user))
+    await conn.execute(insert(User).values(initial_user2))
     await conn.execute(insert(Project).values(initial_project))
     await conn.execute(insert(Role).values(initial_roles))
     await conn.execute(insert(ProjectInvite).values(initial_project_invite))
+    await conn.execute(insert(UserProjectRole).values(initial_joined_user))
     await conn.execute(insert(TaskStatus).values(initial_task_statuses))
     await conn.execute(insert(TaskPriority).values(initial_task_priorities))
     await conn.execute(insert(TaskType).values(initial_task_types))

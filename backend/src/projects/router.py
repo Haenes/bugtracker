@@ -4,8 +4,13 @@ from fastapi import APIRouter, Depends
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.auth.models import User as UserModel
+from src.auth.models import User as UserModel, UserProjectRole
 from src.auth.manager import User, current_active_user
+from src.auth.schemas import (
+    UsersInProjectSchema,
+    NoUsersInProjectSchema,
+    UpdateUserInProjectSchema
+)
 from src.utils.db import get_async_session
 from src.utils.cache import (
     Redis, get_redis_client,
@@ -172,3 +177,42 @@ async def join_to_project(
 ) -> dict[str, str]:
     await cache_delete_all(cache, f"projects_{user.id}_*")
     return await add_to_project(session, invite_token, user.id)
+
+
+@router.get("/{project_id}/users")
+async def get_users_in_project(
+    project_id: UUID,
+    session: AsyncSession = Depends(get_async_session),
+    user: User = Depends(current_active_user)
+) -> list[UsersInProjectSchema] | NoUsersInProjectSchema:
+    return await UserProjectRole.users_in_project(session, user.id, project_id)
+
+
+@router.patch("/{project_id}/users/{user_id}")
+async def edit_user_role_in_project(
+    project_id: UUID,
+    user_id: UUID,
+    data: UpdateUserInProjectSchema,
+    session: AsyncSession = Depends(get_async_session),
+    user: User = Depends(current_active_user)
+) -> dict[str, str]:
+    return await UserProjectRole.update_user_role(
+        session,
+        user_id,
+        data.role_id,
+        project_id
+    )
+
+
+@router.delete("/{project_id}/users/{user_id}")
+async def remove_user_from_project(
+    project_id: UUID,
+    user_id: UUID,
+    session: AsyncSession = Depends(get_async_session),
+    user: User = Depends(current_active_user)
+) -> dict[str, str]:
+    return await UserProjectRole.delete_user_from_project(
+        session,
+        user_id,
+        project_id
+    )
