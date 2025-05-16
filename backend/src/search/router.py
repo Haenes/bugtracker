@@ -8,7 +8,7 @@ from src.auth.manager import User, current_active_user
 from src.auth.schemas import SearchUserSchema
 from src.utils.db import get_async_session
 from .schemas import SearchResultsResponse, NoItemsResponse
-from .crud import fulltext_search, user_search
+from .db import fulltext_search, user_search
 
 
 router = APIRouter(

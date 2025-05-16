@@ -2,7 +2,10 @@ from uuid import UUID
 
 from fastapi import HTTPException
 
-from sqlalchemy import select, insert, update, delete
+from sqlalchemy import (
+    select, insert,
+    update as as_update, delete as as_delete
+)
 from sqlalchemy.orm import joinedload
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -13,7 +16,7 @@ from .models import Task
 from .schemas import TaskSchema, TaskSchemaGet, CreatedTaskSchema
 
 
-async def create_task_db(
+async def create(
     session: AsyncSession,
     user_id: UUID,
     project_id: UUID,
@@ -48,25 +51,24 @@ async def create_task_db(
         return await handleDbUniqueError(session, stmt, is_create=True)
 
 
-async def get_tasks_db(
+async def read_all(
     session: AsyncSession,
-    model: Task,
     user_id: UUID,
     offset: int,
     limit: int,
     project_id: UUID
 ) -> list[TaskSchemaGet]:
     tasks_query = (
-        select(model)
+        select(Task)
         .options(
-            joinedload(model.status_rel),
-            joinedload(model.priority_rel),
-            joinedload(model.type_rel)
+            joinedload(Task.status_rel),
+            joinedload(Task.priority_rel),
+            joinedload(Task.type_rel)
         )
         .where(
-            model.project_id == project_id,
+            Task.project_id == project_id,
         )
-        .order_by(model.type_id, model.created_at)
+        .order_by(Task.type_id, Task.created_at)
         .offset(offset)
         .limit(limit)
     )
@@ -82,7 +84,7 @@ async def get_tasks_db(
     return tasks_result.all(), role_id_result
 
 
-async def get_task_db(
+async def read(
     session: AsyncSession,
     user_id: UUID,
     project_id: UUID,
@@ -113,7 +115,7 @@ async def get_task_db(
         return task
 
 
-async def update_task_db(
+async def update(
     session: AsyncSession,
     user_id: UUID,
     project_id: UUID,
@@ -122,7 +124,7 @@ async def update_task_db(
 ) -> TaskSchema:
 
     stmt = (
-        update(Task)
+        as_update(Task)
         .where(
             Task.id == task_id,
             Task.creator_id == user_id,
@@ -142,7 +144,7 @@ async def update_task_db(
         return updated_task
 
 
-async def delete_task_db(
+async def delete(
     session: AsyncSession,
     user_id: UUID,
     project_id: UUID,
@@ -150,7 +152,7 @@ async def delete_task_db(
 ) -> dict[str, str]:
 
     stmt = (
-        delete(Task)
+        as_delete(Task)
         .where(
             Task.id == task_id,
             Task.creator_id == user_id,

@@ -71,7 +71,7 @@ class UserProjectRole(Base):
     user_rel: Mapped[User] = relationship(innerjoin=True)
     username: AssociationProxy[str] = association_proxy('user_rel', 'username')
 
-    async def add(
+    async def create(
         session: AsyncSession,
         user_id: UUID,
         project_id: UUID,
@@ -88,7 +88,7 @@ class UserProjectRole(Base):
         )
         return await handleDbUniqueError(session, add_user_stmt)
 
-    async def get(
+    async def read(
         session: AsyncSession,
         user_id: UUID,
         project_id: UUID,
@@ -102,7 +102,7 @@ class UserProjectRole(Base):
         )
         return await session.scalar(query)
 
-    async def update_user_role(
+    async def update(
         session: AsyncSession,
         user_id: UUID,
         role_id: int,
@@ -125,7 +125,7 @@ class UserProjectRole(Base):
         await session.commit()
         return {'status': 'Success'}
 
-    async def delete_user_from_project(
+    async def delete(
         session: AsyncSession,
         user_id: UUID,
         project_id: UUID,
@@ -146,13 +146,13 @@ class UserProjectRole(Base):
         await session.commit()
         return {'status': 'Success'}
 
-    async def users_in_project(
+    async def read_all_users(
         session: AsyncSession,
         user_id: UUID,
         project_id: UUID,
     ):
         # TODO: Check user permission to get this info
-        # user_role = await UserProjectRole.get(session, user_id, project_id)
+        # user_role = await UserProjectRole.read(session, user_id, project_id)
         query = (
             select(
                 UserProjectRole.user_id,

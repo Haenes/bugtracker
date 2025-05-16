@@ -3,7 +3,10 @@ from uuid import UUID
 
 from fastapi import HTTPException
 
-from sqlalchemy import func, or_, select, insert, update, delete
+from sqlalchemy import (
+    func, or_, select, insert,
+    update as sa_update, delete as sa_delete
+)
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.auth.models import UserProjectRole
@@ -30,7 +33,7 @@ def is_valid_project_name(project_name):
     return True
 
 
-async def create_project_db(
+async def create(
     session: AsyncSession,
     user_id: UUID,
     project: ProjectSchema,
@@ -44,23 +47,22 @@ async def create_project_db(
     )
     created_project = await handleDbUniqueError(session, stmt, is_create=True)
 
-    await UserProjectRole.add(session, user_id, created_project['id'])
+    await UserProjectRole.create(session, user_id, created_project['id'])
     await ProjectInvite.add(session, created_project['id'], user_id)
     return created_project
 
 
-async def get_projects_db(
+async def read_all(
     session: AsyncSession,
-    model: Project,
     user_id: UUID,
     offset: int,
     limit: int,
 ) -> list[ProjectsSchema]:
     projects_query = (
-        select(model, UserProjectRole.role_id)
-        .join(UserProjectRole, model.id == UserProjectRole.project_id)
+        select(Project, UserProjectRole.role_id)
+        .join(UserProjectRole, Project.id == UserProjectRole.project_id)
         .where(user_id == UserProjectRole.user_id)
-        .order_by(model.is_favorite.desc(), model.created_at)
+        .order_by(Project.is_favorite.desc(), Project.created_at)
         .offset(offset)
         .limit(limit)
     )
@@ -73,7 +75,7 @@ async def get_projects_db(
     ]
 
 
-async def get_project_db(
+async def read(
     session: AsyncSession,
     user_id: UUID,
     project_id: UUID
@@ -91,7 +93,7 @@ async def get_project_db(
         return project
 
 
-async def update_project_db(
+async def update(
     session: AsyncSession,
     user_id: UUID,
     project_id: UUID,
@@ -102,7 +104,7 @@ async def update_project_db(
         is_valid_project_name(project.name)
 
     stmt = (
-        update(Project)
+        sa_update(Project)
         .where(Project.creator_id == user_id, Project.id == project_id)
         .values(**project.model_dump(exclude_none=True))
         .returning(Project)
@@ -118,14 +120,14 @@ async def update_project_db(
         return updated_project
 
 
-async def delete_project_db(
+async def delete(
     session: AsyncSession,
     user_id: UUID,
     project_id: UUID
 ) -> dict[str, str]:
 
     stmt = (
-        delete(Project)
+        sa_delete(Project)
         .where(Project.creator_id == user_id, Project.id == project_id)
         .returning(Project)
     )
@@ -163,7 +165,7 @@ async def is_correct_invite_token(session: AsyncSession, invite_token: str):
 
 async def add_to_project(session: AsyncSession, invite_token: str, user_id: UUID):
     project_id, role_id = await is_correct_invite_token(session, invite_token)
-    is_added = await UserProjectRole.add(session, user_id, project_id, role_id)
+    is_added = await UserProjectRole.create(session, user_id, project_id, role_id)
 
     if is_added:
         await increment_invite_use_count(session, invite_token)
@@ -173,7 +175,7 @@ async def add_to_project(session: AsyncSession, invite_token: str, user_id: UUID
 
 async def increment_invite_use_count(session: AsyncSession, invite_token: str):
     update_use_count_stmt = (
-        update(ProjectInvite)
+        sa_update(ProjectInvite)
         .values(use_count=ProjectInvite.use_count + 1)
         .where(ProjectInvite.invite_token == invite_token)
         .returning(ProjectInvite.use_count)

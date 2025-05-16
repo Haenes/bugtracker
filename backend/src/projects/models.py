@@ -53,7 +53,10 @@ class ProjectInvite(Base):
     project_id: Mapped[UUID] = mapped_column(
         ForeignKey('project.id', ondelete='CASCADE')
     )
-    role_id: Mapped[int] = mapped_column(ForeignKey('role.id', ondelete='CASCADE'))
+    role_id: Mapped[int] = mapped_column(
+        ForeignKey('role.id', ondelete='CASCADE'),
+        default=3
+    )
     invite_token: Mapped[str] = mapped_column(VARCHAR(255))
     max_uses: Mapped[int | None] = mapped_column(nullable=True)
     use_count: Mapped[int] = mapped_column(default=0)
@@ -73,7 +76,7 @@ class ProjectInvite(Base):
     ) -> dict[str, int]:
         if project_invite is None:
             # For case, when project invite is creating inside create_project_db().
-            project_invite_dict = {'role_id': 3}
+            project_invite_dict = {}
         else:
             project_invite_dict = dict(project_invite)
         project_invite_dict['creator_id'] = user_id

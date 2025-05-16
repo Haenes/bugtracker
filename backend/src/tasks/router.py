@@ -18,11 +18,7 @@ from .schemas import (
     CreateTaskSchema, TaskSchemaGet,  UpdateTaskSchema,
     CreatedTaskSchema, TaskSchema
 )
-from .models import Task
-from .crud import (
-    create_task_db, get_task_db,
-    update_task_db, delete_task_db
-)
+from .crud import create, read, update, delete
 
 
 router = APIRouter(
@@ -44,7 +40,7 @@ async def get_tasks(
         cache,
         f"tasks_project_{project_id}_{pagination_params}",
         TasksPagination.get_paginated,
-        session, Task, pagination_params, user.id, project_id
+        session, pagination_params, user.id, project_id
     )
 
 
@@ -58,7 +54,7 @@ async def create_task(
 ) -> CreatedTaskSchema:
     """ Create a new task related to the specified project """
     await cache_delete_all(cache, f"tasks_project_{project_id}_*")
-    return await create_task_db(session, user.id, project_id, task)
+    return await create(session, user.id, project_id, task)
 
 
 @router.get("/{task_id}")
@@ -69,7 +65,7 @@ async def get_task(
     user: User = Depends(current_active_user)
 ) -> TaskSchemaGet:
     """ Return an task related to the specified project """
-    return await get_task_db(session, user.id, project_id, task_id)
+    return await read(session, user.id, project_id, task_id)
 
 
 @router.patch("/{task_id}")
@@ -83,7 +79,7 @@ async def update_task(
 ) -> TaskSchema:
     """ Update an task related to the specified project """
     await cache_delete_all(cache, f"tasks_project_{project_id}_*")
-    return await update_task_db(session, user.id, project_id, task_id, task)
+    return await update(session, user.id, project_id, task_id, task)
 
 
 @router.delete("/{task_id}")
@@ -96,4 +92,4 @@ async def delete_task(
 ):
     """ Delete specified task from specified project """
     await cache_delete_all(cache, f"tasks_project_{project_id}_*")
-    return await delete_task_db(session, user.id, project_id, task_id)
+    return await delete(session, user.id, project_id, task_id)

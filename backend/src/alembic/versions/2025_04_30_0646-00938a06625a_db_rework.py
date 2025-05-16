@@ -225,7 +225,7 @@ def upgrade() -> None:
         sa.Column("id", sa.Integer(), nullable=False),
         sa.Column("creator_id", sa.Uuid(), nullable=False),
         sa.Column("project_id", sa.Uuid(), nullable=False),
-        sa.Column("role_id", sa.SMALLINT(), nullable=False),
+        sa.Column("role_id", sa.SMALLINT(), nullable=False, default=3),
         sa.Column("invite_token", sa.VARCHAR(length=255), nullable=False),
         sa.Column("max_uses", sa.Integer(), nullable=True),
         sa.Column("use_count", sa.Integer(), nullable=False, default=0),

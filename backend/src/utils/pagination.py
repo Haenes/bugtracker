@@ -9,10 +9,10 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from pydantic import BaseModel
 
 from src.auth.models import UserProjectRole
-from src.projects.crud import get_projects_db
+from src.projects.crud import read_all as all_projects
 from src.projects.models import Project
 from src.projects.schemas import ProjectsSchema
-from src.tasks.crud import get_tasks_db
+from src.tasks.crud import read_all as all_tasks
 from src.tasks.models import Task
 from src.tasks.schemas import TaskSchemaGet
 
@@ -30,11 +30,12 @@ class PaginatedResponse(BaseModel):
     next_page: int | None
     prev_page: int | None
     total_pages: int | float
-    results: list[ProjectsSchema] | list[TaskSchemaGet]
+    results: list[ProjectsSchema]
 
 
 class PaginatedTasksResponse(PaginatedResponse):
     role_id: int
+    results: list[TaskSchemaGet]
 
 
 class NoItemsResponse(BaseModel):
@@ -75,14 +76,12 @@ class PaginationInterface:
     @staticmethod
     def _count_query(
         session: AsyncSession,
-        model: Project | Task,
         user_id: UUID,
         project_id: UUID | None = None,
     ): ...
 
     def _items_query(
         session: AsyncSession,
-        model: Project | Task,
         user_id: UUID,
         offset: int,
         limit: int,
@@ -93,7 +92,6 @@ class PaginationInterface:
     async def get_paginated(
         cls,
         session: AsyncSession,
-        model: Project | Task,
         pagination_params: pagination_params,
         user_id: UUID,
         project_id: UUID | None = None
@@ -107,7 +105,7 @@ class PaginationInterface:
             )
         offset = (page - 1) * limit
 
-        count = await cls._count_query(session, model, user_id, project_id)
+        count = await cls._count_query(session, user_id, project_id)
 
         if not isinstance(count, int):
             return count
@@ -115,7 +113,6 @@ class PaginationInterface:
         total_pages, next_page, previous_page = cls._validate_params(count, limit, page)
         results = await cls._items_query(
             session=session,
-            model=model,
             user_id=user_id,
             offset=offset,
             limit=limit,
@@ -137,15 +134,14 @@ class ProjectsPagination(PaginationInterface):
     @staticmethod
     async def _count_query(
         session: AsyncSession,
-        model: Project,
         user_id: UUID,
         project_id: UUID | None = None,
     ):
         count_query = (
-            select(func.count(model.id))
-            .select_from(model)
+            select(func.count(Project.id))
+            .select_from(Project)
             .join(UserProjectRole, UserProjectRole.user_id == user_id)
-            .where(model.id == UserProjectRole.project_id)
+            .where(Project.id == UserProjectRole.project_id)
         )
         count = await session.scalar(count_query)
 
@@ -156,13 +152,12 @@ class ProjectsPagination(PaginationInterface):
     @staticmethod
     async def _items_query(
         session: AsyncSession,
-        model: Project,
         user_id: UUID,
         offset: int,
         limit: int,
         project_id: UUID | None = None,
     ):
-        return await get_projects_db(session, model, user_id, offset, limit)
+        return await all_projects(session, user_id, offset, limit)
 
 
 class TasksPagination(PaginationInterface):
@@ -170,7 +165,6 @@ class TasksPagination(PaginationInterface):
     @staticmethod
     async def _is_project_exist_query(
         session: AsyncSession,
-        model: Task,
         user_id: UUID,
         project_id: UUID,
     ):
@@ -187,27 +181,25 @@ class TasksPagination(PaginationInterface):
     @staticmethod
     async def _count_query(
         session: AsyncSession,
-        model: Task,
         user_id: UUID,
         project_id: UUID,
     ):
         await TasksPagination._is_project_exist_query(
             session=session,
-            model=model,
             user_id=user_id,
             project_id=project_id
         )
 
         count_query = (
-            select(func.count(model.id))
-            .select_from(model)
+            select(func.count(Task.id))
+            .select_from(Task)
             # model.creator_id == user_id,
-            .where(model.project_id == project_id)
+            .where(Task.project_id == project_id)
         )
         count = await session.scalar(count_query)
 
         if count == 0:
-            role_id = await UserProjectRole.get(session, user_id, project_id)
+            role_id = await UserProjectRole.read(session, user_id, project_id)
 
             return NoTasksResponse(
                 results="You don't have any tasks for this project!",
@@ -218,19 +210,17 @@ class TasksPagination(PaginationInterface):
     @staticmethod
     async def _items_query(
         session: AsyncSession,
-        model: Task,
         user_id: UUID,
         offset: int,
         limit: int,
         project_id: UUID
     ):
-        return await get_tasks_db(session, model, user_id, offset, limit, project_id)
+        return await all_tasks(session, user_id, offset, limit, project_id)
 
     @classmethod
     async def get_paginated(
         cls,
         session: AsyncSession,
-        model: Project | Task,
         pagination_params: pagination_params,
         user_id: UUID,
         project_id: UUID | None = None
@@ -244,7 +234,7 @@ class TasksPagination(PaginationInterface):
             )
         offset = (page - 1) * limit
 
-        count = await cls._count_query(session, model, user_id, project_id)
+        count = await cls._count_query(session, user_id, project_id)
 
         if not isinstance(count, int):
             return count
@@ -252,7 +242,6 @@ class TasksPagination(PaginationInterface):
         total_pages, next_page, previous_page = cls._validate_params(count, limit, page)
         results = await cls._items_query(
             session=session,
-            model=model,
             user_id=user_id,
             offset=offset,
             limit=limit,

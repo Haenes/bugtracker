@@ -28,10 +28,10 @@ from .schemas import (
     CreateProjectInviteSchema, CreatedProjectInviteSchema,
     UpdateProjectInviteSchema, ProjectInviteSchema
 )
-from .models import Project, ProjectInvite
+from .models import ProjectInvite
 from .crud import (
-    add_to_project, get_project_db, create_project_db,
-    update_project_db, delete_project_db
+    add_to_project, read, create,
+    update, delete
 )
 
 
@@ -53,7 +53,7 @@ async def projects(
         cache,
         f"projects_{user.id}_{pagination_params}",
         ProjectsPagination.get_paginated,
-        session, Project, pagination_params, user.id
+        session, pagination_params, user.id
     )
 
 
@@ -65,7 +65,7 @@ async def create_project(
     cache: Redis = Depends(get_redis_client)
 ) -> CreatedProjectSchema:
     await cache_delete_all(cache, f"projects_{user.id}_*")
-    return await create_project_db(session, user.id, project)
+    return await create(session, user.id, project)
 
 
 @router.get("/{project_id}")
@@ -74,7 +74,7 @@ async def get_project(
     session: AsyncSession = Depends(get_async_session),
     user: User = Depends(current_active_user)
 ) -> ProjectSchema:
-    return await get_project_db(session, user.id, project_id)
+    return await read(session, user.id, project_id)
 
 
 @router.patch("/{project_id}")
@@ -86,7 +86,7 @@ async def update_project(
     cache: Redis = Depends(get_redis_client)
 ) -> ProjectSchema:
     await cache_delete_all(cache, f"projects_{user.id}_*")
-    return await update_project_db(session, user.id, project_id, project)
+    return await update(session, user.id, project_id, project)
 
 
 @router.delete("/{project_id}")
@@ -97,7 +97,7 @@ async def delete_project(
     cache: Redis = Depends(get_redis_client)
 ) -> dict[str, str]:
     await cache_delete_all(cache, f"projects_{user.id}_*")
-    return await delete_project_db(session, user.id, project_id)
+    return await delete(session, user.id, project_id)
 
 
 @router.post("/{project_id}/invite-links")
@@ -121,8 +121,7 @@ async def invite_links(
     session: AsyncSession = Depends(get_async_session),
     user: User = Depends(current_active_user),
 ) -> list[ProjectInviteSchema]:
-    project_invites = await ProjectInvite.get_all(session, project_id)
-    return project_invites
+    return await ProjectInvite.get_all(session, project_id)
 
 
 @router.patch("/{project_id}/invite-links/{invite_id}")
@@ -133,11 +132,7 @@ async def update_invite_link(
     session: AsyncSession = Depends(get_async_session),
     user: User = Depends(current_active_user),
 ) -> ProjectInviteSchema:
-    return await ProjectInvite.update(
-        session=session,
-        invite_id=invite_id,
-        invite=project_invite
-    )
+    return await ProjectInvite.update(session, invite_id, project_invite)
 
 
 @router.delete("/{project_id}/invite-links/{invite_id}")
@@ -147,7 +142,7 @@ async def delete_invite_link(
     session: AsyncSession = Depends(get_async_session),
     user: User = Depends(current_active_user),
 ) -> dict[str, str]:
-    return await ProjectInvite.delete(session=session, invite_id=invite_id)
+    return await ProjectInvite.delete(session, invite_id)
 
 
 @router.post("/invite-to/{project_id}")
@@ -158,7 +153,8 @@ async def invite_to_project(
     user: User = Depends(current_active_user),
 ) -> dict[str, str]:
     user_email = await UserModel.get_email(session, data_for_invite.user.id)
-
+    # TODO: Check project existence before send an email?
+    # TODO: Remove strict params here after refactor of email stuff.
     celery_send_email.delay(
         "EmailInviteToProject",
         user=User(email=user_email, first_name=data_for_invite.user.first_name),
@@ -185,7 +181,7 @@ async def get_users_in_project(
     session: AsyncSession = Depends(get_async_session),
     user: User = Depends(current_active_user)
 ) -> list[UsersInProjectSchema] | NoUsersInProjectSchema:
-    return await UserProjectRole.users_in_project(session, user.id, project_id)
+    return await UserProjectRole.read_all_users(session, user.id, project_id)
 
 
 @router.patch("/{project_id}/users/{user_id}")
@@ -196,12 +192,7 @@ async def edit_user_role_in_project(
     session: AsyncSession = Depends(get_async_session),
     user: User = Depends(current_active_user)
 ) -> dict[str, str]:
-    return await UserProjectRole.update_user_role(
-        session,
-        user_id,
-        data.role_id,
-        project_id
-    )
+    return await UserProjectRole.update(session, user_id, data.role_id, project_id)
 
 
 @router.delete("/{project_id}/users/{user_id}")
@@ -211,8 +202,4 @@ async def remove_user_from_project(
     session: AsyncSession = Depends(get_async_session),
     user: User = Depends(current_active_user)
 ) -> dict[str, str]:
-    return await UserProjectRole.delete_user_from_project(
-        session,
-        user_id,
-        project_id
-    )
+    return await UserProjectRole.delete(session, user_id, project_id)
