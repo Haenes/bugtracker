@@ -11,6 +11,7 @@ from sqlalchemy import (
 from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from src.auth.models import UserProjectRole
 from src.utils.db import Base, INT_PK, UUID_PK
 from src.models import BaseClass, to_tsvector
 from .schemas import (
@@ -68,14 +69,16 @@ class ProjectInvite(Base):
         DateTime(timezone=True), nullable=True
     )
 
-    async def add(
+    async def create(
         session: AsyncSession,
         project_id: UUID,
         user_id: UUID,
         project_invite: CreateProjectInviteSchema | None = None
     ) -> dict[str, int]:
-        if project_invite is None:
-            # For case, when project invite is creating inside create_project_db().
+        await UserProjectRole.is_permitted(session, user_id, project_id)
+
+        if not project_invite:
+            # For case, when project invite is creating inside projects.crud.create
             project_invite_dict = {}
         else:
             project_invite_dict = dict(project_invite)
@@ -92,10 +95,13 @@ class ProjectInvite(Base):
         await session.commit()
         return {'id': created_invite_id}
 
-    async def get_all(
+    async def read_all(
         session: AsyncSession,
+        user_id: UUID,
         project_id: UUID
     ) -> list[ProjectInviteSchema]:
+        await UserProjectRole.is_permitted(session, user_id, project_id)
+
         project_invites_query = (
             select(ProjectInvite)
             .where(ProjectInvite.project_id == project_id)
@@ -105,9 +111,13 @@ class ProjectInvite(Base):
 
     async def update(
         session: AsyncSession,
-        invite_id: UUID,
+        user_id: UUID,
+        project_id: UUID,
+        invite_id: int,
         invite: UpdateProjectInviteSchema
     ) -> ProjectInviteSchema:
+        await UserProjectRole.is_permitted(session, user_id, project_id)
+
         update_invite_stmt = (
             update(ProjectInvite)
             .values(**invite.model_dump(exclude_none=True))
@@ -124,8 +134,12 @@ class ProjectInvite(Base):
 
     async def delete(
         session: AsyncSession,
+        user_id: UUID,
+        project_id: UUID,
         invite_id: int
     ) -> dict[str, str]:
+        await UserProjectRole.is_permitted(session, user_id, project_id)
+
         stmt = (
             delete(ProjectInvite)
             .where(ProjectInvite.id == invite_id)

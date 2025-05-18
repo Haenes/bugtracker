@@ -3,7 +3,7 @@ from uuid import UUID
 from sqlalchemy import select, func
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.auth.models import User
+from src.auth.models import User, UserProjectRole
 from src.projects.models import Project
 from src.tasks.models import Task
 from src.models import to_tsvector
@@ -18,8 +18,9 @@ async def fulltext_search(
 
     projects_query = (
         select(Project.id, Project.name, Project.key)
+        .join(UserProjectRole, Project.id == UserProjectRole.project_id)
         .where(
-            Project.creator_id == user_id,
+            UserProjectRole.user_id == user_id,
             to_tsvector("name", "key", regconfig="english").bool_op("@@")(
                 func.plainto_tsquery("english", q)
             )
@@ -29,8 +30,9 @@ async def fulltext_search(
 
     tasks_query = (
         select(Task.project_id, Task.id, Task.name)
+        .join(UserProjectRole, Task.project_id == UserProjectRole.project_id)
         .where(
-            Task.creator_id == user_id,
+            UserProjectRole.user_id == user_id,
             to_tsvector("name", "description", regconfig="english").bool_op("@@")(
                 func.plainto_tsquery("english", q)
             )

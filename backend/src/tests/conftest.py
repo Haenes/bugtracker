@@ -101,7 +101,7 @@ async def set_initial_data(conn: AsyncConnection):
     initial_project_invite = {
         'creator_id': initial_user['id'],
         'project_id': initial_project['id'],
-        'role_id': 3,
+        'role_id': 2,
         'invite_token': 't7qvFh8Fmqy0-d1eWNMdlw',
     }
     initial_joined_user = {

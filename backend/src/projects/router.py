@@ -107,7 +107,7 @@ async def create_invite_link(
     session: AsyncSession = Depends(get_async_session),
     user: User = Depends(current_active_user),
 ) -> CreatedProjectInviteSchema:
-    return await ProjectInvite.add(
+    return await ProjectInvite.create(
         session=session,
         project_id=project_id,
         user_id=user.id,
@@ -121,7 +121,7 @@ async def invite_links(
     session: AsyncSession = Depends(get_async_session),
     user: User = Depends(current_active_user),
 ) -> list[ProjectInviteSchema]:
-    return await ProjectInvite.get_all(session, project_id)
+    return await ProjectInvite.read_all(session, user.id, project_id)
 
 
 @router.patch("/{project_id}/invite-links/{invite_id}")
@@ -132,7 +132,13 @@ async def update_invite_link(
     session: AsyncSession = Depends(get_async_session),
     user: User = Depends(current_active_user),
 ) -> ProjectInviteSchema:
-    return await ProjectInvite.update(session, invite_id, project_invite)
+    return await ProjectInvite.update(
+        session=session,
+        user_id=user.id,
+        project_id=project_id,
+        invite_id=invite_id,
+        invite=project_invite
+    )
 
 
 @router.delete("/{project_id}/invite-links/{invite_id}")
@@ -142,7 +148,7 @@ async def delete_invite_link(
     session: AsyncSession = Depends(get_async_session),
     user: User = Depends(current_active_user),
 ) -> dict[str, str]:
-    return await ProjectInvite.delete(session, invite_id)
+    return await ProjectInvite.delete(session, user.id, project_id, invite_id)
 
 
 @router.post("/invite-to/{project_id}")
@@ -153,7 +159,8 @@ async def invite_to_project(
     user: User = Depends(current_active_user),
 ) -> dict[str, str]:
     user_email = await UserModel.get_email(session, data_for_invite.user.id)
-    # TODO: Check project existence before send an email?
+    is_project_exist = await read(session, user.id, project_id)  # noqa Func will handle, if there's no project 
+
     # TODO: Remove strict params here after refactor of email stuff.
     celery_send_email.delay(
         "EmailInviteToProject",
@@ -192,7 +199,13 @@ async def edit_user_role_in_project(
     session: AsyncSession = Depends(get_async_session),
     user: User = Depends(current_active_user)
 ) -> dict[str, str]:
-    return await UserProjectRole.update(session, user_id, data.role_id, project_id)
+    return await UserProjectRole.update(
+        session=session,
+        user_id=user.id,
+        project_id=project_id,
+        user_to_update=user_id,
+        role_id=data.role_id
+    )
 
 
 @router.delete("/{project_id}/users/{user_id}")

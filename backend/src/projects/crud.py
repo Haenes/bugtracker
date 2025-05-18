@@ -48,7 +48,7 @@ async def create(
     created_project = await handleDbUniqueError(session, stmt, is_create=True)
 
     await UserProjectRole.create(session, user_id, created_project['id'])
-    await ProjectInvite.add(session, created_project['id'], user_id)
+    await ProjectInvite.create(session, created_project['id'], user_id)
     return created_project
 
 
@@ -83,11 +83,15 @@ async def read(
 
     project_query = (
         select(Project)
-        .where(Project.creator_id == user_id, Project.id == project_id)
+        .join(UserProjectRole, Project.id == UserProjectRole.project_id)
+        .where(
+            UserProjectRole.user_id == user_id,
+            UserProjectRole.project_id == project_id
+        )
     )
     project = await session.scalar(project_query)
 
-    if project is None:
+    if not project:
         raise HTTPException(404, "Project not found!")
     else:
         return project
@@ -99,6 +103,12 @@ async def update(
     project_id: UUID,
     project: UpdateProjectSchema
 ) -> ProjectSchema:
+    await UserProjectRole.is_permitted(
+        session=session,
+        user_id=user_id,
+        project_id=project_id,
+        permitted_roles=(1,),
+    )
 
     if project.name is not None:
         is_valid_project_name(project.name)
@@ -112,7 +122,7 @@ async def update(
 
     updated_project = await handleDbUniqueError(session, stmt)
 
-    if updated_project is None:
+    if not updated_project:
         await session.rollback()
         raise HTTPException(400, "The project for the update doesn't exist!")
     else:
@@ -125,6 +135,12 @@ async def delete(
     user_id: UUID,
     project_id: UUID
 ) -> dict[str, str]:
+    await UserProjectRole.is_permitted(
+        session=session,
+        user_id=user_id,
+        project_id=project_id,
+        permitted_roles=(1,),
+    )
 
     stmt = (
         sa_delete(Project)

@@ -22,17 +22,12 @@ async def create(
     project_id: UUID,
     task: TaskSchema
 ) -> CreatedTaskSchema:
+    await UserProjectRole.is_permitted(session, user_id, project_id)
 
-    # Query to check if there is a project with the received id
-    # TODO: Check user role before create project
-    project_query = (
-        select(Project.id)
-        # Project.creator_id == user_id,
-        .where(Project.id == project_id)
-    )
-    project = await session.scalar(project_query)
+    is_project_exist_query = select(Project.id).where(Project.id == project_id)
+    is_project_exist = await session.scalar(is_project_exist_query)
 
-    if project is None:
+    if not is_project_exist:
         await session.rollback()
         raise HTTPException(
             status_code=400,
@@ -65,9 +60,7 @@ async def read_all(
             joinedload(Task.priority_rel),
             joinedload(Task.type_rel)
         )
-        .where(
-            Task.project_id == project_id,
-        )
+        .where(Task.project_id == project_id)
         .order_by(Task.type_id, Task.created_at)
         .offset(offset)
         .limit(limit)
@@ -90,17 +83,19 @@ async def read(
     project_id: UUID,
     task_id: UUID
 ) -> TaskSchemaGet:
+    # TODO: Remove relationships? Bcs they query all the fields of the joined tables.
     task_query = (
         select(Task)
+        .join(UserProjectRole, Task.project_id == UserProjectRole.project_id)
         .options(
             joinedload(Task.status_rel),
             joinedload(Task.priority_rel),
             joinedload(Task.type_rel)
         )
         .where(
+            UserProjectRole.user_id == user_id,
             Task.id == task_id,
-            Task.creator_id == user_id,
-            Task.project_id == project_id
+            Task.project_id == project_id,
         )
     )
 
@@ -122,21 +117,25 @@ async def update(
     task_id: UUID,
     task: TaskSchema
 ) -> TaskSchema:
+    user_role_id = await UserProjectRole.read(session, user_id, project_id)
+    is_assignee_query = (
+        select(Task.assignee_id)
+        .where(Task.assignee_id == user_id, Task.project_id == project_id)
+    )
+    is_assignee = await session.scalar(is_assignee_query)
+
+    if user_role_id not in [1, 2] and not is_assignee:
+        raise HTTPException(403, 'Not enough rights to perform the action!')
 
     stmt = (
         as_update(Task)
-        .where(
-            Task.id == task_id,
-            Task.creator_id == user_id,
-            Task.project_id == project_id
-        )
+        .where(Task.id == task_id, Task.project_id == project_id)
         .values(**task.model_dump(exclude_none=True))
         .returning(Task)
     )
-
     updated_task = await handleDbUniqueError(session, stmt)
 
-    if updated_task is None:
+    if not updated_task:
         await session.rollback()
         raise HTTPException(400, "The task for the update doesn't exist!")
     else:
@@ -150,6 +149,7 @@ async def delete(
     project_id: UUID,
     task_id: UUID
 ) -> dict[str, str]:
+    await UserProjectRole.is_permitted(session, user_id, project_id)
 
     stmt = (
         as_delete(Task)
@@ -160,9 +160,9 @@ async def delete(
         )
         .returning(Task.id)
     )
-    result = await session.scalar(stmt)
+    is_deleted = await session.scalar(stmt)
 
-    if result is None:
+    if not is_deleted:
         await session.rollback()
         raise HTTPException(
             status_code=400,

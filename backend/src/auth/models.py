@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Annotated
+from typing import Annotated, Iterable
 from uuid import UUID
 
 from fastapi import Depends, HTTPException
@@ -7,9 +7,9 @@ from fastapi import Depends, HTTPException
 from fastapi_users.db import SQLAlchemyUserDatabase
 
 from sqlalchemy import (
-    ForeignKey, VARCHAR, DateTime, delete,
+    ForeignKey, VARCHAR, DateTime,
     false, insert, select,
-    true, text, update
+    true, text, update as sa_update, delete as sa_delete
 )
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -105,14 +105,17 @@ class UserProjectRole(Base):
     async def update(
         session: AsyncSession,
         user_id: UUID,
-        role_id: int,
         project_id: UUID,
+        user_to_update: UUID,
+        role_id: int,
     ):
+        await UserProjectRole.is_permitted(session, user_id, project_id)
+
         stmt = (
-            update(UserProjectRole)
+            sa_update(UserProjectRole)
             .values(role_id=role_id)
             .where(
-                UserProjectRole.user_id == user_id,
+                UserProjectRole.user_id == user_to_update,
                 UserProjectRole.project_id == project_id,
             )
             .returning(UserProjectRole.role_id)
@@ -130,8 +133,10 @@ class UserProjectRole(Base):
         user_id: UUID,
         project_id: UUID,
     ):
+        await UserProjectRole.is_permitted(session, user_id, project_id)
+        # TODO: Invalidate cache for deleted from project user.
         stmt = (
-            delete(UserProjectRole)
+            sa_delete(UserProjectRole)
             .where(
                 UserProjectRole.user_id == user_id,
                 UserProjectRole.project_id == project_id,
@@ -151,9 +156,9 @@ class UserProjectRole(Base):
         user_id: UUID,
         project_id: UUID,
     ):
-        # TODO: Check user permission to get this info
-        # user_role = await UserProjectRole.read(session, user_id, project_id)
-        query = (
+        await UserProjectRole.is_permitted(session, user_id, project_id)
+
+        users_query = (
             select(
                 UserProjectRole.user_id,
                 UserProjectRole.role_id,
@@ -166,8 +171,8 @@ class UserProjectRole(Base):
                 UserProjectRole.project_id == project_id,
             )
         )
-        result = await session.execute(query)
-        users = result.all()
+        users_raw = await session.execute(users_query)
+        users = users_raw.all()
 
         if not users:
             return NoUsersInProjectSchema(detail='So far, no one has joined.')
@@ -179,6 +184,20 @@ class UserProjectRole(Base):
                 'username': user[3],
             } for user in users
         ]
+
+    async def is_permitted(
+        session: AsyncSession,
+        user_id: UUID,
+        project_id: UUID,
+        permitted_roles: Iterable | None = (1, 2),
+        error_message: str | None = None
+    ):
+        role_id = await UserProjectRole.read(session, user_id, project_id)
+
+        if role_id not in permitted_roles:
+            if error_message:
+                raise HTTPException(403, error_message)
+            raise HTTPException(403, 'Not enough rights to perform the action!')
 
 
 class Role(Base):

@@ -5,6 +5,7 @@ PROJECT_ID = None
 PROJECT2_ID = None
 TASK_ID = None
 TASK2_ID = None
+TASK3_ID = None
 INCORRECT_ID = '1fbe7f08-79ff-4c60-9c68-267f5cce8f84'
 INVITE_TOKEN = 't7qvFh8Fmqy0-d1eWNMdlw'
 INIT_PROJECT_ID = '87654321-1234-5678-8765-432112345678'
@@ -226,8 +227,8 @@ async def test_update_not_exist_project(user_client: AsyncClient):
         json={"favorite": True}
     )
 
-    assert r.json()["detail"] == "The project for the update doesn't exist!"
-    assert r.status_code == 400
+    assert r.json()["detail"] == "Not enough rights to perform the action!"
+    assert r.status_code == 403
 
 
 async def test_get_project_invites(user_client: AsyncClient):
@@ -246,6 +247,15 @@ async def test_create_project_invite(user_client: AsyncClient):
     assert r.json()['id'] == 4
 
 
+async def test_create_not_exist_project_invite(user_client: AsyncClient):
+    r = await user_client.post(
+        url=f'projects/{INCORRECT_ID}/invite-links',
+        json={'role_id': 2, 'max_uses': 1}
+    )
+    assert r.status_code == 403
+    assert r.json()['detail'] == 'Not enough rights to perform the action!'
+
+
 async def test_update_invite(user_client: AsyncClient):
     r = await user_client.patch(
         url=f'projects/{PROJECT_ID}/invite-links/4',
@@ -253,6 +263,15 @@ async def test_update_invite(user_client: AsyncClient):
     )
     assert r.status_code == 200
     assert r.json()['max_uses'] == 666
+
+
+async def test_update_not_exist_project_invite(user_client: AsyncClient):
+    r = await user_client.patch(
+        url=f'projects/{INCORRECT_ID}/invite-links/4',
+        json={'max_uses': 666}
+    )
+    assert r.status_code == 403
+    assert r.json()['detail'] == 'Not enough rights to perform the action!'
 
 
 async def test_update_not_exist_invite(user_client: AsyncClient):
@@ -268,6 +287,12 @@ async def test_delete_invite(user_client: AsyncClient):
     r = await user_client.delete(f'projects/{PROJECT_ID}/invite-links/4')
     assert r.status_code == 200
     assert r.json()['status'] == 'Success'
+
+
+async def test_delete_not_exist_project_invite(user_client: AsyncClient):
+    r = await user_client.delete(f'projects/{INCORRECT_ID}/invite-links/4')
+    assert r.status_code == 403
+    assert r.json()['detail'] == 'Not enough rights to perform the action!'
 
 
 async def test_delete_not_exist_invite(user_client: AsyncClient):
@@ -286,16 +311,14 @@ async def test_get_project_users(user_client: AsyncClient):
 
 async def test_get_zero_project_users(user_client: AsyncClient):
     r = await user_client.get(f'projects/{PROJECT_ID}/users')
-
     assert r.status_code == 200
     assert r.json()['detail'] == 'So far, no one has joined.'
 
 
 async def test_get_not_exist_project_users(user_client: AsyncClient):
     r = await user_client.get(f'projects/{INCORRECT_ID}/users')
-
-    assert r.status_code == 200
-    assert r.json()['detail'] == 'So far, no one has joined.'
+    assert r.status_code == 403
+    assert r.json()['detail'] == 'Not enough rights to perform the action!'
 
 
 async def test_edit_project_user_role(user_client: AsyncClient):
@@ -305,6 +328,15 @@ async def test_edit_project_user_role(user_client: AsyncClient):
     )
     assert r.status_code == 200
     assert r.json()['status'] == 'Success'
+
+
+async def test_edit_not_exist_project_user_role(user_client: AsyncClient):
+    r = await user_client.patch(
+        url=f'projects/{INCORRECT_ID}/users/{INIT_USER2_ID}',
+        json={'role_id': 2}
+    )
+    assert r.status_code == 403
+    assert r.json()['detail'] == 'Not enough rights to perform the action!'
 
 
 async def test_edit_project_not_exist_user_role(user_client: AsyncClient):
@@ -322,10 +354,16 @@ async def test_delete_project_user_role(user_client: AsyncClient):
     assert r.json()['status'] == 'Success'
 
 
+async def test_delete_not_exist_project_user_role(user_client: AsyncClient):
+    r = await user_client.delete(f'projects/{INCORRECT_ID}/users/{INIT_USER2_ID}')
+    assert r.status_code == 403
+    assert r.json()['detail'] == 'Not enough rights to perform the action!'
+
+
 async def test_delete_project_not_exist_user_role(user_client: AsyncClient):
     r = await user_client.delete(f'projects/{INIT_PROJECT_ID}/users/{INCORRECT_ID}')
-    assert r.status_code == 500
-    assert r.json()['detail'] == 'Unexpected error, try again later'
+    assert r.status_code == 403
+    assert r.json()['detail'] == 'Not enough rights to perform the action!'
 
 
 async def test_create_tasks(user_client: AsyncClient):
@@ -364,15 +402,27 @@ async def test_create_task_exist_name(user_client: AsyncClient):
     assert r.status_code == 400
 
 
+async def test_create_task_joined_project(user_client: AsyncClient):
+    global TASK3_ID
+
+    r = await user_client.post(
+        url=f"projects/{INIT_PROJECT_ID}/tasks",
+        json={
+            "name": "Test task",
+            "description": "Test"
+        }
+    )
+    assert r.status_code == 201
+    TASK3_ID = r.json()['id']
+
+
 async def test_create_task_for_not_exist_project(user_client: AsyncClient):
     r = await user_client.post(
         url=f"projects/{INCORRECT_ID}/tasks",
         json={"name": "Wrong project"}
     )
-    results = r.json()["detail"]
-
-    assert results == "You can't create an task for a non-existent project!"
-    assert r.status_code == 400
+    assert r.status_code == 403
+    assert r.json()["detail"] == "Not enough rights to perform the action!"
 
 
 async def test_tasks_pagination_not_exist_page(user_client: AsyncClient):
@@ -418,14 +468,30 @@ async def test_update_task_exist_name(user_client: AsyncClient):
     assert r.status_code == 400
 
 
-async def test_update_not_exist_task(user_client: AsyncClient):
+async def test_update_task_joined_project(user_client: AsyncClient):
+    r = await user_client.patch(
+        url=f"projects/{INIT_PROJECT_ID}/tasks/{TASK3_ID}",
+        json={"status": "Done"}
+    )
+    assert r.status_code == 200
+
+
+async def test_update_task_not_exist_project(user_client: AsyncClient):
     r = await user_client.patch(
         url=f"projects/{INCORRECT_ID}/tasks/{INCORRECT_ID}",
         json={"status": 4}
     )
+    assert r.status_code == 403
+    assert r.json()["detail"] == "Not enough rights to perform the action!"
 
-    assert r.json()["detail"] == "The task for the update doesn't exist!"
+
+async def test_update_not_exist_task(user_client: AsyncClient):
+    r = await user_client.patch(
+        url=f"projects/{PROJECT_ID}/tasks/{INCORRECT_ID}",
+        json={"status": 4}
+    )
     assert r.status_code == 400
+    assert r.json()["detail"] == "The task for the update doesn't exist!"
 
 
 async def test_search_no_results(user_client: AsyncClient):
@@ -452,7 +518,8 @@ async def test_search_tasks(user_client: AsyncClient):
     assert results["projects"] == []
     assert results["tasks"] == [
         {"id": TASK_ID, "project_id": PROJECT_ID, "name": "Test task"},
-        {"id": TASK2_ID, "project_id": PROJECT_ID, "name": "Another test task"}
+        {"id": TASK2_ID, "project_id": PROJECT_ID, "name": "Another test task"},
+        {"id": TASK3_ID, "project_id": INIT_PROJECT_ID, "name": "Test task"}
     ]
 
 
@@ -466,7 +533,8 @@ async def test_search_results(user_client: AsyncClient):
     ]
     assert results["tasks"] == [
         {"id": TASK_ID, "project_id": PROJECT_ID, "name": "Test task"},
-        {"id": TASK2_ID, "project_id": PROJECT_ID, "name": "Another test task"}
+        {"id": TASK2_ID, "project_id": PROJECT_ID, "name": "Another test task"},
+        {"id": TASK3_ID, "project_id": INIT_PROJECT_ID, "name": "Test task"}
     ]
 
 
@@ -489,9 +557,8 @@ async def test_delete_project(user_client: AsyncClient):
 
 async def test_delete_not_exist_project(user_client: AsyncClient):
     r = await user_client.delete(f"projects/{INCORRECT_ID}")
-
-    assert r.json()["detail"] == "The project to delete doesn't exist!"
-    assert r.status_code == 400
+    assert r.status_code == 403
+    assert r.json()["detail"] == "Not enough rights to perform the action!"
 
 
 async def test_search_user(user_client: AsyncClient):
