@@ -65,16 +65,9 @@ async def read_all(
         .offset(offset)
         .limit(limit)
     )
-    role_id_query = (
-        select(UserProjectRole.role_id)
-        .where(
-            UserProjectRole.user_id == user_id,
-            UserProjectRole.project_id == project_id
-        )
-    )
     tasks_result = await session.scalars(tasks_query)
-    role_id_result = await session.scalar(role_id_query)
-    return tasks_result.all(), role_id_result
+    role_id = await UserProjectRole.read(session, user_id, project_id)
+    return tasks_result.all(), role_id
 
 
 async def read(

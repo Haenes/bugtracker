@@ -197,15 +197,18 @@ async def edit_user_role_in_project(
     user_id: UUID,
     data: UpdateUserInProjectSchema,
     session: AsyncSession = Depends(get_async_session),
-    user: User = Depends(current_active_user)
+    user: User = Depends(current_active_user),
+    cache: Redis = Depends(get_redis_client),
 ) -> dict[str, str]:
-    return await UserProjectRole.update(
+    updated = await UserProjectRole.update(
         session=session,
         user_id=user.id,
         project_id=project_id,
         user_to_update=user_id,
         role_id=data.role_id
     )
+    await cache_delete_all(cache, f"projects_{user_id}_*")
+    return updated
 
 
 @router.delete("/{project_id}/users/{user_id}")
@@ -213,6 +216,9 @@ async def remove_user_from_project(
     project_id: UUID,
     user_id: UUID,
     session: AsyncSession = Depends(get_async_session),
-    user: User = Depends(current_active_user)
+    user: User = Depends(current_active_user),
+    cache: Redis = Depends(get_redis_client),
 ) -> dict[str, str]:
-    return await UserProjectRole.delete(session, user_id, project_id)
+    deleted = await UserProjectRole.delete(session, user_id, project_id)
+    await cache_delete_all(cache, f"projects_{user_id}_*")
+    return deleted
