@@ -12,16 +12,16 @@ class CreateTaskSchema(BaseModel):
     type_id: int = Field(ge=1, default=4)
     priority_id: int = Field(ge=1, default=2)
     status_id: int = Field(ge=1, default=1)
+    assignee_id: UUID | None = None
     deadline_at: datetime | None = None
 
 
 class UpdateTaskSchema(CreateTaskSchema):
     name: str | None = Field(max_length=100, default=None)
     description: str | None = None
-    type_id: int | None = None
-    priority_id: int | None = None
-    status_id: int | None = None
-    deadline_at: datetime | None = None
+    type_id: int | None = Field(ge=1, default=None)
+    priority_id: int | None = Field(ge=1, default=None)
+    status_id: int | None = Field(ge=1, default=None)
 
 
 class TaskSchema(CreateTaskSchema):
@@ -60,3 +60,22 @@ class SearchTask(BaseModel):
     project_id: UUID
     id: UUID
     name: str
+
+
+class CreateTaskCommentSchema(BaseModel):
+    text: str
+
+
+class TaskCommentSchema(CreateTaskCommentSchema):
+    id: int
+    user_id: UUID
+    task_id: UUID
+    created_at: datetime
+
+
+class NoTaskCommentsResponse(BaseModel):
+    results: str
+
+
+class NoTaskChangesResponse(NoTaskCommentsResponse):
+    pass

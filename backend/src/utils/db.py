@@ -41,6 +41,16 @@ class Base(DeclarativeBase):
         cols = [f'{col}={getattr(self, col)}' for col in self.__table__.columns.keys()]
         return f'{self.__class__.__name__}({', '.join(cols)})'
 
+    def columns_to_dict(self):
+        '''Convert Row to dict when using execute()
+        with field(s) from other models (tables).
+        '''
+        columns_dict = {}
+
+        for key in self.__mapper__.c.keys():
+            columns_dict[key] = getattr(self, key)
+        return columns_dict
+
 
 engine = create_async_engine(url=settings.get_db_url(), echo=True)
 async_session_maker = async_sessionmaker(engine, expire_on_commit=False)
@@ -51,7 +61,12 @@ async def get_async_session() -> AsyncGenerator[AsyncSession, None]:
         yield session
 
 
-async def handleDbUniqueError(session: AsyncSession, stmt, is_create: bool = False):
+async def handleDbUniqueError(
+    session: AsyncSession,
+    stmt,
+    is_create: bool = False,
+    is_task_update: bool = False,
+):
     """
     Performs an operation that may result in a uniqueness error
     on the part of the database and processes it
@@ -76,6 +91,11 @@ async def handleDbUniqueError(session: AsyncSession, stmt, is_create: bool = Fal
             if k in error:
                 raise HTTPException(400, v)
     else:
+        if is_task_update:
+            # Prevent commit, because it's just a part of one big transaction.
+            # Check tasks.crud.update
+            return result
+
         await session.commit()
 
         if is_create:

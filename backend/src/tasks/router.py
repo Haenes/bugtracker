@@ -1,3 +1,4 @@
+from datetime import datetime
 from uuid import UUID
 
 from fastapi import APIRouter, Depends
@@ -14,17 +15,26 @@ from src.utils.pagination import (
     PaginatedTasksResponse, NoTasksResponse,
     pagination_params, TasksPagination
 )
+from .models import TaskHistoryChanges
 from .schemas import (
     CreateTaskSchema, TaskSchemaGet,  UpdateTaskSchema,
-    CreatedTaskSchema, TaskSchema
+    CreatedTaskSchema, TaskSchema,
+    CreateTaskCommentSchema, TaskCommentSchema,
+    NoTaskCommentsResponse, NoTaskChangesResponse
 )
-from .crud import create, read, update, delete
+from .crud import create, read, update, delete, create_comment, read_all_comments
 
 
 router = APIRouter(
     prefix="/projects/{project_id}/tasks",
     tags=["Tasks"]
 )
+TASK_CHANGES_ANNOTATION = list[
+    dict[
+        str,
+        UUID | datetime | str | list[dict[str, str]]
+    ]
+]
 
 
 @router.get("")
@@ -52,7 +62,6 @@ async def create_task(
     user: User = Depends(current_active_user),
     cache: Redis = Depends(get_redis_client)
 ) -> CreatedTaskSchema:
-    """ Create a new task related to the specified project """
     await cache_delete_all(cache, f"tasks_project_{project_id}_*")
     return await create(session, user.id, project_id, task)
 
@@ -64,7 +73,6 @@ async def get_task(
     session: AsyncSession = Depends(get_async_session),
     user: User = Depends(current_active_user)
 ) -> TaskSchemaGet:
-    """ Return an task related to the specified project """
     return await read(session, user.id, project_id, task_id)
 
 
@@ -76,8 +84,7 @@ async def update_task(
     session: AsyncSession = Depends(get_async_session),
     user: User = Depends(current_active_user),
     cache: Redis = Depends(get_redis_client)
-) -> TaskSchema:
-    """ Update an task related to the specified project """
+) -> TaskSchema | dict[str, str]:
     await cache_delete_all(cache, f"tasks_project_{project_id}_*")
     return await update(session, user.id, project_id, task_id, task)
 
@@ -90,6 +97,36 @@ async def delete_task(
     user: User = Depends(current_active_user),
     cache: Redis = Depends(get_redis_client)
 ):
-    """ Delete specified task from specified project """
     await cache_delete_all(cache, f"tasks_project_{project_id}_*")
     return await delete(session, user.id, project_id, task_id)
+
+
+@router.post('/{task_id}/comments')
+async def add_comment_to_task(
+    project_id: UUID,
+    task_id: UUID,
+    comment: CreateTaskCommentSchema,
+    session: AsyncSession = Depends(get_async_session),
+    user: User = Depends(current_active_user),
+) -> dict[str, str | datetime]:
+    return await create_comment(session, user.id, project_id, task_id, comment)
+
+
+@router.get('/{task_id}/comments')
+async def get_comments(
+    project_id: UUID,
+    task_id: UUID,
+    session: AsyncSession = Depends(get_async_session),
+    user: User = Depends(current_active_user),
+) -> list[TaskCommentSchema] | NoTaskCommentsResponse:
+    return await read_all_comments(session, user.id, project_id, task_id)
+
+
+@router.get('/{task_id}/changes')
+async def get_task_changes_history(
+    project_id: UUID,
+    task_id: UUID,
+    session: AsyncSession = Depends(get_async_session),
+    user: User = Depends(current_active_user),
+) -> TASK_CHANGES_ANNOTATION | NoTaskChangesResponse:
+    return await TaskHistoryChanges.read_all(session, user.id, project_id, task_id)

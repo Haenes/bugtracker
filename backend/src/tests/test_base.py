@@ -450,10 +450,68 @@ async def test_get_not_exist_task(user_client: AsyncClient):
     assert r.status_code == 404
 
 
+async def test_add_comment_to_task(user_client: AsyncClient):
+    r = await user_client.post(
+        url=f'projects/{PROJECT_ID}/tasks/{TASK_ID}/comments',
+        json={'text': 'Test comment'}
+    )
+    assert r.status_code == 200
+    assert r.json()['created_at']
+
+
+async def test_add_comment_to_not_exist_project_task(user_client: AsyncClient):
+    r = await user_client.post(
+        url=f'projects/{INCORRECT_ID}/tasks/{TASK_ID}/comments',
+        json={'text': 'Try to add comment to task within not existing project'}
+    )
+    assert r.status_code == 403
+    assert r.json()['detail'] == 'Not enough rights to perform the action!'
+
+
+async def test_add_comment_to_not_exist_task(user_client: AsyncClient):
+    r = await user_client.post(
+        url=f'projects/{PROJECT_ID}/tasks/{INCORRECT_ID}/comments',
+        json={'text': 'Test comment for task that is not exist'}
+    )
+    assert r.status_code == 404
+    assert r.json()['detail'] == (
+        'Task not found! Make sure that the correct data is passed.'
+    )
+
+
+async def test_get_task_comments(user_client: AsyncClient):
+    r = await user_client.get(f'projects/{PROJECT_ID}/tasks/{TASK_ID}/comments')
+    assert r.status_code == 200
+
+    comments = r.json()
+    assert len(comments) == 1
+    assert comments[0]['text'] == 'Test comment'
+
+
+async def test_get_task_zero_comments(user_client: AsyncClient):
+    r = await user_client.get(f'projects/{PROJECT_ID}/tasks/{TASK2_ID}/comments')
+    assert r.status_code == 200
+    assert r.json()['results'] == 'No comments yet.'
+
+
+async def test_get_not_exist_project_task_comments(user_client: AsyncClient):
+    r = await user_client.get(f'projects/{INCORRECT_ID}/tasks/{TASK_ID}/comments')
+    assert r.status_code == 403
+    assert r.json()['detail'] == 'Not enough rights to perform the action!'
+
+
+async def test_get_not_exist_task_comments(user_client: AsyncClient):
+    r = await user_client.get(f'projects/{PROJECT_ID}/tasks/{INCORRECT_ID}/comments')
+    assert r.status_code == 404
+    assert r.json()['detail'] == (
+        'Task not found! Make sure that the correct data is passed.'
+    )
+
+
 async def test_update_task(user_client: AsyncClient):
     r = await user_client.patch(
         url=f"projects/{PROJECT_ID}/tasks/{TASK_ID}",
-        json={"status": "Done"}
+        json={"status_id": 4}
     )
     assert r.status_code == 200
 
@@ -471,7 +529,7 @@ async def test_update_task_exist_name(user_client: AsyncClient):
 async def test_update_task_joined_project(user_client: AsyncClient):
     r = await user_client.patch(
         url=f"projects/{INIT_PROJECT_ID}/tasks/{TASK3_ID}",
-        json={"status": "Done"}
+        json={"status_id": 4}
     )
     assert r.status_code == 200
 
@@ -479,7 +537,7 @@ async def test_update_task_joined_project(user_client: AsyncClient):
 async def test_update_task_not_exist_project(user_client: AsyncClient):
     r = await user_client.patch(
         url=f"projects/{INCORRECT_ID}/tasks/{INCORRECT_ID}",
-        json={"status": 4}
+        json={"status_id": 4}
     )
     assert r.status_code == 403
     assert r.json()["detail"] == "Not enough rights to perform the action!"
@@ -488,10 +546,47 @@ async def test_update_task_not_exist_project(user_client: AsyncClient):
 async def test_update_not_exist_task(user_client: AsyncClient):
     r = await user_client.patch(
         url=f"projects/{PROJECT_ID}/tasks/{INCORRECT_ID}",
-        json={"status": 4}
+        json={"status_id": 4}
     )
-    assert r.status_code == 400
-    assert r.json()["detail"] == "The task for the update doesn't exist!"
+    assert r.status_code == 404
+    assert r.json()["detail"] == (
+        "Task not found! Make sure that the correct data is passed."
+    )
+
+
+async def test_get_task_changes(user_client: AsyncClient):
+    r = await user_client.get(f'projects/{PROJECT_ID}/tasks/{TASK_ID}/changes')
+    assert r.status_code == 200
+
+    changes = r.json()
+    assert len(changes) == 1
+    assert changes[0]['changes'] == [
+        {
+            'field': 'status_id',
+            'old_value': '1',
+            'new_value': '4'
+        }
+    ]
+
+
+async def test_get_task_zero_changes(user_client: AsyncClient):
+    r = await user_client.get(f'projects/{PROJECT_ID}/tasks/{TASK2_ID}/changes')
+    assert r.status_code == 200
+    assert r.json()['results'] == 'No changes yet.'
+
+
+async def test_get_not_exist_project_task_changes(user_client: AsyncClient):
+    r = await user_client.get(f'projects/{INCORRECT_ID}/tasks/{TASK_ID}/changes')
+    assert r.status_code == 403
+    assert r.json()['detail'] == 'Not enough rights to perform the action!'
+
+
+async def test_get_not_exist_task_changes(user_client: AsyncClient):
+    r = await user_client.get(f'projects/{PROJECT_ID}/tasks/{INCORRECT_ID}/changes')
+    assert r.status_code == 404
+    assert r.json()['detail'] == (
+        'Task not found! Make sure that the correct data is passed.'
+    )
 
 
 async def test_search_no_results(user_client: AsyncClient):

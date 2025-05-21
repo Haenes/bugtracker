@@ -1,17 +1,22 @@
 from datetime import datetime
 from uuid import UUID
 
+from fastapi import HTTPException
+
 from sqlalchemy import (
     TEXT, SMALLINT, VARCHAR, DateTime,
     ForeignKey, Index, UniqueConstraint,
-    text as sa_text,
+    text as sa_text, select, insert
 )
+from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.ext.associationproxy import association_proxy
 from sqlalchemy.ext.associationproxy import AssociationProxy
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
+from src.auth.models import UserProjectRole
 from src.utils.db import Base, SMALLINT_PK, BIGINT_PK
 from src.models import BaseClass, to_tsvector
+from .schemas import NoTaskChangesResponse
 
 
 class Task(BaseClass):
@@ -55,6 +60,29 @@ class Task(BaseClass):
         ),
     )
 
+    async def is_exist(
+        session: AsyncSession,
+        user_id: UUID,
+        project_id: UUID,
+        task_id: UUID
+    ):
+        is_exist_query = (
+            select(Task.id)
+            .join(UserProjectRole, Task.project_id == UserProjectRole.project_id)
+            .where(
+                UserProjectRole.user_id == user_id,
+                Task.project_id == project_id,
+                Task.id == task_id,
+            )
+        )
+        is_exist = await session.scalar(is_exist_query)
+
+        if not is_exist:
+            raise HTTPException(
+                status_code=404,
+                detail='Task not found! Make sure that the correct data is passed.'
+            )
+
 
 class TaskPriority(Base):
     __tablename__ = 'task_priority'
@@ -82,19 +110,120 @@ class TaskHistory(Base):
     __tablename__ = 'task_history'
 
     id: Mapped[BIGINT_PK]
-    changed_by: Mapped[UUID] = mapped_column(
-        ForeignKey('user.id', ondelete='CASCADE')
-    )
     task_id: Mapped[UUID] = mapped_column(
         ForeignKey('task.id', ondelete='CASCADE')
     )
-    changed_field: Mapped[str] = mapped_column(VARCHAR(255))
-    old_value: Mapped[str] = mapped_column(VARCHAR(255))
-    new_value: Mapped[str] = mapped_column(VARCHAR(255))
+    changed_by: Mapped[UUID] = mapped_column(
+        ForeignKey('user.id', ondelete='CASCADE')
+    )
+    operation_id: Mapped[UUID] = mapped_column(
+        server_default=sa_text('gen_random_uuid()')
+    )
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         server_default=sa_text('CURRENT_TIMESTAMP')
     )
+
+    async def create(
+        session: AsyncSession,
+        user_id: UUID,
+        task_id: UUID,
+    ):
+        create_stmt = (
+            insert(TaskHistory)
+            .values(task_id=task_id, changed_by=user_id)
+            .returning(TaskHistory.id)
+        )
+        history_id = await session.scalar(create_stmt)
+
+        if not history_id:
+            await session.rollback()
+            raise HTTPException(500, 'Unexpected error, try again later')
+        # await session.commit will be called in function that calling it.
+        # Check tasks.crud.update
+        return history_id
+
+
+class TaskHistoryChanges(Base):
+    __tablename__ = 'task_history_changes'
+
+    id: Mapped[BIGINT_PK]
+    history_id: Mapped[int] = mapped_column(
+        ForeignKey('task_history.id', ondelete='CASCADE')
+    )
+    field: Mapped[str] = mapped_column(VARCHAR(20))
+    old_value: Mapped[str] = mapped_column(TEXT)
+    new_value: Mapped[str] = mapped_column(TEXT)
+
+    async def create(
+        session: AsyncSession,
+        changes: list[dict],
+    ):
+        create_stmt = (
+            insert(TaskHistoryChanges)
+            .values(changes)
+            .returning(TaskHistoryChanges.id)
+        )
+        is_created = await session.scalar(create_stmt)
+
+        if not is_created:
+            await session.rollback()
+            raise HTTPException(500, 'Unexpected error, try again later')
+        # await session.commit will be called in function that calling it.
+        # Check tasks.crud.update
+
+    async def read_all(
+        session: AsyncSession,
+        user_id: UUID,
+        project_id: UUID,
+        task_id: UUID,
+    ):
+        await UserProjectRole.is_permitted(session, user_id, project_id, (1, 2, 3))
+        await Task.is_exist(session, user_id, project_id, task_id)
+
+        task_changes_query = (
+            select(
+                TaskHistory.operation_id,
+                TaskHistoryChanges.field,
+                TaskHistoryChanges.old_value,
+                TaskHistoryChanges.new_value,
+                TaskHistory.created_at,
+            )
+            .join(TaskHistory, TaskHistory.id == TaskHistoryChanges.history_id)
+            .where(TaskHistory.task_id == task_id)
+            .order_by(TaskHistory.created_at)
+        )
+        task_changes_raw = await session.execute(task_changes_query)
+        task_changes = task_changes_raw.all()
+
+        # Create a list with tuple's of unique operation_id and related created_at.
+        # It's necessary, for example, when there are
+        # 2+ changes within the same operation_id,
+        # because it allows you to get rid of the duplicate operation_id.
+        unique_pairs = [(task[0], task[4]) for task in task_changes]
+
+        operations = {
+            unique_pair[0]:  {
+                'operation_id': unique_pair[0],
+                'created_at': unique_pair[1],
+                'changes': [],
+            }
+            for unique_pair in unique_pairs
+        }
+
+        for task in task_changes:
+            if task[0] == operations[task[0]]['operation_id']:
+                operations[task[0]]['changes'].append(
+                    {
+                        'field': task[1],
+                        'old_value': task[2],
+                        'new_value': task[3],
+                    }
+                )
+
+        if operations:
+            return [operation for operation in operations.values()]
+        return NoTaskChangesResponse(results='No changes yet.')
 
 
 class TaskComment(Base):

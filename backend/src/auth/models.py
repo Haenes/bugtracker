@@ -134,7 +134,7 @@ class UserProjectRole(Base):
         project_id: UUID,
     ):
         await UserProjectRole.is_permitted(session, user_id, project_id)
-        # TODO: Invalidate cache for deleted from project user.
+
         stmt = (
             sa_delete(UserProjectRole)
             .where(

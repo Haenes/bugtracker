@@ -15,7 +15,11 @@ from src.config import settings
 from src.models import BaseClass
 from src.auth.models import User, Role, UserProjectRole
 from src.projects.models import Project, ProjectInvite
-from src.tasks.models import Task, TaskPriority, TaskStatus, TaskType, TaskComment, TaskHistory
+from src.tasks.models import (
+    Task, TaskPriority, TaskStatus,
+    TaskType, TaskComment, TaskHistory,
+    TaskHistoryChanges
+)
 
 
 # this is the Alembic Config object, which provides
@@ -35,8 +39,8 @@ target_tables_list = [
     "user", "role", "user_project_role",
     "project", "project_invite",
     "task", "task_priority", "task_type",
-    "task_status", "task_history", "task_comment",
-    "auth_user", "issue",
+    "task_status", "task_history", "task_history_changes",
+    "task_comment", "auth_user", "issue",
 ]
 
 

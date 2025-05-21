@@ -35,16 +35,6 @@ class Project(BaseClass):
         Index('ix_project_fts', to_tsvector('name', 'key'), postgresql_using='gin'),
     )
 
-    def columns_to_dict(self):
-        '''Convert Project Row to dict when using execute()
-        with field(s) from other models (tables).
-        '''
-        columns_dict = {}
-
-        for key in self.__mapper__.c.keys():
-            columns_dict[key] = getattr(self, key)
-        return columns_dict
-
 
 class ProjectInvite(Base):
     __tablename__ = 'project_invite'
@@ -56,11 +46,11 @@ class ProjectInvite(Base):
     )
     role_id: Mapped[int] = mapped_column(
         ForeignKey('role.id', ondelete='CASCADE'),
-        default=3
+        server_default='3'
     )
     invite_token: Mapped[str] = mapped_column(VARCHAR(255))
     max_uses: Mapped[int | None] = mapped_column(nullable=True)
-    use_count: Mapped[int] = mapped_column(default=0)
+    use_count: Mapped[int] = mapped_column(server_default='0')
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         server_default=text('CURRENT_TIMESTAMP')
