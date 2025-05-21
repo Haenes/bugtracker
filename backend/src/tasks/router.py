@@ -15,14 +15,13 @@ from src.utils.pagination import (
     PaginatedTasksResponse, NoTasksResponse,
     pagination_params, TasksPagination
 )
-from .models import TaskHistoryChanges
+from .models import Task, TaskComment, TaskHistoryChanges
 from .schemas import (
     CreateTaskSchema, TaskSchemaGet,  UpdateTaskSchema,
     CreatedTaskSchema, TaskSchema,
     CreateTaskCommentSchema, TaskCommentSchema,
     NoTaskCommentsResponse, NoTaskChangesResponse
 )
-from .crud import create, read, update, delete, create_comment, read_all_comments
 
 
 router = APIRouter(
@@ -63,7 +62,7 @@ async def create_task(
     cache: Redis = Depends(get_redis_client)
 ) -> CreatedTaskSchema:
     await cache_delete_all(cache, f"tasks_project_{project_id}_*")
-    return await create(session, user.id, project_id, task)
+    return await Task.create(session, user.id, project_id, task)
 
 
 @router.get("/{task_id}")
@@ -73,7 +72,7 @@ async def get_task(
     session: AsyncSession = Depends(get_async_session),
     user: User = Depends(current_active_user)
 ) -> TaskSchemaGet:
-    return await read(session, user.id, project_id, task_id)
+    return await Task.read(session, user.id, project_id, task_id)
 
 
 @router.patch("/{task_id}")
@@ -86,7 +85,7 @@ async def update_task(
     cache: Redis = Depends(get_redis_client)
 ) -> TaskSchema | dict[str, str]:
     await cache_delete_all(cache, f"tasks_project_{project_id}_*")
-    return await update(session, user.id, project_id, task_id, task)
+    return await Task.update(session, user.id, project_id, task_id, task)
 
 
 @router.delete("/{task_id}")
@@ -98,7 +97,7 @@ async def delete_task(
     cache: Redis = Depends(get_redis_client)
 ):
     await cache_delete_all(cache, f"tasks_project_{project_id}_*")
-    return await delete(session, user.id, project_id, task_id)
+    return await Task.delete(session, user.id, project_id, task_id)
 
 
 @router.post('/{task_id}/comments')
@@ -109,7 +108,7 @@ async def add_comment_to_task(
     session: AsyncSession = Depends(get_async_session),
     user: User = Depends(current_active_user),
 ) -> dict[str, str | datetime]:
-    return await create_comment(session, user.id, project_id, task_id, comment)
+    return await TaskComment.create(session, user.id, project_id, task_id, comment)
 
 
 @router.get('/{task_id}/comments')
@@ -119,7 +118,7 @@ async def get_comments(
     session: AsyncSession = Depends(get_async_session),
     user: User = Depends(current_active_user),
 ) -> list[TaskCommentSchema] | NoTaskCommentsResponse:
-    return await read_all_comments(session, user.id, project_id, task_id)
+    return await TaskComment.read_all(session, user.id, project_id, task_id)
 
 
 @router.get('/{task_id}/changes')

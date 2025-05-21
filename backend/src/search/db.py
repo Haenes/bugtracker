@@ -3,7 +3,8 @@ from uuid import UUID
 from sqlalchemy import select, func
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.auth.models import User, UserProjectRole
+from src.auth.models import User
+from src.models import UserProjectRole
 from src.projects.models import Project
 from src.tasks.models import Task
 from src.models import to_tsvector

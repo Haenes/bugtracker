@@ -4,7 +4,8 @@ from fastapi import APIRouter, Depends
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.auth.models import User as UserModel, UserProjectRole
+from src.auth.models import User as UserModel
+from src.models import UserProjectRole
 from src.auth.manager import User, current_active_user
 from src.auth.schemas import (
     UsersInProjectSchema,
@@ -28,11 +29,7 @@ from .schemas import (
     CreateProjectInviteSchema, CreatedProjectInviteSchema,
     UpdateProjectInviteSchema, ProjectInviteSchema
 )
-from .models import ProjectInvite
-from .crud import (
-    add_to_project, read, create,
-    update, delete
-)
+from .models import Project, ProjectInvite
 
 
 router = APIRouter(
@@ -65,7 +62,7 @@ async def create_project(
     cache: Redis = Depends(get_redis_client)
 ) -> CreatedProjectSchema:
     await cache_delete_all(cache, f"projects_{user.id}_*")
-    return await create(session, user.id, project)
+    return await Project.create(session, user.id, project)
 
 
 @router.get("/{project_id}")
@@ -74,7 +71,7 @@ async def get_project(
     session: AsyncSession = Depends(get_async_session),
     user: User = Depends(current_active_user)
 ) -> ProjectSchema:
-    return await read(session, user.id, project_id)
+    return await Project.read(session, user.id, project_id)
 
 
 @router.patch("/{project_id}")
@@ -86,7 +83,7 @@ async def update_project(
     cache: Redis = Depends(get_redis_client)
 ) -> ProjectSchema:
     await cache_delete_all(cache, f"projects_{user.id}_*")
-    return await update(session, user.id, project_id, project)
+    return await Project.update(session, user.id, project_id, project)
 
 
 @router.delete("/{project_id}")
@@ -97,7 +94,7 @@ async def delete_project(
     cache: Redis = Depends(get_redis_client)
 ) -> dict[str, str]:
     await cache_delete_all(cache, f"projects_{user.id}_*")
-    return await delete(session, user.id, project_id)
+    return await Project.delete(session, user.id, project_id)
 
 
 @router.post("/{project_id}/invite-links")
@@ -159,7 +156,8 @@ async def invite_to_project(
     user: User = Depends(current_active_user),
 ) -> dict[str, str]:
     user_email = await UserModel.get_email(session, data_for_invite.user.id)
-    is_project_exist = await read(session, user.id, project_id)  # noqa Func will handle, if there's no project 
+    # TODO заменить на метод
+    is_project_exist = await Project.read(session, user.id, project_id)  # noqa Func will handle, if there's no project 
 
     # TODO: Remove strict params here after refactor of email stuff.
     celery_send_email.delay(
@@ -179,7 +177,7 @@ async def join_to_project(
     cache: Redis = Depends(get_redis_client)
 ) -> dict[str, str]:
     await cache_delete_all(cache, f"projects_{user.id}_*")
-    return await add_to_project(session, invite_token, user.id)
+    return await Project.join_to_project(session, invite_token, user.id)
 
 
 @router.get("/{project_id}/users")

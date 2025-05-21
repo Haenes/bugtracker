@@ -8,11 +8,9 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from pydantic import BaseModel
 
-from src.auth.models import UserProjectRole
-from src.projects.crud import read_all as all_projects
+from src.models import UserProjectRole
 from src.projects.models import Project
 from src.projects.schemas import ProjectsSchema
-from src.tasks.crud import read_all as all_tasks
 from src.tasks.models import Task
 from src.tasks.schemas import TaskSchemaGet
 
@@ -157,7 +155,7 @@ class ProjectsPagination(PaginationInterface):
         limit: int,
         project_id: UUID | None = None,
     ):
-        return await all_projects(session, user_id, offset, limit)
+        return await Project.read_all(session, user_id, offset, limit)
 
 
 class TasksPagination(PaginationInterface):
@@ -170,7 +168,6 @@ class TasksPagination(PaginationInterface):
     ):
         _is_project_exist_query = (
             select(Project)
-            # Project.creator_id == user_id,
             .where(Project.id == project_id)
         )
         is_project_exist = await session.scalar(_is_project_exist_query)
@@ -193,7 +190,6 @@ class TasksPagination(PaginationInterface):
         count_query = (
             select(func.count(Task.id))
             .select_from(Task)
-            # model.creator_id == user_id,
             .where(Task.project_id == project_id)
         )
         count = await session.scalar(count_query)
@@ -215,7 +211,7 @@ class TasksPagination(PaginationInterface):
         limit: int,
         project_id: UUID
     ):
-        return await all_tasks(session, user_id, offset, limit, project_id)
+        return await Task.read_all(session, user_id, offset, limit, project_id)
 
     @classmethod
     async def get_paginated(

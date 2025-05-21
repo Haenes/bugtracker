@@ -17,7 +17,8 @@ from redis.asyncio import ConnectionPool, Redis
 
 from src.config import settings
 from main import app
-from src.auth.models import User, Role, UserProjectRole
+from src.auth.models import User, Role
+from src.models import UserProjectRole
 from src.auth.manager import UserManager, current_active_user
 from src.projects.models import Project, ProjectInvite
 from src.tasks.models import TaskStatus, TaskPriority, TaskType
