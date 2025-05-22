@@ -11,10 +11,10 @@ import { convertDate } from "../PageLayout.jsx";
 const { TextArea } = Input;
 
 
-export function EditTaskForm({ task, errors, setModalOpen }) {
+export function EditTaskForm({ task, userId, roleId, errors, setModalOpen }) {
     const fetcher = useFetcher();
     const { t } = useTranslation();
-
+    const isPermitted = task.assignee_id == userId || [1, 2].includes(roleId);
     const [type, setType] = useState(task.type_id);
     const [taskStatus, setTaskStatus] = useState(task.status_id);
     const [priority, setPriority] = useState(task.priority_id);
@@ -46,6 +46,7 @@ export function EditTaskForm({ task, errors, setModalOpen }) {
                     status={errors?.editName && "error"}
                     type="text"
                     defaultValue={task.name}
+                    disabled={!isPermitted}
                     required
                     minLength={3}
                     maxLength={100}
@@ -54,6 +55,7 @@ export function EditTaskForm({ task, errors, setModalOpen }) {
                 <TextArea
                     name="description"
                     defaultValue={task.description}
+                    disabled={!isPermitted}
                     className="my-3"
                     placeholder={t("editTask_description")}
                 />
@@ -61,8 +63,9 @@ export function EditTaskForm({ task, errors, setModalOpen }) {
                 <div>
                     <span className="mr-2">{t("editTask_type")}</span>
                     <Select
-                        defaultValue={task.type_id}
                         className="w-1/3 md:w-1/3"
+                        defaultValue={task.type_id}
+                        disabled={!isPermitted}
                         popupMatchSelectWidth={false}
                         options={[
                             {label: t("task_typeFeature"), value: 3},
@@ -78,8 +81,9 @@ export function EditTaskForm({ task, errors, setModalOpen }) {
                 <div className="my-3">
                     <span className="mr-2">{t("editTask_status")}</span>
                     <Select
-                        defaultValue={task.status_id}
                         className="w-2/5 md:w-1/3"
+                        defaultValue={task.status_id}
+                        disabled={!isPermitted}
                         popupMatchSelectWidth={false}
                         options={[
                             {label: t("taskStatus_notAssign"), value: 1},
@@ -94,8 +98,9 @@ export function EditTaskForm({ task, errors, setModalOpen }) {
 
                 <span className="mr-2">{t("editTask_priority")}</span>
                 <Select
-                    defaultValue={task.priority_id}
                     className="w-1/2 md:w-1/3"
+                    defaultValue={task.priority_id}
+                    disabled={!isPermitted}
                     popupMatchSelectWidth={false}
                     options={[
                         {label: t("task_priorityLow"), value: 1},
@@ -121,28 +126,31 @@ export function EditTaskForm({ task, errors, setModalOpen }) {
                 }
                 </div>
 
-                <div className="flex flex-row gap-3 justify-end">
-                    <Popconfirm
-                        title={t("confirm_title")}
-                        description={t("confirm_description")}
-                        cancelText={t("confirm_cancel")}
-                        okText={t("confirm_ok")}
-                        onConfirm={handleDelete}
-                    >
-                        <Button
-                            danger
-                            name="intent"
-                            value="delete"
-                            type="text"
+                {isPermitted ? 
+                    <div className="flex flex-row gap-3 justify-end">
+                        <Popconfirm
+                            title={t("confirm_title")}
+                            description={t("confirm_description")}
+                            cancelText={t("confirm_cancel")}
+                            okText={t("confirm_ok")}
+                            onConfirm={handleDelete}
                         >
-                            {t("btn_delete")}
-                        </Button>
-                    </Popconfirm>
+                            <Button
+                                danger
+                                name="intent"
+                                value="delete"
+                                type="text"
+                            >
+                                {t("btn_delete")}
+                            </Button>
+                        </Popconfirm>
 
-                    <Button name="intent" value="edit" type="primary" htmlType="submit">
-                        {t("btn_change")}
-                    </Button>
-                </div>
+                        <Button name="intent" value="edit" type="primary" htmlType="submit">
+                            {t("btn_change")}
+                        </Button>
+                    </div>
+                    : <></>
+                }
             </div>
         </Form>
     );

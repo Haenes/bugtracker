@@ -95,16 +95,7 @@ class Task(BaseClass):
         task: TaskSchema
     ) -> CreatedTaskSchema:
         await UserProjectRole.is_permitted(session, user_id, project_id)
-
-        is_project_exist_query = select(Project.id).where(Project.id == project_id)
-        is_project_exist = await session.scalar(is_project_exist_query)
-
-        if not is_project_exist:
-            await session.rollback()
-            raise HTTPException(
-                status_code=400,
-                detail="You can't create an task for a non-existent project!"
-            )
+        await Project.is_exist(session, user_id, project_id)
 
         stmt = (
             insert(Task)
@@ -419,19 +410,8 @@ class TaskComment(Base):
         comment: CreateTaskCommentSchema
     ) -> CreatedTaskSchema:
         await is_permitted_task(session, user_id, project_id, task_id)
-
+        await Project.is_exist(session, user_id, project_id)
         await Task.is_exist(session, user_id, project_id, task_id)
-
-        # TODO: Move is project exist check to Project model
-        is_project_exist_query = select(Project.id).where(Project.id == project_id)
-        is_project_exist = await session.scalar(is_project_exist_query)
-
-        if not is_project_exist:
-            await session.rollback()
-            raise HTTPException(
-                status_code=400,
-                detail="You can't add a comment to task for a non-existent project!"
-            )
 
         stmt = (
             insert(TaskComment)

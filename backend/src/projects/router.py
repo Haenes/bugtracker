@@ -48,7 +48,7 @@ async def projects(
     """ Return all user projects with pagination. """
     return await cache_get_or_set(
         cache,
-        f"projects_{user.id}_{pagination_params}",
+        f"{user.id}_projects_{pagination_params}",
         ProjectsPagination.get_paginated,
         session, pagination_params, user.id
     )
@@ -61,7 +61,7 @@ async def create_project(
     user: User = Depends(current_active_user),
     cache: Redis = Depends(get_redis_client)
 ) -> CreatedProjectSchema:
-    await cache_delete_all(cache, f"projects_{user.id}_*")
+    await cache_delete_all(cache, f"{user.id}_projects_*")
     return await Project.create(session, user.id, project)
 
 
@@ -82,7 +82,7 @@ async def update_project(
     user: User = Depends(current_active_user),
     cache: Redis = Depends(get_redis_client)
 ) -> ProjectSchema:
-    await cache_delete_all(cache, f"projects_{user.id}_*")
+    await cache_delete_all(cache, f"{user.id}_projects_*")
     return await Project.update(session, user.id, project_id, project)
 
 
@@ -93,7 +93,7 @@ async def delete_project(
     user: User = Depends(current_active_user),
     cache: Redis = Depends(get_redis_client)
 ) -> dict[str, str]:
-    await cache_delete_all(cache, f"projects_{user.id}_*")
+    await cache_delete_all(cache, f"{user.id}_projects_*")
     return await Project.delete(session, user.id, project_id)
 
 
@@ -155,9 +155,8 @@ async def invite_to_project(
     session: AsyncSession = Depends(get_async_session),
     user: User = Depends(current_active_user),
 ) -> dict[str, str]:
+    await Project.is_exist(session, user.id, project_id)
     user_email = await UserModel.get_email(session, data_for_invite.user.id)
-    # TODO заменить на метод
-    is_project_exist = await Project.read(session, user.id, project_id)  # noqa Func will handle, if there's no project 
 
     # TODO: Remove strict params here after refactor of email stuff.
     celery_send_email.delay(
@@ -176,7 +175,7 @@ async def join_to_project(
     user: User = Depends(current_active_user),
     cache: Redis = Depends(get_redis_client)
 ) -> dict[str, str]:
-    await cache_delete_all(cache, f"projects_{user.id}_*")
+    await cache_delete_all(cache, f"{user.id}_projects_*")
     return await Project.join_to_project(session, invite_token, user.id)
 
 
@@ -205,7 +204,7 @@ async def edit_user_role_in_project(
         user_to_update=user_id,
         role_id=data.role_id
     )
-    await cache_delete_all(cache, f"projects_{user_id}_*")
+    await cache_delete_all(cache, f"{user.id}_projects_*")
     return updated
 
 
@@ -218,5 +217,5 @@ async def remove_user_from_project(
     cache: Redis = Depends(get_redis_client),
 ) -> dict[str, str]:
     deleted = await UserProjectRole.delete(session, user_id, project_id)
-    await cache_delete_all(cache, f"projects_{user_id}_*")
+    await cache_delete_all(cache, f"{user.id}_projects_*")
     return deleted

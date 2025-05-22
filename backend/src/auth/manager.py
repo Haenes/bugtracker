@@ -1,4 +1,4 @@
-import re
+from re import compile as re_compile
 from uuid import UUID
 
 from fastapi import Depends, Request
@@ -8,6 +8,9 @@ from fastapi_users import (
     UUIDIDMixin
 )
 
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from src.utils.db import get_async_session
 from src.utils.tasks import celery_send_email
 from .config import MANAGER_SECRET, MAX_AGE
 from .cookie_jwt import auth_backend as jwt_backend
@@ -37,7 +40,7 @@ class UserManager(UUIDIDMixin, BaseUserManager[User, UUID]):
         4) at least one digit (?=.*?[0-9]);
         5) at least one special character (?=.*?[#?!@$%^&*-_+=])
         """
-        pattern = re.compile(
+        pattern = re_compile(
             "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-_+=]).{8,}$"
         )
 
@@ -105,3 +108,11 @@ register_router = fastapi_users.get_register_router(UserRead, UserCreate)
 users_router = fastapi_users.get_users_router(UserRead, UserUpdate)
 auth_verify_router = fastapi_users.get_verify_router(UserRead)
 reset_password_router = fastapi_users.get_reset_password_router()
+
+
+@users_router.get('/me/id')
+async def get_id(
+    session: AsyncSession = Depends(get_async_session),
+    user: User = Depends(current_active_user),
+) -> UUID:
+    return await User.get_id(session, user.id)

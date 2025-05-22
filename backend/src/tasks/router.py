@@ -47,7 +47,7 @@ async def get_tasks(
     """ Return all tasks related with specified project with pagination. """
     return await cache_get_or_set(
         cache,
-        f"tasks_project_{project_id}_{pagination_params}",
+        f"{user.id}_tasks_{project_id}_{pagination_params}",
         TasksPagination.get_paginated,
         session, pagination_params, user.id, project_id
     )
@@ -61,7 +61,7 @@ async def create_task(
     user: User = Depends(current_active_user),
     cache: Redis = Depends(get_redis_client)
 ) -> CreatedTaskSchema:
-    await cache_delete_all(cache, f"tasks_project_{project_id}_*")
+    await cache_delete_all(cache, f"{user.id}_tasks_{project_id}_*")
     return await Task.create(session, user.id, project_id, task)
 
 
@@ -84,7 +84,7 @@ async def update_task(
     user: User = Depends(current_active_user),
     cache: Redis = Depends(get_redis_client)
 ) -> TaskSchema | dict[str, str]:
-    await cache_delete_all(cache, f"tasks_project_{project_id}_*")
+    await cache_delete_all(cache, f"{user.id}_tasks_{project_id}*")
     return await Task.update(session, user.id, project_id, task_id, task)
 
 
@@ -96,7 +96,7 @@ async def delete_task(
     user: User = Depends(current_active_user),
     cache: Redis = Depends(get_redis_client)
 ):
-    await cache_delete_all(cache, f"tasks_project_{project_id}_*")
+    await cache_delete_all(cache, f"{user.id}_tasks_{project_id}*")
     return await Task.delete(session, user.id, project_id, task_id)
 
 

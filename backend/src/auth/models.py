@@ -30,10 +30,13 @@ class User(Base):
         server_default=text('CURRENT_TIMESTAMP')
     )
 
+    async def get_id(session: AsyncSession, user_id: UUID) -> str:
+        user_id_query = select(User.id).where(User.id == user_id)
+        return await session.scalar(user_id_query)
+
     async def get_email(session: AsyncSession, user_id: UUID) -> str:
         user_email_query = select(User.email).where(User.id == user_id)
-        user_email = await session.scalar(user_email_query)
-        return user_email
+        return await session.scalar(user_email_query)
 
 
 class Role(Base):

@@ -161,31 +161,12 @@ class ProjectsPagination(PaginationInterface):
 class TasksPagination(PaginationInterface):
 
     @staticmethod
-    async def _is_project_exist_query(
-        session: AsyncSession,
-        user_id: UUID,
-        project_id: UUID,
-    ):
-        _is_project_exist_query = (
-            select(Project)
-            .where(Project.id == project_id)
-        )
-        is_project_exist = await session.scalar(_is_project_exist_query)
-
-        if not is_project_exist:
-            raise HTTPException(404, 'Project not found!')
-
-    @staticmethod
     async def _count_query(
         session: AsyncSession,
         user_id: UUID,
         project_id: UUID,
     ):
-        await TasksPagination._is_project_exist_query(
-            session=session,
-            user_id=user_id,
-            project_id=project_id
-        )
+        await Project.is_exist(session, user_id, project_id)
 
         count_query = (
             select(func.count(Task.id))

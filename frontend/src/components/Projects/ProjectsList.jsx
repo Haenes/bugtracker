@@ -17,7 +17,6 @@ import { EditProjectForm } from "./EditForm.jsx";
 
 export function ProjectsList() {
     const projects = useLoaderData();
-    console.log(projects);
     const errors = useActionData();
     const submit = useSubmit();
 

@@ -1,6 +1,7 @@
 import { replace } from "react-router";
 
 import i18n from "../i18n/config.js";
+import { getMyId } from "../client/auth.js";
 import { getItems, updateItem, deleteItem, createItem } from "../client/base.js";
 
 import { TasksBoard } from "../components/Tasks/TasksBoard.jsx";
@@ -37,6 +38,7 @@ export async function loader({ request, params }) {
     }
 
     const tasks = await getItems(page, limit, projectId);
+    const userId = await getMyId();
 
     if (tasks.results === "You don't have any tasks for this project!") {
         return false;
@@ -44,7 +46,7 @@ export async function loader({ request, params }) {
     else if (tasks.detail === "Project not found!") {
         throw({status: 404, statusText: i18n.t("tasksBoard_projectNotFound")});
     }
-    return tasks;
+    return {tasks, userId};
 }
 
 

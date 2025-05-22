@@ -6,6 +6,7 @@ import { ConfigProvider, Layout, Spin, theme } from "antd";
 import "./index.css";
 import "./i18n/config.js";
 import { ErrorBoundary } from "./components/ErrorPage.jsx";
+import {App} from "./components/test/App.jsx";
 
 
 const getColorMode = () => {
@@ -66,6 +67,10 @@ const router = createBrowserRouter([
             {
                 path: "/logout",
                 lazy: () => import("./routes/auth/logout.jsx"),
+            },
+            {
+                path: "/test",
+                element: <App/>
             },
             {
                 lazy: () => import("./components/PageLayout.jsx"),

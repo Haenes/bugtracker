@@ -10,14 +10,16 @@ import {
 
 import { useTranslation } from "react-i18next";
 
-import { Card, Empty, Spin } from "antd";
+import { Button, Card, Empty, Spin } from "antd";
 
 import { CreateModal } from "../ModalProvider.jsx";
 import { CreateTaskForm } from "./CreateForm.jsx";
 import { EditTaskForm } from "./EditForm.jsx";
 
 export function TasksBoard() {
-    const tasks = useLoaderData();
+    const {tasks, userId} = useLoaderData();
+    const roleId = tasks.role_id;
+    const isPermitted = [1, 2].includes(roleId);
     const errors = useActionData();
     const fetchers = useFetchers();
     const fetcher = useFetcher();
@@ -32,9 +34,12 @@ export function TasksBoard() {
     if (!tasks) {
         return (
             <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} >
-                <CreateModal modalId={1} title={createModalTitle} errors={errors}>
-                    <CreateTaskForm setModalOpen={setModalOpen} />
-                </CreateModal>
+                {isPermitted ?
+                    <CreateModal modalId={1} title={createModalTitle} errors={errors}>
+                        <CreateTaskForm errors={errors} setModalOpen={setModalOpen} />
+                    </CreateModal>
+                    : <></>
+                }
             </Empty>
         );
     }
@@ -45,16 +50,15 @@ export function TasksBoard() {
     const done = tasks.results.filter(task => task.status === "Done");
 
     return (
-        // <div className="grid grid-cols-12 h-full gap-4 md:gap-2 text-center">
         <div className="grid grid-cols-12 h-full gap-4 md:gap-2 text-center">
             {fetchers[0] && fetchers[0].state !== "idle" && <Spin fullscreen delay={50}/>}
 
             <StatusCard id={1} title={t("taskStatus_notAssign").toUpperCase()} fetcher={fetcher}>
-                {TaskCard(notAssign, setModalOpen, setFormData, t, fetcher)}
+                {TaskCard(notAssign, userId, isPermitted, setModalOpen, setFormData, t, fetcher)}
             </StatusCard>
 
             <StatusCard id={2} title={t("taskStatus_toDo").toUpperCase()} fetcher={fetcher}>
-                {TaskCard(toDo, setModalOpen, setFormData, t, fetcher)}
+                {TaskCard(toDo, userId, isPermitted, setModalOpen, setFormData, t, fetcher)}
             </StatusCard>
 
             <StatusCard
@@ -62,7 +66,7 @@ export function TasksBoard() {
                 title={t("taskStatus_inProgress").toUpperCase()}
                 fetcher={fetcher}
             >
-                {TaskCard(inProgress, setModalOpen, setFormData, t, fetcher)}
+                {TaskCard(inProgress, userId, isPermitted, setModalOpen, setFormData, t, fetcher)}
             </StatusCard>
 
             <StatusCard
@@ -70,16 +74,21 @@ export function TasksBoard() {
                 title={t("taskStatus_done").toUpperCase()}
                 fetcher={fetcher}
             >
-                {TaskCard(done, setModalOpen, setFormData, t, fetcher)}
+                {TaskCard(done, userId, isPermitted, setModalOpen, setFormData, t, fetcher)}
             </StatusCard>
-
-            <CreateModal modalId={1} title={createModalTitle} errors={errors}>
-                <CreateTaskForm errors={errors} setModalOpen={setModalOpen} />
-            </CreateModal>
+            
+            {isPermitted ?
+                <CreateModal modalId={1} title={createModalTitle} errors={errors}>
+                    <CreateTaskForm errors={errors} setModalOpen={setModalOpen} />
+                </CreateModal>
+                : <></>
+            }
 
             <CreateModal modalId={2} title={editModalTitle} errors={errors}>
                 <EditTaskForm
                     task={formData}
+                    userId={userId}
+                    roleId={roleId}
                     errors={errors} 
                     setModalOpen={setModalOpen}
                 />
@@ -107,7 +116,7 @@ function StatusCard({ id, title, children, fetcher }) {
 }
 
 
-function TaskCard(taskStatus, setModalOpen, setFormData, t, fetcher) {
+function TaskCard(taskStatus, userId, isPermitted, setModalOpen, setFormData, t, fetcher) {
     const handlers = dragAndDropHandlers("card", fetcher);
 
     return (taskStatus.map((task, i) => (
@@ -118,7 +127,7 @@ function TaskCard(taskStatus, setModalOpen, setFormData, t, fetcher) {
             type="inner"
             size="small"
             hoverable
-            draggable
+            draggable={task.assignee_id == userId || isPermitted}
             className={
                 taskStatus[i + 1]
                 ? "text-start mb-4"

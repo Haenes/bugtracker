@@ -176,6 +176,17 @@ class Project(BaseClass):
             )
         return True
 
+    async def is_exist(session: AsyncSession, user_id: UUID, project_id: UUID):
+        is_project_exist_query = (
+            select(Project.id)
+            .join(UserProjectRole, UserProjectRole.project_id == project_id)
+            .where(Project.id == project_id, UserProjectRole.user_id == user_id)
+        )
+        is_project_exist = await session.scalar(is_project_exist_query)
+
+        if not is_project_exist:
+            raise HTTPException(404, 'Project not found!')
+
 
 class ProjectInvite(Base):
     __tablename__ = 'project_invite'

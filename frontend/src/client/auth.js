@@ -134,6 +134,22 @@ export async function getMe() {
 }
 
 
+export async function getMyId() {
+    try {
+        let rawResponse = await fetch(`${BACKEND_URL}/users/me/id`, {
+            headers: {
+                "Accept": "application/json",
+            },
+            credentials: "include",
+        });
+
+        return rawResponse.json();
+    } catch(err) {
+        throw new Response("Error", error503);
+    }
+}
+
+
 export async function editMe(data) {
     try {
         let rawResponse = await fetch(`${BACKEND_URL}/users/me`, {
