@@ -119,13 +119,14 @@ class UserProjectRole(Base):
         session: AsyncSession,
         user_id: UUID,
         project_id: UUID,
+        user_to_delete: UUID
     ) -> dict[str, str]:
         await UserProjectRole.is_permitted(session, user_id, project_id)
 
         stmt = (
             sa_delete(UserProjectRole)
             .where(
-                UserProjectRole.user_id == user_id,
+                UserProjectRole.user_id == user_to_delete,
                 UserProjectRole.project_id == project_id,
             )
             .returning(UserProjectRole.role_id)

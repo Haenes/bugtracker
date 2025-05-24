@@ -216,6 +216,6 @@ async def remove_user_from_project(
     user: User = Depends(current_active_user),
     cache: Redis = Depends(get_redis_client),
 ) -> dict[str, str]:
-    deleted = await UserProjectRole.delete(session, user_id, project_id)
+    deleted = await UserProjectRole.delete(session, user.id, project_id, user_id)
     await cache_delete_all(cache, f"{user.id}_projects_*")
     return deleted

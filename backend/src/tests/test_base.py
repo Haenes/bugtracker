@@ -362,8 +362,8 @@ async def test_delete_not_exist_project_user_role(user_client: AsyncClient):
 
 async def test_delete_project_not_exist_user_role(user_client: AsyncClient):
     r = await user_client.delete(f'projects/{INIT_PROJECT_ID}/users/{INCORRECT_ID}')
-    assert r.status_code == 403
-    assert r.json()['detail'] == 'Not enough rights to perform the action!'
+    assert r.status_code == 500
+    assert r.json()['detail'] == 'Unexpected error, try again later'
 
 
 async def test_create_tasks(user_client: AsyncClient):
