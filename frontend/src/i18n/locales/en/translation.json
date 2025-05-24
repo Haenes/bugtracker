@@ -50,19 +50,18 @@
     "projectsList_projectKey": "KEY:",
     "projectsList_projectType": "TYPE:",
 
+    "projectSettingsDetails": "Details",
+    "projectSettingsParticipants": "Participants",
+
     "project_typeFullstack": "Fullstack",
     "project_typeBackend": "Back-end",
     "project_typeFrontend": "Front-end",
 
     "createProject_header": "New project",
-    "createProject_name": "Project name",
     "createProject_key": "Project key",
-    "createProject_type": "Project type",
     "createProject_favorite": "Favorite",
 
-    "editProject_name": "Name:",
-    "editProject_key": "Key:",
-    "editProject_type": "Type:",
+    "editProject_key": "Key",
     "editProject_favorite": "Favorite:",
 
     "tasksBoard_header": "Tasks",
@@ -85,18 +84,16 @@
     "task_priorityCritical": "Critical",
 
     "createTask_header": "New task",
-    "createTask_name": "Task Name",
-    "createTask_description": "Task description",
-    "createTask_type": "Task type",
-    "createTask_priority": "Task priority",
 
-    "editTask_description": "Description is empty.",
-    "editTask_type": "Type:",
-    "editTask_status": "Status:",
-    "editTask_priority": "Priority:",
+    "editTask_status": "Status",
 
-    "editCreated": "Created:",
-    "editUpdated": "Updated:",
+    "description": "Description",
+    "name": "Name",
+    "type": "Type",
+    "priority": "Priority",
+    "editEmptyDescription": "Description is empty.",
+    "editCreated": "Date of creation:",
+    "editUpdated": "Last update:",
 
     "btn_logIn": "Log in",
     "btn_settings": "Settings",

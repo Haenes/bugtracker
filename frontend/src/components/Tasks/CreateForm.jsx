@@ -46,18 +46,18 @@ export function CreateTaskForm({ errors, setModalOpen }) {
                 status={errors?.createName && "error"}
                 type="text"
                 required
-                placeholder={t("createTask_name")}
+                placeholder={t("name")}
                 minLength={3}
                 maxLength={100}
             />
 
             <TextArea
                 name="description"
-                placeholder={t("createTask_description")}
+                placeholder={t("description")}
             />
 
             <Select
-                placeholder={t("createTask_type")}
+                placeholder={t("type")}
                 className="w-2/5 md:w-1/3"
                 status={errors?.createType && "error"}
                 options={[
@@ -71,7 +71,7 @@ export function CreateTaskForm({ errors, setModalOpen }) {
             <input name="type_id" type="hidden" value={type} />
 
             <Select
-                placeholder={t("createTask_priority")}
+                placeholder={t("priority")}
                 className="w-3/5 md:w-2/5"
                 status={errors?.createPriority && "error"}
                 options={[

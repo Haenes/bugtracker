@@ -15,6 +15,20 @@ export async function getItems(page, limit, project_id = null) {
 }
 
 
+export async function getProjectUsers(projectId) {
+    const url = `${BACKEND_URL}/projects/${projectId}/users`;
+
+    try {
+        let rawResponse = await fetch(url, {credentials: "include"});
+        let response = await rawResponse.json();
+
+        return response;
+    } catch(err) {
+        throw new Response("Error", error503);
+    }
+}
+
+
 export async function getItem(project_id) {
     const url = urlSingleHelper(project_id);
 
@@ -146,7 +160,7 @@ function urlGetAllHelper(page, limit, project_id) {
     if (project_id) {
         url += `/${project_id}/tasks?${pagination}`;
     } else {
-        url += `?${pagination}`;
+        url += `?${pagination}&with_users=True`;
     }
 
     return url;

@@ -40,10 +40,7 @@ export async function loader({ request, params }) {
     const tasks = await getItems(page, limit, projectId);
     const userId = await getMyId();
 
-    if (tasks.results === "You don't have any tasks for this project!") {
-        return false;
-    }
-    else if (tasks.detail === "Project not found!") {
+    if (tasks.detail === "Project not found!") {
         throw({status: 404, statusText: i18n.t("tasksBoard_projectNotFound")});
     }
     return {tasks, userId};

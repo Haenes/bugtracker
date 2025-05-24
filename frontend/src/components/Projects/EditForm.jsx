@@ -1,10 +1,15 @@
+import { useEffect, useState } from "react"
+
 import { Form, useFetcher } from "react-router";
 
 import { useTranslation } from "react-i18next";
 
-import { Button, Checkbox, Input, Popconfirm } from 'antd';
+import { Button, Checkbox, Tabs, List, Input, Popconfirm } from 'antd';
 
+import { getProjectUsers } from "../../client/base.js";
 import { convertDate } from "../PageLayout.jsx";
+
+const { TextArea } = Input;
 
 
 export function EditProjectForm({ project, errors, setModalOpen }) {
@@ -20,7 +25,7 @@ export function EditProjectForm({ project, errors, setModalOpen }) {
     };
 
     return (
-        <Form method="post" name="editProject" className="flex flex-col gap-y-3 mt-4">
+        <Form method="post" name="editProject">
             {errors?.editName || errors?.editKey ?
                 <div className='text-center text-red-500'>
                     {errors?.editName}
@@ -30,43 +35,47 @@ export function EditProjectForm({ project, errors, setModalOpen }) {
 
             <input name="projectId" value={project.id} type="hidden" />
 
-            <div className="flex flex-row items-center">
-                <span className="mr-2">{t("editProject_name")}</span>
-                <Input
-                    name="name"
-                    status={errors?.editName && "error"}
-                    type="text"
-                    defaultValue={project.name}
-                    required
-                    minLength={3}
-                />
-            </div>
+            <label>{t("name")}</label>
+            <Input
+                name="name"
+                className="mb-3"
+                status={errors?.name && "error"}
+                type="text"
+                defaultValue={project.name}
+                required
+                minLength={3}
+            />
 
-            <div className="flex flex-row items-center w-3/5 md:w-2/5">
-                <span className="mr-2">{t("editProject_key")}</span>
-                <Input
-                    name="key"
-                    status={errors?.editKey && "error"}
-                    type="text"
-                    defaultValue={project.key}
-                    required
-                    minLength={3}
-                    maxLength={10}
-                />
-            </div>
+            <label>{t("editProject_key")}</label>
+            <Input
+                name="key"
+                className="mb-3"
+                status={errors?.editKey && "error"}
+                type="text"
+                defaultValue={project.key}
+                required
+                minLength={3}
+                maxLength={10}
+            />
 
-            <div>
-                <span className="mr-2">{t("editProject_favorite")}</span>
-                <Checkbox name="is_favorite" defaultChecked={project.is_favorite} />
-            </div>
+            <label>{t("description")}</label>
+            <TextArea
+                name="description"
+                className="mb-3"
+                defaultValue={project.description}
+                placeholder={t("editEmptyDescription")}
+            />
 
-            <div>
-                <span className="mr-2">{t("editCreated")}</span>
+            <label className="mr-2">{t("editProject_favorite")}</label>
+            <Checkbox className="mb-3" name="is_favorite" defaultChecked={project.is_favorite} />
+
+            <div className="mb-3">
+                <label className="mr-2">{t("editCreated")}</label>
                 {convertDate(project.created_at)}
             </div>
 
-            <div>
-                <span className="mr-2">{t("editUpdated")}</span>
+            <div className="mb-3">
+                <label className="mr-2">{t("editUpdated")}</label>
                 {/* Get updated datetime from PATCH response to synchronize data */}
                 {errors?.created_at == project.created_at ?
                     convertDate(errors.updated_at) :
@@ -93,9 +102,66 @@ export function EditProjectForm({ project, errors, setModalOpen }) {
                 </Popconfirm>
 
                 <Button name="intent" value="edit" type="primary" htmlType="submit">
-                {t("btn_change")}
+                    {t("btn_change")}
                 </Button>
             </div>
         </Form>
     );
+}
+
+
+export function ProjectParticipants({ projectId }) {
+    const [users, setUsers] = useState([])
+    // const fetcher = useFetcher();
+
+    const fetchUsers = async () => {
+        const users = await getProjectUsers(projectId);
+        setUsers(users)
+    };
+
+    useEffect(() => {fetchUsers()}, [])
+
+    // Add ability to change role and delete from project
+    // Add field for invite new user to project by username/email
+    return (
+        <List
+            itemLayout="horizontal"
+            dataSource={users}
+            renderItem={user => (
+                <List.Item
+                    actions={[
+                        <a key="change-role">Change role</a>,
+                        <a key="delete-user">Delete</a>
+                    ]}
+                >
+                    <List.Item.Meta title={user.username} />
+                    <div>{user.role_id}</div>
+                </List.Item>
+            )}
+        />
+    )
+}
+
+
+export function ProjectSettings({ project, errors, setModalOpen }) {
+    const { t } = useTranslation();
+    const items = [
+        {
+            label: t("projectSettingsDetails"),
+            key: 1,
+            children: <EditProjectForm project={project} errors={errors} setModalOpen={setModalOpen} />
+        },
+        {
+            label: t("projectSettingsParticipants"),
+            key: 2,
+            children: <ProjectParticipants projectId={project.id}/>
+        }
+    ];
+
+    return (
+        <Tabs
+            tabPosition={"top"}
+            items={items.map((_, i) => {return items[i]})}
+        />
+    )
 }

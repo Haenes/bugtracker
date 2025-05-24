@@ -28,130 +28,130 @@ export function EditTaskForm({ task, userId, roleId, errors, setModalOpen }) {
     };
 
     return (
-        <Form method="post" name="editTask" className="grid grid-cols-2 gap-x-8 mt-4">
+        <Form method="post" name="editTask" className="mt-4">
             <input name="taskId" value={task.id} type="hidden" />
 
-            <div className="col-span-2">
+            {errors?.editName ?
+                <div className='text-center text-red-500'>
+                    <span className='text-center text-red-500'>
+                        {errors.editName}
+                    </span>
+                </div> : <></>
+            }
+            
+            <label>{t("name")}</label>
+            <Input
+                name="name"
+                className="mb-3"
+                status={errors?.name && "error"}
+                type="text"
+                defaultValue={task.name}
+                disabled={!isPermitted}
+                required
+                minLength={3}
+                maxLength={100}
+            />
 
-                {errors?.editName ?
-                    <div className='text-center text-red-500'>
-                        <span className='text-center text-red-500'>
-                            {errors.editName}
-                        </span>
-                    </div> : <></>
-                }
+            <label>{t("description")}</label>
+            <TextArea
+                name="description"
+                className="mb-3"
+                defaultValue={task.description}
+                disabled={!isPermitted}
+                placeholder={t("editEmptyDescription")}
+            />
 
-                <Input
-                    name="name"
-                    status={errors?.editName && "error"}
-                    type="text"
-                    defaultValue={task.name}
-                    disabled={!isPermitted}
-                    required
-                    minLength={3}
-                    maxLength={100}
-                />
+            <div className="grid grid-cols-2 justify-items-stretch">
+                <label>{t("type")}</label>
+                <label>{t("editTask_status")}</label>
+            </div>
 
-                <TextArea
-                    name="description"
-                    defaultValue={task.description}
-                    disabled={!isPermitted}
-                    className="my-3"
-                    placeholder={t("editTask_description")}
-                />
-
-                <div>
-                    <span className="mr-2">{t("editTask_type")}</span>
-                    <Select
-                        className="w-1/3 md:w-1/3"
-                        defaultValue={task.type_id}
-                        disabled={!isPermitted}
-                        popupMatchSelectWidth={false}
-                        options={[
-                            {label: t("task_typeFeature"), value: 3},
-                            {label: t("task_typeMisc"), value: 4},
-                            {label: t("task_typeFix"), value: 2},
-                            {label: t("task_typeBug"), value: 1}
-                        ]}
-                        onChange={value => setType(value)}
-                    />
-                    <input name="type_id" type="hidden" value={type} />
-                </div>
-
-                <div className="my-3">
-                    <span className="mr-2">{t("editTask_status")}</span>
-                    <Select
-                        className="w-2/5 md:w-1/3"
-                        defaultValue={task.status_id}
-                        disabled={!isPermitted}
-                        popupMatchSelectWidth={false}
-                        options={[
-                            {label: t("taskStatus_notAssign"), value: 1},
-                            {label: t("taskStatus_toDo"), value: 2},
-                            {label: t("taskStatus_inProgress"), value: 3},
-                            {label: t("taskStatus_done"), value: 4}
-                        ]}
-                        onChange={value => setTaskStatus(value)}
-                    />
-                    <input name="status_id" type="hidden" value={taskStatus || 999} />
-                </div>
-
-                <span className="mr-2">{t("editTask_priority")}</span>
+            <div className="grid grid-cols-2 justify-items-stretch mb-3">
                 <Select
-                    className="w-1/2 md:w-1/3"
-                    defaultValue={task.priority_id}
+                    defaultValue={task.type_id}
+                    disabled={!isPermitted}
+                    className="w-5/6"
+                    popupMatchSelectWidth={false}
+                    options={[
+                        {label: t("task_typeFeature"), value: 3},
+                        {label: t("task_typeMisc"), value: 4},
+                        {label: t("task_typeFix"), value: 2},
+                        {label: t("task_typeBug"), value: 1}
+                    ]}
+                    onChange={value => setType(value)}
+                />
+                <input name="type_id" type="hidden" value={type} />
+
+                <Select
+                    defaultValue={task.status_id}
                     disabled={!isPermitted}
                     popupMatchSelectWidth={false}
                     options={[
-                        {label: t("task_priorityLow"), value: 1},
-                        {label: t("task_priorityMedium"), value: 2},
-                        {label: t("task_priorityHigh"), value: 3},
-                        {label: t("task_priorityCritical"), value: 4}
+                        {label: t("taskStatus_notAssign"), value: 1},
+                        {label: t("taskStatus_toDo"), value: 2},
+                        {label: t("taskStatus_inProgress"), value: 3},
+                        {label: t("taskStatus_done"), value: 4}
                     ]}
-                    onChange={value => setPriority(value)}
+                    onChange={value => setTaskStatus(value)}
                 />
-                <input name="priority_id" type="hidden" value={priority} />
-
-                <div className="my-3">
-                    <span className="mr-2">{t("editCreated")}</span>
-                    {convertDate(task.created_at)}
-                </div>
-
-                <div className="mb-4">
-                    <span className="mr-1">{t("editUpdated")}</span>
-                    {/* Get updated datetime from PATCH response to synchronize data */}
-                    {errors?.created_at == task.created_at ?
-                    convertDate(errors.updated_at) :
-                    convertDate(task.updated_at)
-                }
-                </div>
-
-                {isPermitted ? 
-                    <div className="flex flex-row gap-3 justify-end">
-                        <Popconfirm
-                            title={t("confirm_title")}
-                            description={t("confirm_description")}
-                            cancelText={t("confirm_cancel")}
-                            okText={t("confirm_ok")}
-                            onConfirm={handleDelete}
-                        >
-                            <Button
-                                danger
-                                name="intent"
-                                value="delete"
-                                type="text"
-                            >
-                                {t("btn_delete")}
-                            </Button>
-                        </Popconfirm>
-
-                        <Button name="intent" value="edit" type="primary" htmlType="submit">
-                            {t("btn_change")}
-                        </Button>
-                    </div>
-                    : <></>
-                }
+                <input name="status_id" type="hidden" value={taskStatus || 999} />
             </div>
+
+            <label className="mr-2">{t("priority")}:</label>
+            <Select
+                defaultValue={task.priority_id}
+                disabled={!isPermitted}
+                className="w-1/3"
+                popupMatchSelectWidth={false}
+                options={[
+                    {label: t("task_priorityLow"), value: 1},
+                    {label: t("task_priorityMedium"), value: 2},
+                    {label: t("task_priorityHigh"), value: 3},
+                    {label: t("task_priorityCritical"), value: 4}
+                ]}
+                onChange={value => setPriority(value)}
+            />
+            <input name="priority_id" type="hidden" value={priority} />
+
+            <div className="my-3">
+                <label className="mr-2">{t("editCreated")}</label>
+                {convertDate(task.created_at)}
+            </div>
+
+            <div className="mb-4">
+                <label className="mr-2">{t("editUpdated")}</label>
+                {/* Get updated datetime from PATCH response to synchronize data */}
+                {errors?.created_at == task.created_at ?
+                convertDate(errors.updated_at) :
+                convertDate(task.updated_at)
+            }
+            </div>
+
+            {isPermitted ? 
+                <div className="flex flex-row gap-3 justify-end">
+                    <Popconfirm
+                        title={t("confirm_title")}
+                        description={t("confirm_description")}
+                        cancelText={t("confirm_cancel")}
+                        okText={t("confirm_ok")}
+                        onConfirm={handleDelete}
+                    >
+                        <Button
+                            danger
+                            name="intent"
+                            value="delete"
+                            type="text"
+                        >
+                            {t("btn_delete")}
+                        </Button>
+                    </Popconfirm>
+
+                    <Button name="intent" value="edit" type="primary" htmlType="submit">
+                        {t("btn_change")}
+                    </Button>
+                </div>
+                : <></>
+            }
         </Form>
     );
 }

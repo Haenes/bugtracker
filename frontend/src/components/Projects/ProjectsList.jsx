@@ -12,8 +12,7 @@ import { StarFilled, StarOutlined, SettingOutlined } from "@ant-design/icons";
 
 import { CreateModal } from "../ModalProvider.jsx";
 import { CreateProjectForm } from "./CreateForm.jsx";
-import { EditProjectForm } from "./EditForm.jsx";
-
+import { ProjectSettings } from "./EditForm.jsx";
 
 export function ProjectsList() {
     const projects = useLoaderData();
@@ -91,7 +90,7 @@ export function ProjectsList() {
             </CreateModal>
 
             <CreateModal modalId={2} title={editModalTitle} errors={errors}>
-                <EditProjectForm project={formData} errors={errors} setModalOpen={setModalOpen} />
+                <ProjectSettings project={formData} errors={errors} setModalOpen={setModalOpen} />
             </CreateModal>
         </>
     );

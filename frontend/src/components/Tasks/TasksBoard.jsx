@@ -31,7 +31,7 @@ export function TasksBoard() {
     const [modalOpen, setModalOpen] = useOutletContext();
     const [formData, setFormData] = useState(null);
 
-    if (!tasks) {
+    if (tasks.results === "You don't have any tasks for this project!") {
         return (
             <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} >
                 {isPermitted ?
@@ -76,7 +76,7 @@ export function TasksBoard() {
             >
                 {TaskCard(done, userId, isPermitted, setModalOpen, setFormData, t, fetcher)}
             </StatusCard>
-            
+
             {isPermitted ?
                 <CreateModal modalId={1} title={createModalTitle} errors={errors}>
                     <CreateTaskForm errors={errors} setModalOpen={setModalOpen} />
@@ -89,7 +89,7 @@ export function TasksBoard() {
                     task={formData}
                     userId={userId}
                     roleId={roleId}
-                    errors={errors} 
+                    errors={errors}
                     setModalOpen={setModalOpen}
                 />
             </CreateModal>
@@ -142,10 +142,10 @@ function TaskCard(taskStatus, userId, isPermitted, setModalOpen, setFormData, t,
         >
             <div className="flex flex-col">
                 <i>
-                    {t("editTask_type")} {t("task_type" + task.type)}
+                    {t("type")}: {t("task_type" + task.type)}
                 </i>
                 <i>
-                    {t("editTask_priority")} {t("task_priority" + task.priority)}
+                    {t("priority")}: {t("task_priority" + task.priority)}
                 </i>
             </div>
         </Card>

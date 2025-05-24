@@ -50,19 +50,18 @@
     "projectsList_projectKey": "КЛЮЧ:",
     "projectsList_projectType": "ТИП:",
 
+    "projectSettingsDetails": "Детали",
+    "projectSettingsParticipants": "Участники",
+
     "project_typeFullstack": "Fullstack",
     "project_typeBackend": "Back-end",
     "project_typeFrontend": "Front-end",
 
     "createProject_header": "Новый проект",
-    "createProject_name": "Название проекта",
     "createProject_key": "Ключ проекта",
-    "createProject_type": "Тип проекта",
     "createProject_favorite": "Избранное",
 
-    "editProject_name": "Имя:",
-    "editProject_key": "Ключ:",
-    "editProject_type": "Тип:",
+    "editProject_key": "Ключ",
     "editProject_favorite": "Избранное:",
 
     "tasksBoard_header": "Задачи",
@@ -85,18 +84,16 @@
     "task_priorityCritical": "Критический",
 
     "createTask_header": "Новая задача",
-    "createTask_name": "Название задачи",
-    "createTask_description": "Описание задачи",
-    "createTask_type": "Тип задачи",
-    "createTask_priority": "Приоритет задачи",
 
-    "editTask_description": "Описание отсутствует.",
-    "editTask_type": "Тип:",
-    "editTask_status": "Статус:",
-    "editTask_priority": "Приоритет:",
+    "editTask_status": "Статус",
 
-    "editCreated": "Создание:",
-    "editUpdated": "Обновление:",
+    "name": "Название",
+    "description": "Описание",
+    "type": "Тип",
+    "priority": "Приоритет",
+    "editEmptyDescription": "Описание отсутствует.",
+    "editCreated": "Дата создания:",
+    "editUpdated": "Последнее обновление:",
 
     "btn_logIn": "Войти",
     "btn_settings": "Настройки",
