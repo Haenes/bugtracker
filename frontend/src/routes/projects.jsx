@@ -1,8 +1,15 @@
 import { replace } from "react-router";
-
 import i18n from "../i18n/config.js";
-import { createItem, updateItem, deleteItem, getItems } from "../client/base.js";
 
+import {
+    createItem,
+    updateItem,
+    deleteItem,
+    getItems,
+    deleteUser,
+    updateUserRole,
+    sendInvite
+} from "../client/base.js";
 import { PageContent } from "../components/PageContent.jsx";
 import { ProjectsList } from "../components/Projects/ProjectsList.jsx";
 import { authProvider } from "./auth/authProvider.jsx";
@@ -56,6 +63,15 @@ export async function action({ request }) {
         case "delete": {
             return await deleteProjectAction(formData.get("projectId"));
         }
+        case "inviteUser": {
+            return await inviteUserAction(formData);
+        }
+        case "editUser": {
+            return await editUserAction(formData);
+        }
+        case "deleteUser": {
+            return await deleteUserAction(formData.get("projectId"), formData.get("userId"));
+        }
     }
 }
 
@@ -91,6 +107,37 @@ async function editProjectAction(projectId, formData) {
 async function deleteProjectAction(projectId) {
     const results = await deleteItem(projectId);
     return results.results === "Success" && replace("");
+}
+
+
+async function inviteUserAction(formData) {
+    const invited = await sendInvite(
+        {
+            user: {
+                id: formData.get("userId"),
+                first_name: formData.get("firstName")
+            },
+            invite_token: formData.get("inviteToken"),
+        },
+        formData.get("projectId")
+    );
+    return invited.status === "Success" && replace("");
+}
+
+
+async function editUserAction(formData) {
+    const user = await updateUserRole(
+        {"role_id": formData.get("roleId")},
+        formData.get("projectId"),
+        formData.get("userId")
+    );
+    return user.status === "Success" && replace("");
+}
+
+
+async function deleteUserAction(projectId, userId) {
+    const results = await deleteUser(projectId, userId);
+    return results.status === "Success" && replace("");
 }
 
 

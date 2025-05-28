@@ -29,6 +29,85 @@ export async function getProjectUsers(projectId) {
 }
 
 
+export async function getProjectinvites(projectId) {
+    const url = `${BACKEND_URL}/projects/${projectId}/invite-links`;
+
+    try {
+        let rawResponse = await fetch(url, {credentials: "include"});
+        let response = await rawResponse.json();
+
+        return response;
+    } catch(err) {
+        throw new Response("Error", error503);
+    }
+}
+
+
+export async function sendInvite(data, projectId) {
+    const url = `${BACKEND_URL}/projects/invite-to/${projectId}`;
+
+    try {
+        let rawResponse = await fetch(url, {
+            method: "POST",
+            headers: {
+                "Accept": "application/json",
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data),
+            credentials: "include"
+        });
+        let response = await rawResponse.json();
+
+        return response;
+    } catch(err) {
+        throw new Response("Error", error503);
+    }
+}
+
+
+export async function updateUserRole(data, projectId, userId) {
+    const url = `${BACKEND_URL}/projects/${projectId}/users/${userId}`;
+
+    try {
+        let rawResponse = await fetch(url, {
+            method: "PATCH",
+            headers: {
+                "Accept": "application/json",
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(data),
+            credentials: "include",
+        });
+        let response = await rawResponse.json();
+
+        return response;
+    } catch(err) {
+        throw new Response("Error", error503);
+    }
+}
+
+
+export async function deleteUser(projectId, userId) {
+    const url = `${BACKEND_URL}/projects/${projectId}/users/${userId}`;
+
+    try {
+        let rawResponse = await fetch(url, {
+            method: "DELETE",
+            headers: {
+                "Accept": "application/json",
+                "Content-Type": "application/json",
+            },
+            credentials: "include",
+        });
+
+        let response = await rawResponse.json();
+        return response;
+    } catch(err) {
+        throw new Response("Error", error503);
+    }
+}
+
+
 export async function getItem(project_id) {
     const url = urlSingleHelper(project_id);
 
@@ -43,8 +122,15 @@ export async function getItem(project_id) {
 }
 
 
-export async function searchItems(q) {
-    const url = `${BACKEND_URL}/search?q=${q}`;
+export async function searchItems(q, isUsers = false) {
+    let url;
+
+    if (isUsers) {
+        url = `${BACKEND_URL}/search/user?q=${q}`;
+    } else {
+        url = `${BACKEND_URL}/search?q=${q}`;
+    }
+
 
     try {
         let rawResponse = await fetch(url, {credentials: "include"});
@@ -160,7 +246,7 @@ function urlGetAllHelper(page, limit, project_id) {
     if (project_id) {
         url += `/${project_id}/tasks?${pagination}`;
     } else {
-        url += `?${pagination}&with_users=True`;
+        url += `?${pagination}`;
     }
 
     return url;
