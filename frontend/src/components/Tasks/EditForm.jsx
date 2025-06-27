@@ -6,6 +6,7 @@ import { Form, useFetcher } from "react-router";
 
 import { useTranslation } from "react-i18next";
 
+import { DeadlinePicker } from "./DeadlinePicker.jsx";
 import { convertDate } from "../PageLayout.jsx";
 
 const { TextArea } = Input;
@@ -14,10 +15,13 @@ const { TextArea } = Input;
 export function EditTaskForm({ task, userId, roleId, errors, setModalOpen }) {
     const fetcher = useFetcher();
     const { t } = useTranslation();
+
     const isPermitted = task.assignee_id == userId || [1, 2].includes(roleId);
+
     const [type, setType] = useState(task.type_id);
     const [taskStatus, setTaskStatus] = useState(task.status_id);
     const [priority, setPriority] = useState(task.priority_id);
+    const [deadline, setDeadline] = useState("");
 
     const handleDelete = () => {
         setModalOpen({visible: false, modalId: 2});
@@ -43,7 +47,7 @@ export function EditTaskForm({ task, userId, roleId, errors, setModalOpen }) {
             <Input
                 name="name"
                 className="mb-3"
-                status={errors?.name && "error"}
+                status={errors?.error_taskName && "error"}
                 type="text"
                 defaultValue={task.name}
                 disabled={!isPermitted}
@@ -97,21 +101,29 @@ export function EditTaskForm({ task, userId, roleId, errors, setModalOpen }) {
                 <input name="status_id" type="hidden" value={taskStatus || 999} />
             </div>
 
-            <label className="mr-2">{t("priority")}:</label>
-            <Select
-                defaultValue={task.priority_id}
-                disabled={!isPermitted}
-                className="w-1/3"
-                popupMatchSelectWidth={false}
-                options={[
-                    {label: t("task_priorityLow"), value: 1},
-                    {label: t("task_priorityMedium"), value: 2},
-                    {label: t("task_priorityHigh"), value: 3},
-                    {label: t("task_priorityCritical"), value: 4}
-                ]}
-                onChange={value => setPriority(value)}
-            />
-            <input name="priority_id" type="hidden" value={priority} />
+            <div className="grid grid-cols-2 justify-items-stretch">
+                <label className="mr-2">{t("priority")}</label>
+                <label>{t("deadline")}</label>
+            </div>
+
+            <div className="grid grid-cols-2 justify-items-stretch mb-3">
+                <Select
+                    defaultValue={task.priority_id}
+                    disabled={!isPermitted}
+                    className="w-5/6"
+                    popupMatchSelectWidth={false}
+                    options={[
+                        {label: t("task_priorityLow"), value: 1},
+                        {label: t("task_priorityMedium"), value: 2},
+                        {label: t("task_priorityHigh"), value: 3},
+                        {label: t("task_priorityCritical"), value: 4}
+                    ]}
+                    onChange={value => setPriority(value)}
+                />
+                <input name="priority_id" type="hidden" value={priority} />
+
+                <DeadlinePicker deadline={deadline} setDeadline={setDeadline} value={task.deadline_at} />
+            </div>
 
             <div className="my-3">
                 <label className="mr-2">{t("editCreated")}</label>

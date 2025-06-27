@@ -6,6 +6,8 @@ import { Button, Select, Input } from 'antd';
 
 import { Form } from "react-router";
 
+import { DeadlinePicker } from "./DeadlinePicker.jsx";
+
 const { TextArea } = Input;
 
 
@@ -13,6 +15,7 @@ export function CreateTaskForm({ errors, setModalOpen }) {
     const { t } = useTranslation();
     const [type, setType] = useState("");
     const [priority, setPriority] = useState("");
+    const [deadline, setDeadline] = useState("");
 
     const handleTypeChange = () => {
         errors?.createType && delete errors.createType;
@@ -83,6 +86,8 @@ export function CreateTaskForm({ errors, setModalOpen }) {
                 onChange={value => {setPriority(value), handlePriorityChange}}
             />
             <input name="priority_id" type="hidden" value={priority} />
+
+            <DeadlinePicker deadline={deadline} setDeadline={setDeadline} />
 
             <Button
                 name="intent"

@@ -2,12 +2,14 @@ import { createBrowserRouter, } from "react-router";
 import { RouterProvider } from "react-router/dom";
 
 import { ConfigProvider, Layout, Spin, theme } from "antd";
+import locale from 'antd/locale/ru_RU';
+
+import dayjs from 'dayjs';
+import 'dayjs/locale/ru';
 
 import "./index.css";
 import "./i18n/config.js";
 import { ErrorBoundary } from "./components/ErrorPage.jsx";
-import {App} from "./components/test/App.jsx";
-
 
 const getColorMode = () => {
     const isAlredySet = localStorage.getItem("colorMode");
@@ -105,7 +107,13 @@ const router = createBrowserRouter([
 
 export const AppRouter = () => {
     return (
-        <ConfigProvider csp={{nonce: getCSP()}} theme={{algorithm: getColorMode(), token:{paddingLG: 16}}}>
+        <ConfigProvider
+            csp={{nonce: getCSP()}}
+            // Will localize text inside DatePicker component to RU.
+            // Due to the nesting, the page needs to be reloaded to update the locale.
+            locale={localStorage.getItem("i18nextLng") === "ru" && locale} 
+            theme={{algorithm: getColorMode(), token:{paddingLG: 16}}}
+        >
             <Layout>
                 <RouterProvider router={router} />
             </Layout>

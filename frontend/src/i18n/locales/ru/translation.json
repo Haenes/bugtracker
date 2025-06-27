@@ -52,6 +52,9 @@
 
     "projectSettingsDetails": "Детали",
     "projectSettingsParticipants": "Участники",
+    "projectInvites": "Приглашения",
+    "projectInvites_token": "Токен",
+    "projectInvites_role": "роль",
 
     "project_typeFullstack": "Fullstack",
     "project_typeBackend": "Back-end",
@@ -91,6 +94,7 @@
     "description": "Описание",
     "type": "Тип",
     "priority": "Приоритет",
+    "deadline": "Сделать до",
     "editEmptyDescription": "Описание отсутствует.",
     "editCreated": "Дата создания:",
     "editUpdated": "Последнее обновление:",

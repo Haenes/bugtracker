@@ -166,7 +166,10 @@ function ProjectInvites({ projectId, value, setValue }) {
     const [loading, setLoading] = useState(false);
 
     const generateInviteLabel = (inviteToken, role) => {
-        return `Token: ${inviteToken}, role: ${role}`
+        return (`
+            ${t("projectInvites_token")}: ${inviteToken},
+            ${t("projectInvites_role")}: ${role}
+        `)
     };
 
     const fetchInvites = async () => {

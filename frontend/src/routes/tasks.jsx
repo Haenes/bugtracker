@@ -84,9 +84,12 @@ async function createTaskAction(projectId, formData) {
 
 async function editTaskAction(projectId, taskId, formData) {
     const errors = {};
+    let issueData = Object.fromEntries(formData);
+    // Prevents incorrect date input error on backend.
+    issueData.deadline_at === "" && delete issueData.deadline_at;
 
     const task = await updateItem(
-        Object.fromEntries(formData),
+        issueData,
         projectId,
         taskId
     );

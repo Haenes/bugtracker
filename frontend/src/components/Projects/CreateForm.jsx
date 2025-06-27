@@ -33,7 +33,7 @@ export function CreateProjectForm({ errors, setModalOpen }) {
                 name="name"
                 status={errors?.createName && "error"}
                 type="text"
-                placeholder={t("createProject_name")}
+                placeholder={t("name")}
                 required
                 minLength={3}
                 maxLength={100}

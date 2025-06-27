@@ -52,6 +52,9 @@
 
     "projectSettingsDetails": "Details",
     "projectSettingsParticipants": "Participants",
+    "projectInvites": "Invites",
+    "projectInvites_token": "Token",
+    "projectInvites_role": "role",
 
     "project_typeFullstack": "Fullstack",
     "project_typeBackend": "Back-end",
@@ -91,6 +94,7 @@
     "name": "Name",
     "type": "Type",
     "priority": "Priority",
+    "deadline": "Deadline",
     "editEmptyDescription": "Description is empty.",
     "editCreated": "Date of creation:",
     "editUpdated": "Last update:",
