@@ -16,19 +16,19 @@ export function Component() {
     return (
         <LoginForm>
             {location.includes("sessionExpired") &&
-                <GetAlert message={t("alert_sessionExpired")} />
+                <GetAlert message={t("alertSessionExpired")} />
             }
             {location.includes("register") &&
-                <GetAlert description={t("alert_register")} />
+                <GetAlert description={t("alertRegister")} />
             }
             {location.includes("verify") &&
-                <GetAlert message={t("alert_verify")} type="success" />
+                <GetAlert message={t("alertVerify")} type="success" />
             }
             {location.includes("forgotPassword") &&
-                <GetAlert description={t("alert_forgotPassword")} />
+                <GetAlert description={t("alertForgotPassword")} />
             }
             {location.includes("resetPassword") &&
-                <GetAlert message={t("alert_resetPassword")} type="success" />
+                <GetAlert message={t("alertResetPassword")} type="success" />
             }
         </LoginForm>
     );
@@ -51,10 +51,10 @@ export async function action({ request }) {
     const errors = {};
 
     if (results.detail === "LOGIN_BAD_CREDENTIALS") {
-        errors.auth = i18n.t("error_loginBadCreds")
+        errors.auth = i18n.t("errorLoginBadCreds")
         return errors;
     } else if (results.detail === "LOGIN_USER_NOT_VERIFIED") {
-        errors.verify = i18n.t("error_loginNotVerified")
+        errors.verify = i18n.t("errorLoginNotVerified")
         return errors;
     }
 
@@ -82,7 +82,7 @@ function GetAlert({
 
     return (
         <Alert
-            message={message ?  message : t("alert_defaultMessage")}
+            message={message ?  message : t("alertDefaultMessage")}
             type={type}
             description={description || null}
             showIcon

@@ -39,7 +39,7 @@ export function SearchForm({ setModalOpen }) {
                 <Search
                     name="q"
                     type="search"
-                    placeholder={t("search_title")}
+                    placeholder={t("searchTitle")}
                     defaultValue={loaderData?.searchQuery}
                     required
                     allowClear
@@ -68,7 +68,7 @@ function showSearchResults(fetcher, loaderData, t, handleClick, searchQuery) {
         return (
             <div className="flex flex-col text-base">
                 <span className="text-center mt-3">
-                    {t("search_noResults")}
+                    {t("searchNoResults")}
                 </span>
             </div>
         );
@@ -99,14 +99,14 @@ function displaySearchResults(plainResults, t, handleClick, isSearchPage) {
         <>
             {projects.length > 0 &&
                 <>
-                    <span className="mt-3">{t("projectsList_header")}:</span>
+                    <span className="mt-3">{t("projectsHeader")}:</span>
                     {projects}
                 </>
             }
             {tasks.length > 0 &&
                 <>
                     <span className={projects.length >= 0 && "mt-3"}>
-                        {t("tasksBoard_header")}:
+                        {t("tasksHeader")}:
                     </span>
                     {tasks}
                 </>
@@ -177,7 +177,7 @@ function allResultsLink(results, searchQuery, t, handleClick) {
                     to={`/search?q=${searchQuery}`}
                     onClick={handleClick}
                 >
-                    {t("search_allResults")}
+                    {t("searchAllResults")}
                 </Link>
             </span>
         );

@@ -21,8 +21,9 @@ export function DeadlinePicker({
                     showTime
                     showNow={false}
                     format={{
-                        format: localStorage.getItem("i18nextLng") === "ru" &&
-                                'DD-MM-YYYY HH:mm' || 'YYYY-MM-DD HH:mm'
+                        // format: localStorage.getItem("i18nextLng") === "ru" &&
+                        //         'DD-MM-YYYY HH:mm' || 'YYYY-MM-DD HH:mm'
+                        format: getDateTimeFormat()
                     }}
                     placeholder={t("deadline")}
                     minDate={dayjs(new Date().toLocaleDateString(), 'DD-MM-YYYY')}
@@ -33,5 +34,13 @@ export function DeadlinePicker({
             </div>
             <input name="deadline_at" type="hidden" value={deadline} />
         </>
+    )
+}
+
+
+export function getDateTimeFormat() {
+    return (
+        localStorage.getItem("i18nextLng") === "ru" &&
+        'DD-MM-YYYY HH:mm' || 'YYYY-MM-DD HH:mm'
     )
 }

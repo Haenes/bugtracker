@@ -8,16 +8,22 @@ import {
     Button,
     Checkbox,
     Collapse,
+    DatePicker,
     Empty,
     Table,
     Tabs,
+    Tooltip,
     Select,
     Steps,
     Input,
+    InputNumber,
     Popconfirm
 } from 'antd';
+import {CheckOutlined, CloseOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
+import dayjs from 'dayjs';
 
-import { getProjectUsers, getProjectinvites, searchItems } from "../../client/base.js";
+import { getProjectUsers, getProjectInvites, searchItems } from "../../client/base.js";
+import { getDateTimeFormat } from "../Tasks/DeadlinePicker.jsx";
 import { convertDate } from "../PageLayout.jsx";
 
 const { TextArea } = Input;
@@ -57,7 +63,7 @@ export function EditProjectForm({ project, errors, setModalOpen }) {
                 minLength={3}
             />
 
-            <label>{t("editProject_key")}</label>
+            <label>{t("projectKey")}</label>
             <Input
                 name="key"
                 className="mb-3"
@@ -77,7 +83,7 @@ export function EditProjectForm({ project, errors, setModalOpen }) {
                 placeholder={t("editEmptyDescription")}
             />
 
-            <label className="mr-2">{t("editProject_favorite")}</label>
+            <label className="mr-2">{t("projectFavorite")}:</label>
             <Checkbox className="mb-3" name="is_favorite" defaultChecked={project.is_favorite} />
 
             <div className="mb-3">
@@ -96,10 +102,10 @@ export function EditProjectForm({ project, errors, setModalOpen }) {
 
             <div className="flex flex-row gap-3 justify-end">
                 <Popconfirm
-                    title={t("confirm_title")}
-                    description={t("confirm_description")}
-                    cancelText={t("confirm_cancel")}
-                    okText={t("confirm_ok")}
+                    title={t("confirmTitle")}
+                    description={t("confirmDescription")}
+                    cancelText={t("confirmCancel")}
+                    okText={t("confirmOk")}
                     onConfirm={handleDelete}
                 >
                     <Button
@@ -108,12 +114,12 @@ export function EditProjectForm({ project, errors, setModalOpen }) {
                         value="delete"
                         type="text"
                     >
-                        {t("btn_delete")}
+                        {t("deleteBtn")}
                     </Button>
                 </Popconfirm>
 
                 <Button name="intent" value="edit" type="primary" htmlType="submit">
-                    {t("btn_change")}
+                    {t("changeBtn")}
                 </Button>
             </div>
         </Form>
@@ -151,8 +157,8 @@ function PickUser({ value, setValue }) {
             onSearch={handleSearch}
             onSelect={setValue}
             defaultActiveFirstOption={false}
-            filterOption={false} 
-            notFoundContent={t("search_noResults")}
+            filterOption={false}
+            notFoundContent={t("searchNoResults")}
             options={user}
             optionRender={(user) => <>{user.data.label}</>}
         />
@@ -160,25 +166,39 @@ function PickUser({ value, setValue }) {
 }
 
 
-function ProjectInvites({ projectId, value, setValue }) {
+function SelectProjectInvites({ projectId, roles, value, setValue }) {
     const { t } = useTranslation();
     const [invites, setInvites] = useState([]);
     const [loading, setLoading] = useState(false);
 
-    const generateInviteLabel = (inviteToken, role) => {
-        return (`
-            ${t("projectInvites_token")}: ${inviteToken},
-            ${t("projectInvites_role")}: ${role}
-        `)
+    const generateInviteLabel = (role, useCount, maxUses, expiresAt) => {
+        maxUses = maxUses || "∞";
+        expiresAt = expiresAt && dayjs(
+            new Date(expiresAt).toLocaleDateString(),
+            'DD-MM-YYYY'
+        )
+
+        // The only reason it's not a single string is
+        // because of the incorrect tooltip formatting with new lines.
+        return (
+            `${roles[role]}, `
+            + `${useCount}/${maxUses}, `
+            + `${expiresAt ? expiresAt.format(getDateTimeFormat()) : "-"}`
+        )
     };
 
     const fetchInvites = async () => {
         setLoading(true);
-        const invites = await getProjectinvites(projectId);
+        const invites = await getProjectInvites(projectId);
 
         setInvites(
             invites.map(invite => ({
-                label: generateInviteLabel(invite.invite_token, invite.role_id),
+                label: generateInviteLabel(
+                    invite.role_id,
+                    invite.use_count,
+                    invite.max_uses,
+                    invite.expires_at
+                ),
                 value: invite.invite_token
             }))
         );
@@ -192,7 +212,7 @@ function ProjectInvites({ projectId, value, setValue }) {
             loading={loading}
             labelInValue
             className="w-full"
-            placeholder={t("projectInvites")}
+            placeholder={t("projectSettingsInvites")}
             value={value}
             onSelect={setValue}
             options={invites}
@@ -202,7 +222,7 @@ function ProjectInvites({ projectId, value, setValue }) {
 }
 
 
-function InviteNewUser({ projectId, t }) {
+function InviteNewUser({ projectId, roles, t }) {
     const fetcher = useFetcher();
     const [current, setCurrent] = useState(0);
     const [userValue, setUserValue] = useState();
@@ -241,8 +261,9 @@ function InviteNewUser({ projectId, t }) {
         {
             title: t("step2"),
             content: (
-                <ProjectInvites
+                <SelectProjectInvites
                     projectId={projectId}
+                    roles={roles}
                     value={inviteValue}
                     setValue={setInviteValue}
                 />
@@ -275,15 +296,10 @@ function InviteNewUser({ projectId, t }) {
 }
 
 
-function ProjectParticipants({ projectId, t }) {
+function ProjectParticipants({ projectId, roles, t }) {
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(false);
     const fetcher = useFetcher();
-    const ROLES = {
-        1: t("userRoleAdmin"),
-        2: t("userRolePrivileged"),
-        3: t("userRoleDefault"),
-    };
 
     const handleUserEdit = (userId, newRole) => {
         fetcher.submit(
@@ -311,11 +327,11 @@ function ProjectParticipants({ projectId, t }) {
             align: "center",
             render: (_, user) => (
                 <Select
-                    defaultValue={ROLES[user.role_id]}
+                    defaultValue={roles[user.role_id]}
                     options={[
-                        {label: ROLES[1], value: 1},
-                        {label: ROLES[2], value: 2},
-                        {label: ROLES[3], value: 3},
+                        {label: roles[1], value: 1},
+                        {label: roles[2], value: 2},
+                        {label: roles[3], value: 3},
                     ]}
                     onChange={(value) => handleUserEdit(user.user_id, value)}
                 />
@@ -327,14 +343,14 @@ function ProjectParticipants({ projectId, t }) {
             align: "center",
             render: (_, user) => (
                 <Popconfirm
-                    title={t("confirm_title")}
-                    description={t("confirm_description")}
-                    cancelText={t("confirm_cancel")}
-                    okText={t("confirm_ok")}
+                    title={t("confirmTitle")}
+                    description={t("confirmDescription")}
+                    cancelText={t("confirmCancel")}
+                    okText={t("confirmOk")}
                     onConfirm={() => handleUserDelete(user.user_id)}
                 >
                     <Button danger type="text">
-                        {t("btn_delete")}
+                        {t("deleteBtn")}
                     </Button>
                 </Popconfirm>
             )
@@ -361,27 +377,244 @@ function ProjectParticipants({ projectId, t }) {
                 pagination={false}
                 size="small"
             />
-            <InviteNewUser projectId={projectId} t={t} />
+            <InviteNewUser projectId={projectId} roles={roles} t={t} />
         </div> :
         <Empty description={t("noUsers")} >
-            <InviteNewUser projectId={projectId} t={t} />
+            <InviteNewUser projectId={projectId} roles={roles} t={t} />
         </Empty>
     )
 }
 
 
+function ProjectInvites2({ projectId, roles, setModalOpen }) {
+    const { t } = useTranslation();
+    const fetcher = useFetcher();
+    const [invites, setInvites] = useState([]);
+
+    const [loading, setLoading] = useState(false);
+    const [isCreating, setIsCreating] = useState(false);
+    const [isEdit, setIsEdit] = useState(false);
+
+    const [role, setRole] = useState(false);
+    const [maxUses, setMaxUses] = useState(false);
+    const [expiresAt, setExpiresAt] = useState(false);
+
+    const handleInviteEdit = (projectId, inviteId, invite, updateData) => {
+        if (
+            !updateData.role_id && !updateData.max_uses && !updateData.expires_at ||
+            invite.role_id == updateData.role_id &&
+            invite.max_uses == updateData.max_uses &&
+            invite.expires_at == updateData.expires_at
+        ) {
+            return console.log("Nothing to change!");
+        }
+        fetcher.submit(
+            {
+                intent: "editInvite",
+                projectId: projectId,
+                inviteId: inviteId,
+                updateData: JSON.stringify(updateData)
+            },
+            {method: "PATCH"}
+        );
+        setModalOpen({visible: false, modalId: 2});
+
+    };
+    const handleInviteDelete = (inviteId) => {
+        fetcher.submit(
+            {intent: "deleteInvite", projectId: projectId, inviteId: inviteId},
+            {method: "DELETE"}
+        );
+        setModalOpen({visible: false, modalId: 2});
+    };
+
+    // TODO: fix error related with ununique keys
+    const columns = [
+        {
+            title: t("inviteRole"),
+            dataIndex: "role_id",
+            key: "roleId",
+            align: "center",
+            render: (_, invite) => (
+                !isEdit ? roles[invite.role_id]
+                : <SelectRole
+                    roles={roles}
+                    defaultValue={roles[invite.role_id]}
+                    setRole={setRole}
+                />
+            )
+        },
+        {
+            title: t("inviteMaxUses"),
+            dataIndex: "max_uses",
+            key: "maxUses",
+            align: "center",
+            render: (_, invite) => (
+                !isEdit ?
+                    invite?.max_uses ?
+                    `${invite.use_count}/${invite.max_uses}` : `${invite.use_count}/∞`
+                : <InputMaxUses invite={invite} setMaxUses={setMaxUses} />
+
+            )
+        },
+        {
+            title: t("inviteExpiresAt"),
+            dataIndex: "expires_at",
+            key: "expiresAt",
+            align: "center",
+            render: (_, invite) => (
+                !isEdit ?
+                    invite?.expires_at ?
+                    `${new Date(invite.expires_at).toLocaleString()}` : "-"
+                : <ExpiresAtPicker
+                    defaultValue={invite.expires_at}
+                    setExpiresAt={setExpiresAt}
+                />
+            )
+        },
+        {
+            title: t("action"),
+            key: "action",
+            align: "center",
+            render: (_, invite) => (
+                <>
+                    {isEdit ?
+                        <>
+                            <Button
+                                color="primary"
+                                variant="text"
+                                onClick={() => handleInviteEdit(
+                                    projectId, invite.id, invite,
+                                    {role_id: role, max_uses: maxUses, expires_at: expiresAt}
+                                )}
+                                icon={<CheckOutlined />}
+                            />
+
+                            <Button
+                                color="orange"
+                                variant="text"
+                                onClick={() => {
+                                    setRole(false); setMaxUses(false); setExpiresAt(false);
+                                    setIsEdit(!isEdit)
+                                }}
+                                icon={<CloseOutlined />}
+                            />
+                        </>
+                        : <>
+                            <Button
+                                className="mr-2"
+                                icon={<EditOutlined />}
+                                onClick={() => setIsEdit(!isEdit)}
+                            />
+
+                            <Popconfirm
+                                title={t("confirmTitle")}
+                                description={t("confirmDescription")}
+                                cancelText={t("confirmCancel")}
+                                okText={t("confirmOk")}
+                                onConfirm={() => handleInviteDelete(invite.id)}
+                            >
+                                <Button danger icon={<DeleteOutlined />} />
+                            </Popconfirm>
+                        </>
+                    }
+                </>
+            )
+        },
+    ]
+
+    const fetchInvites = async () => {
+        setLoading(true);
+        const invites = await getProjectInvites(projectId);
+        setInvites(invites);
+        setLoading(false);
+    };
+
+    useEffect(() => {fetchInvites()}, [])
+
+    return (
+        <div className="flex flex-col gap-y-4">
+            {!isCreating ?
+                <Button
+                    type="primary"
+                    className="w-1/4"
+                    onClick={() => setIsCreating(!isCreating)}
+                >
+                    {t("createBtn")}
+                </Button>
+                : <Form className="flex gap-x-2" method="post" name="editProject">
+                    <input name="projectId" value={projectId} type="hidden" />
+
+                    <SelectRole roles={roles} setRole={setRole}/>
+                    <input name="role_id" type="hidden" value={role} />
+
+                    <Tooltip title={t("inviteMaxUses")}>
+                        <InputMaxUses setMaxUses={setMaxUses} />
+                    </Tooltip>
+
+                    <ExpiresAtPicker setExpiresAt={setExpiresAt} />
+                    <input name="expires_at" value={expiresAt || ""} type="hidden" />
+
+                    <Button
+                        name="intent"
+                        value="createInvite"
+                        color="primary"
+                        variant="text"
+                        htmlType="submit"
+                        icon={<CheckOutlined />}
+                        onClick={() => setModalOpen({visible: false, modalId: 2})}
+                    />
+
+                    <Button
+                        color="orange"
+                        variant="text"
+                        icon={<CloseOutlined />}
+                        onClick={() => {
+                            setRole(false);
+                            setMaxUses(false);
+                            setExpiresAt(false);
+                            setIsCreating(!isCreating);
+                        }}
+                    />
+                </Form>
+            }
+
+            <Table
+                bordered
+                loading={loading}
+                rowClassName="text-center"
+                columns={columns}
+                dataSource={invites}
+                pagination={false}
+                size="small"
+                scroll={{x: 'max-content'}}
+            />
+        </div>
+    )
+}
+
 export function ProjectSettings({ project, errors, setModalOpen }) {
     const { t } = useTranslation();
+    const ROLES = {
+        1: t("userRoleAdmin"),
+        2: t("userRolePrivileged"),
+        3: t("userRoleDefault"),
+    };
     const items = [
         {
             label: t("projectSettingsDetails"),
-            key: 1,
+            key: "tab1",
             children: <EditProjectForm project={project} errors={errors} setModalOpen={setModalOpen} />
         },
         {
             label: t("projectSettingsParticipants"),
-            key: 2,
-            children: <ProjectParticipants projectId={project.id} t={t} />
+            key: "tab2",
+            children: <ProjectParticipants projectId={project.id} t={t} roles={ROLES} />
+        },
+        {
+            label: t("projectSettingsInvites"),
+            key: "tab3",
+            children: <ProjectInvites2 projectId={project.id} roles={ROLES} setModalOpen={setModalOpen} />
         }
     ];
 
@@ -389,6 +622,59 @@ export function ProjectSettings({ project, errors, setModalOpen }) {
         <Tabs
             tabPosition={"top"}
             items={items.map((_, i) => {return items[i]})}
+        />
+    )
+}
+
+
+function SelectRole({ roles, defaultValue, setRole }) {
+    const { t } = useTranslation();
+
+    return (
+        <Select
+            defaultValue={defaultValue}
+            popupMatchSelectWidth={false}
+            placeholder={t("role")}
+            options={[
+                {label: roles[1], value: 1},
+                {label: roles[2], value: 2},
+                {label: roles[3], value: 3},
+            ]}
+            onChange={setRole}
+        />
+    )
+}
+
+
+function InputMaxUses({ invite, setMaxUses }) {
+    const { t } = useTranslation();
+
+    return (
+        <InputNumber
+            min={invite ? invite.use_count + 1 : 1}
+            max={999}
+            defaultValue={invite?.max_uses}
+            placeholder={invite ? 1 : t("inviteMaxUses")}
+            onChange={setMaxUses}
+        />
+    )
+}
+
+
+function ExpiresAtPicker({ defaultValue, setExpiresAt }) {
+    const { t } = useTranslation();
+
+    return (
+        <DatePicker
+            defaultValue={defaultValue && dayjs(defaultValue)}
+            showTime
+            showNow={false}
+            format={{format: getDateTimeFormat()}}
+            placeholder={t("inviteExpiresAt")}
+            minDate={dayjs(new Date().toLocaleDateString(), 'DD-MM-YYYY')}
+            onChange={(value, dateString) => {
+                value && setExpiresAt(value.toISOString())
+            }}
         />
     )
 }

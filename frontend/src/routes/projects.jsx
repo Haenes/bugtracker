@@ -8,7 +8,10 @@ import {
     getItems,
     deleteUser,
     updateUserRole,
-    sendInvite
+    createInvite,
+    sendInvite,
+    editInvite,
+    deleteInvite,
 } from "../client/base.js";
 import { PageContent } from "../components/PageContent.jsx";
 import { ProjectsList } from "../components/Projects/ProjectsList.jsx";
@@ -17,7 +20,7 @@ import { authProvider } from "./auth/authProvider.jsx";
 
 export function Component() {
     return (
-        <PageContent header={i18n.t("projectsList_header")}>
+        <PageContent header={i18n.t("projectsHeader")}>
             <ProjectsList />
         </PageContent>
     );
@@ -71,6 +74,15 @@ export async function action({ request }) {
         }
         case "deleteUser": {
             return await deleteUserAction(formData.get("projectId"), formData.get("userId"));
+        }
+        case "createInvite": {
+            return await createInviteAction(formData);
+        }
+        case "editInvite": {
+            return await editInviteAction(formData);
+        }
+        case "deleteInvite": {
+            return await deleteInviteAction(formData.get("projectId"), formData.get("inviteId"));
         }
     }
 }
@@ -141,6 +153,36 @@ async function deleteUserAction(projectId, userId) {
 }
 
 
+async function createInviteAction(formData) {
+    let inviteData = Object.fromEntries(formData);
+    inviteData?.max_uses == false && delete inviteData.max_uses;
+    inviteData?.expires_at == false && delete inviteData.expires_at;
+
+    const invite = await createInvite(inviteData.projectId, inviteData);
+    return invite?.id && replace("");
+}
+
+
+async function editInviteAction(formData) {
+    let updateData = JSON.parse(formData.get("updateData"));
+    updateData?.role_id == false && delete updateData.role_id;
+    updateData?.max_uses == false && delete updateData.max_uses;
+    updateData?.expires_at == false && delete updateData.expires_at;
+
+    const invite = await editInvite(
+        formData.get("projectId"),
+        formData.get("inviteId"),
+        updateData,
+    );
+    return invite?.id && replace("");
+}
+
+
+async function deleteInviteAction(projectId, inviteId) {
+    const results = await deleteInvite(projectId, inviteId);
+    return results?.status === "Success" && replace("");
+}
+
 /**
  * Function to validate Name and Key fields
  * from form after send fetch request.
@@ -152,14 +194,14 @@ function afterSubmitValidation(project, intent) {
 
     if (project.detail === "Project with this key already exist!") {
         intent === "create"
-        ? errors.createKey = i18n.t("error_projectKey")
-        : errors.editKey = i18n.t("error_projectKey");
+        ? errors.createKey = i18n.t("errorProjectKeyAlreadyExist")
+        : errors.editKey = i18n.t("errorProjectKeyAlreadyExist");
 
         return errors;
     } else if (project.detail === "Slashes, ':', '?' and '=' not allowed in project name!") {
         intent === "create"
-        ? errors.createName = i18n.t("error_projectName")
-        : errors.editName = i18n.t("error_projectName");
+        ? errors.createName = i18n.t("errorProjectNameNotAllowed")
+        : errors.editName = i18n.t("errorProjectNameNotAllowed");
 
         return errors;
     }

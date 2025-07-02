@@ -15,7 +15,7 @@ export function RegisterForm() {
 
     return (
         <div className="flex flex-col h-screen w-screen items-center justify-center">
-            <Card title={t("register_cardTitle")}>
+            <Card title={t("registerCardTitle")}>
                 <Form method="post" name="register" className="flex flex-col gap-y-4">
 
                     {errors ?
@@ -91,7 +91,7 @@ export function RegisterForm() {
                         type="primary"
                         htmlType="submit"
                     >
-                        {t("register_btn")}
+                        {t("registerBtn")}
                     </Button>
 
                     <div className="text-center">

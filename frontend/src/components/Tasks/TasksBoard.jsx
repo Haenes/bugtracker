@@ -25,8 +25,8 @@ export function TasksBoard() {
     const fetcher = useFetcher();
     const { t } = useTranslation();
 
-    const createModalTitle = t("createTask_header");
-    const editModalTitle = t("tasksBoard_modalTitle");
+    const createModalTitle = t("createTaskHeader");
+    const editModalTitle = t("tasksModalTitle");
 
     const [modalOpen, setModalOpen] = useOutletContext();
     const [formData, setFormData] = useState(null);
@@ -53,17 +53,17 @@ export function TasksBoard() {
         <div className="grid grid-cols-12 h-full gap-4 md:gap-2 text-center">
             {fetchers[0] && fetchers[0].state !== "idle" && <Spin fullscreen delay={50}/>}
 
-            <StatusCard id={1} title={t("taskStatus_notAssign").toUpperCase()} fetcher={fetcher}>
+            <StatusCard id={1} title={t("taskStatusNotAssign").toUpperCase()} fetcher={fetcher}>
                 {TaskCard(notAssign, userId, isPermitted, setModalOpen, setFormData, t, fetcher)}
             </StatusCard>
 
-            <StatusCard id={2} title={t("taskStatus_toDo").toUpperCase()} fetcher={fetcher}>
+            <StatusCard id={2} title={t("taskStatusToDo").toUpperCase()} fetcher={fetcher}>
                 {TaskCard(toDo, userId, isPermitted, setModalOpen, setFormData, t, fetcher)}
             </StatusCard>
 
             <StatusCard
                 id={3}
-                title={t("taskStatus_inProgress").toUpperCase()}
+                title={t("taskStatusInProgress").toUpperCase()}
                 fetcher={fetcher}
             >
                 {TaskCard(inProgress, userId, isPermitted, setModalOpen, setFormData, t, fetcher)}
@@ -71,7 +71,7 @@ export function TasksBoard() {
 
             <StatusCard
                 id={4}
-                title={t("taskStatus_done").toUpperCase()}
+                title={t("taskStatusDone").toUpperCase()}
                 fetcher={fetcher}
             >
                 {TaskCard(done, userId, isPermitted, setModalOpen, setFormData, t, fetcher)}

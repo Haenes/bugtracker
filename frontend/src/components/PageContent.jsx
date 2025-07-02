@@ -34,11 +34,11 @@ export function PageContent({ header, children }) {
                         {isProjectName ? isProjectName : header}
                     </span>
 
-                    {header !== t("settings_header")
-                        && header !== t("search_header") &&
+                    {header !== t("settingsHeader")
+                        && header !== t("searchHeader") &&
                         <Button
                             className="items-baseline"
-                            title={t("btn_create")}
+                            title={t("createBtn")}
                             type="button"
                             icon={<FormOutlined />}
                             onClick={() => setModalOpen(

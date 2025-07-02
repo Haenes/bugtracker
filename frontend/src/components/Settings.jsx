@@ -13,22 +13,22 @@ export function Settings() {
     const { t } = useTranslation();
 
     const items = [
-        {label: t("settings_tab1"), key: 1, children: <AccountForm />},
+        {label: t("settingsTab1"), key: 1, children: <AccountForm />},
         {
-            label: t("settings_tab2"),
+            label: t("settingsTab2"),
             key: 2,
             children: <PreferencesTab colorMode={localStorage.getItem("colorMode")} />
         }
     ]
 
     return (
-        <PageContent header={t("settings_header")}>
+        <PageContent header={t("settingsHeader")}>
             <Tabs
                 tabPosition={"top"}
                 items={items.map((_, i) => {return items[i]})}
             />
 
-            <CreateModal modalId={3} title={t("settings_changePassword")}>
+            <CreateModal modalId={3} title={t("settingsChangePassword")}>
                 <ChangePasswordForm />
             </CreateModal>
         </PageContent>
@@ -49,17 +49,17 @@ function PreferencesTab() {
     return (
         <>
             <div className="flex flex-row items-center mb-3">
-                <span className="mr-2">{t("settings_colorMode")}:</span>
+                <span className="mr-2">{t("settingsColorMode")}:</span>
 
                 <Segmented
                     options={[
                         {
-                            label: t("settings_light"),
+                            label: t("settingsColorModeLight"),
                             value: "light",
                             icon: <SunOutlined />
                         },
                         {
-                            label: t("settings_dark"),
+                            label: t("settingsColorModeDark"),
                             value: "dark",
                             icon: <MoonOutlined />
                         }
@@ -70,12 +70,12 @@ function PreferencesTab() {
             </div>
 
             <div className="flex flex-row items-center w-2/3">
-                <span className="mr-2">{t("settings_lang")}:</span>
+                <span className="mr-2">{t("settingsLang")}:</span>
 
                 <Segmented
                     options={[
-                        {label: t("settings_en"), value: "en"},
-                        {label: t("settings_ru"), value: "ru"},
+                        {label: t("settingsLangEn"), value: "en"},
+                        {label: t("settingsLangRu"), value: "ru"},
                     ]}
                     value={localStorage.getItem("i18nextLng")}
                     onChange={(lang) => handleClickLang(lang)}

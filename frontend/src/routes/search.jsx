@@ -9,7 +9,7 @@ export function Component() {
     const { t } = useTranslation();
 
     return (
-        <PageContent header={t("search_header")}>
+        <PageContent header={t("searchHeader")}>
             <div className="md:w-1/2">
                 <SearchForm />
             </div>

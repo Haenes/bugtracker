@@ -17,10 +17,10 @@ export function Component() {
 
                 {isAuth
                     ? <Link to="projects">
-                        <Button>{i18n.t("projectsList_header")}</Button>
+                        <Button>{i18n.t("projectsHeader")}</Button>
                     </Link>
                     : <Link to="login">
-                        <Button>{i18n.t("btn_logIn")}</Button>
+                        <Button>{i18n.t("loginBtn")}</Button>
                     </Link>
                 }
             </nav>

@@ -23,7 +23,7 @@ export async function action({ request, params }) {
     );
 
     if (!result.ok) {
-        throw({status: 400, statusText: i18n.t("error_resetPassword")});
+        throw({status: 400, statusText: i18n.t("errorResetPasswordBadToken")});
     }
     
     return replace("/login?resetPassword=true");

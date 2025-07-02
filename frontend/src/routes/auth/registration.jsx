@@ -32,10 +32,10 @@ export async function action({ request }) {
     );
 
     if (results["detail"] === "REGISTER_USER_ALREADY_EXISTS") {
-        errors.email = i18n.t("error_registerEmail");
+        errors.email = i18n.t("errorRegisteredEmail");
         return errors;
     } else if (results["detail"] === "USERNAME_ALREADY_EXISTS") {
-        errors.username = i18n.t("error_registerUsername");
+        errors.username = i18n.t("errorRegisteredUsername");
         return errors;
     }
     

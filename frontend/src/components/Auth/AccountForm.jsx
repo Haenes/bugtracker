@@ -82,14 +82,14 @@ export function AccountForm() {
 
             <div className="flex flex-row flex-wrap gap-3">
                 <Popconfirm
-                    title={t("confirm_title")}
-                    description={t("confirm_description")}
-                    cancelText={t("confirm_cancel")}
-                    okText={t("confirm_ok")}
+                    title={t("confirmTitle")}
+                    description={t("confirmDescription")}
+                    cancelText={t("confirmCancel")}
+                    okText={t("confirmOk")}
                     onConfirm={handleAccDelete}
                 >
                     <Button danger type="link">
-                        {t("settings_deleteAcc")}
+                        {t("settingsDeleteAcc")}
                     </Button>
                 </Popconfirm>
 
@@ -97,7 +97,7 @@ export function AccountForm() {
                     type="link"
                     onClick={handleChangePassword}
                 >
-                    {t("btn_changePassword")}
+                    {t("changePasswordBtn")}
                 </Button>
 
                 <Button
@@ -106,7 +106,7 @@ export function AccountForm() {
                     type="primary"
                     htmlType="submit"
                 >
-                    {t("btn_change")}
+                    {t("changeBtn")}
                 </Button>
             </div>
 

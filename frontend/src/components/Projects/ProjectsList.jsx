@@ -21,8 +21,8 @@ export function ProjectsList() {
 
     const { t } = useTranslation();
 
-    const createModalTitle = t("createProject_header");
-    const editModalTitle = t("projectsList_modalTitle");
+    const createModalTitle = t("createProjectHeader");
+    const editModalTitle = t("projectsModalTitle");
 
     const [modalOpen, setModalOpen] = useOutletContext();
     const [formData, setFormData] = useState(null);
@@ -121,8 +121,8 @@ function FavoriteButton({ data }) {
             className="border-0 shadow-none"    
             icon={
                 is_favorite
-                ? <StarFilled title={t("projectsList_favoriteTrue")} style={buttonSize}/>
-                : <StarOutlined title={t("projectsList_favoriteFalse")} style={buttonSize}/>
+                ? <StarFilled title={t("projectsFavoriteTrue")} style={buttonSize}/>
+                : <StarOutlined title={t("projectsFavoriteFalse")} style={buttonSize}/>
             }
             onClick={handleClick}
         />
@@ -136,7 +136,7 @@ function SettingsButton({ project, setFuncs }) {
 
     return (
         <Button
-            title={t("btn_settings")}
+            title={t("settingsBtn")}
             className="border-0 shadow-none"
             icon={<SettingOutlined style={buttonSize}/>}
             onClick={() => {

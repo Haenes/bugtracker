@@ -8,9 +8,9 @@ export async function loader({ params }) {
     const result = await userVerification(params.token);
 
     if (result.detail === "VERIFY_USER_ALREADY_VERIFIED") {
-        throw({status: 400, statusText: i18n.t("error_verifyAlready")})
+        throw({status: 400, statusText: i18n.t("errorVerifiedAlready")})
     } else if (result.detail === "VERIFY_USER_BAD_TOKEN") {
-        throw({status: 400, statusText: i18n.t("error_verifyInvalidToken")})
+        throw({status: 400, statusText: i18n.t("errorVerifyInvalidToken")})
     }
 
     return replace("/login?verify=true");

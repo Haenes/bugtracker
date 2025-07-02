@@ -19,7 +19,7 @@ export async function action({ request }) {
     );
 
     if (!result.ok) {
-        throw({status: 422, statusText: i18n.t("error_forgotPassword")});
+        throw({status: 422, statusText: i18n.t("errorForgotPasswordValidation")});
     }
 
     return replace("/login?forgotPassword=true");

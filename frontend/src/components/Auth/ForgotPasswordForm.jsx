@@ -11,11 +11,11 @@ export function ForgotPasswordForm() {
 
     return (
         <div className="flex flex-col h-screen w-screen items-center justify-center">
-            <Card title={t("forgotPassword_title")} className="text-center">
+            <Card title={t("forgotPasswordTitle")} className="text-center">
 
                 <Form method="post" name="forgotPassword" className="flex flex-col">
                     <span className="text-start text-stone-400">
-                        {t("forgotPassword_span")}
+                        {t("forgotPasswordSpan")}
                     </span>
 
                     <Input
@@ -29,7 +29,7 @@ export function ForgotPasswordForm() {
                     />
 
                     <Button loading={navigation.state === "submitting" & 50} className="my-4" type="primary" htmlType="submit">
-                        {t("forgotPassword_btn")}    
+                        {t("forgotPasswordBtn")}    
                     </Button>
 
                     <Link to="/login">{t("returnToLogin")}</Link>

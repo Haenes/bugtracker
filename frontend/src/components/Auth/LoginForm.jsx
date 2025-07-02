@@ -20,7 +20,7 @@ export function LoginForm({ children }) {
 
             <div className="mb-5">{children}</div>
 
-            <Card title={t("login_cardTitle")}>
+            <Card title={t("loginCardTitle")}>
                 <Form method="post" name="login" className="flex flex-col gap-y-4">
 
                     {errors &&
@@ -54,7 +54,7 @@ export function LoginForm({ children }) {
                         visibilityToggle={() => (!setPasswordVisible)}
                     />
 
-                    <Checkbox name="remember">{t("login_rememberMe")}</Checkbox>
+                    <Checkbox name="remember">{t("loginRememberMe")}</Checkbox>
 
                     <Button
                         loading={navigation.state === "submitting" & 50}
@@ -62,12 +62,12 @@ export function LoginForm({ children }) {
                         type="primary"
                         htmlType="submit"
                     >
-                        {t("btn_logIn")}
+                        {t("loginBtn")}
                     </Button>
 
                     <div className="flex flex-row gap-x-10">
-                        <Link to="/forgot-pasword">{t("login_forgotPassword")}</Link>
-                        <Link to="/register">{t("login_register")}</Link>
+                        <Link to="/forgot-pasword">{t("loginForgotPassword")}</Link>
+                        <Link to="/register">{t("loginRegister")}</Link>
                     </div>
 
                 </Form>

@@ -34,24 +34,24 @@ export function Sidebar({ setModalOpen }) {
     const menuItems = [
         {
             key: "1",   
-            label: t("sidebar_home"),
+            label: t("sidebarHome"),
             icon: <Link to="/projects"><HomeOutlined /></Link>
         },
         {
             key: "2",
-            label: t("sidebar_search"),
+            label: t("sidebarSearch"),
             icon:  <SearchOutlined />,
             disabled: location === "/search",
             onClick: handleClickSearch
         },
         {
             key: "3",
-            label: t("sidebar_settings"),
+            label: t("sidebarSettings"),
             icon: <Link to="/settings"><SettingOutlined /></Link>,
         },
         {
             key: "4",
-            label: t("sidebar_logOut"),
+            label: t("sidebarLogOut"),
             icon: <LogoutOutlined />,
             onClick: handleClickLogout
         }

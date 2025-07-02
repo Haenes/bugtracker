@@ -19,7 +19,7 @@ export function ResetPasswordForm() {
         <div className="flex flex-col h-screen w-screen items-center justify-center">
             {navigation.state === "loading" && <Spin fullscreen delay={50}/>}
 
-            <Card title={t("resetPassword_cardTitle")} className="text-center w-4/5 md:w-2/5 lg:w-1/4">
+            <Card title={t("resetPasswordCardTitle")} className="text-center w-4/5 md:w-2/5 lg:w-1/4">
 
                 <Form method="post" name="forgotPassword" className="flex flex-col">
 
@@ -64,7 +64,7 @@ export function ResetPasswordForm() {
                         type="primary"
                         htmlType="submit"
                     >
-                        {t("resetPassword_button")}
+                        {t("resetPasswordBtn")}
                     </Button>
 
                 </Form>

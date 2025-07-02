@@ -11,7 +11,7 @@ export function CreateModal({ modalId, title, errors = null, children }) {
     let clearErrors;
 
     clearErrors = (errors) => {
-        if (title === t("projectsList_modalTitle")) {
+        if (title === t("projectsModalTitle")) {
             delete errors?.createName;
             delete errors?.editName;
             delete errors?.createKey;

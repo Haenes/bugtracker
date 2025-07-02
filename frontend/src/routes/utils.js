@@ -14,7 +14,7 @@ export function formValidation(formData, intent) {
     const password = formData.get("password");
     const confirm_password = formData.get("confirm_password");
 
-    const nameError = i18n.t("error_nameNotLetters");
+    const nameError = i18n.t("errorNameOnlyLettersAllowed");
 
     if (!isValidName(first_name)) {
         errors.first_name = nameError;
@@ -23,9 +23,9 @@ export function formValidation(formData, intent) {
     if (intent === "editUser") return errors;
 
     if (!isValidPassword(password)) {
-        errors.password = i18n.t("error_passwordWeak");
+        errors.password = i18n.t("errorPasswordIsWeak");
     } else if (password != confirm_password) {
-        errors.confirm_password = i18n.t("error_passwordNotConfirm");
+        errors.confirm_password = i18n.t("errorPasswordNotConfirmed");
     }
 
     return errors;
@@ -46,9 +46,9 @@ export function passwordValidation(formData) {
     const confirm_password = formData.get("confirm_password");
 
     if (!isValidPassword(password)) {
-        errors.password = i18n.t("error_passwordWeak");
+        errors.password = i18n.t("errorPasswordIsWeak");
     } else if (password != confirm_password) {
-        errors.confirm_password = i18n.t("error_passwordNotConfirm");
+        errors.confirm_password = i18n.t("errorPasswordNotConfirmed");
     }
 
     return errors;

@@ -47,7 +47,7 @@ export function EditTaskForm({ task, userId, roleId, errors, setModalOpen }) {
             <Input
                 name="name"
                 className="mb-3"
-                status={errors?.error_taskName && "error"}
+                status={errors?.errorTaskNameAlreadyExist && "error"}
                 type="text"
                 defaultValue={task.name}
                 disabled={!isPermitted}
@@ -67,7 +67,7 @@ export function EditTaskForm({ task, userId, roleId, errors, setModalOpen }) {
 
             <div className="grid grid-cols-2 justify-items-stretch">
                 <label>{t("type")}</label>
-                <label>{t("editTask_status")}</label>
+                <label>{t("editTaskStatus")}</label>
             </div>
 
             <div className="grid grid-cols-2 justify-items-stretch mb-3">
@@ -77,10 +77,10 @@ export function EditTaskForm({ task, userId, roleId, errors, setModalOpen }) {
                     className="w-5/6"
                     popupMatchSelectWidth={false}
                     options={[
-                        {label: t("task_typeFeature"), value: 3},
-                        {label: t("task_typeMisc"), value: 4},
-                        {label: t("task_typeFix"), value: 2},
-                        {label: t("task_typeBug"), value: 1}
+                        {label: t("taskTypeFeature"), value: 3},
+                        {label: t("taskTypeMisc"), value: 4},
+                        {label: t("taskTypeFix"), value: 2},
+                        {label: t("taskTypeBug"), value: 1}
                     ]}
                     onChange={value => setType(value)}
                 />
@@ -91,10 +91,10 @@ export function EditTaskForm({ task, userId, roleId, errors, setModalOpen }) {
                     disabled={!isPermitted}
                     popupMatchSelectWidth={false}
                     options={[
-                        {label: t("taskStatus_notAssign"), value: 1},
-                        {label: t("taskStatus_toDo"), value: 2},
-                        {label: t("taskStatus_inProgress"), value: 3},
-                        {label: t("taskStatus_done"), value: 4}
+                        {label: t("taskStatusNotAssign"), value: 1},
+                        {label: t("taskStatusToDo"), value: 2},
+                        {label: t("taskStatusInProgress"), value: 3},
+                        {label: t("taskStatusDone"), value: 4}
                     ]}
                     onChange={value => setTaskStatus(value)}
                 />
@@ -113,10 +113,10 @@ export function EditTaskForm({ task, userId, roleId, errors, setModalOpen }) {
                     className="w-5/6"
                     popupMatchSelectWidth={false}
                     options={[
-                        {label: t("task_priorityLow"), value: 1},
-                        {label: t("task_priorityMedium"), value: 2},
-                        {label: t("task_priorityHigh"), value: 3},
-                        {label: t("task_priorityCritical"), value: 4}
+                        {label: t("taskPriorityLow"), value: 1},
+                        {label: t("taskPriorityMedium"), value: 2},
+                        {label: t("taskPriorityHigh"), value: 3},
+                        {label: t("taskPriorityCritical"), value: 4}
                     ]}
                     onChange={value => setPriority(value)}
                 />
@@ -142,10 +142,10 @@ export function EditTaskForm({ task, userId, roleId, errors, setModalOpen }) {
             {isPermitted ? 
                 <div className="flex flex-row gap-3 justify-end">
                     <Popconfirm
-                        title={t("confirm_title")}
-                        description={t("confirm_description")}
-                        cancelText={t("confirm_cancel")}
-                        okText={t("confirm_ok")}
+                        title={t("confirmTitle")}
+                        description={t("confirmDescription")}
+                        cancelText={t("confirmCancel")}
+                        okText={t("confirmOk")}
                         onConfirm={handleDelete}
                     >
                         <Button
@@ -154,12 +154,12 @@ export function EditTaskForm({ task, userId, roleId, errors, setModalOpen }) {
                             value="delete"
                             type="text"
                         >
-                            {t("btn_delete")}
+                            {t("deleteBtn")}
                         </Button>
                     </Popconfirm>
 
                     <Button name="intent" value="edit" type="primary" htmlType="submit">
-                        {t("btn_change")}
+                        {t("changeBtn")}
                     </Button>
                 </div>
                 : <></>

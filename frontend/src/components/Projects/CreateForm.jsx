@@ -44,13 +44,13 @@ export function CreateProjectForm({ errors, setModalOpen }) {
                 className="w-1/2 md:w-1/4"
                 status={errors?.createKey && "error"}
                 type="text"
-                placeholder={t("createProject_key")}
+                placeholder={t("createProjectKey")}
                 required
                 minLength={3}
                 maxLength={10}
             />
 
-            <Checkbox name="is_favorite">{t("createProject_favorite")}</Checkbox>
+            <Checkbox name="is_favorite">{t("projectFavorite")}</Checkbox>
 
             <Button
                 name="intent"
@@ -59,7 +59,7 @@ export function CreateProjectForm({ errors, setModalOpen }) {
                 type="primary"
                 htmlType="submit"
             >
-                {t("btn_create")}
+                {t("createBtn")}
             </Button>
         </Form>
     );

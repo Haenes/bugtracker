@@ -247,6 +247,7 @@ class ProjectInvite(Base):
         project_invites_query = (
             select(ProjectInvite)
             .where(ProjectInvite.project_id == project_id)
+            .order_by(ProjectInvite.role_id, ProjectInvite.created_at)
         )
         project_invites = await session.scalars(project_invites_query)
         return project_invites.all()

@@ -41,7 +41,7 @@ export async function loader({ request, params }) {
     const userId = await getMyId();
 
     if (tasks.detail === "Project not found!") {
-        throw({status: 404, statusText: i18n.t("tasksBoard_projectNotFound")});
+        throw({status: 404, statusText: i18n.t("tasksProjectNotFound")});
     }
     return {tasks, userId};
 }
@@ -75,7 +75,7 @@ async function createTaskAction(projectId, formData) {
     const task = await createItem(Object.fromEntries(formData), projectId);
 
     if (task.detail == "Task with this name already exist!") {
-        errors.createName = i18n.t("error_taskName");
+        errors.createName = i18n.t("errorTaskNameAlreadyExist");
         return errors;
     }
     return task;
@@ -95,7 +95,7 @@ async function editTaskAction(projectId, taskId, formData) {
     );
 
     if (task.detail) {
-        errors.editName = i18n.t("error_taskName");
+        errors.editName = i18n.t("errorTaskNameAlreadyExist");
         return errors;
     }
     return task;
@@ -121,10 +121,10 @@ function selectValidation(formData) {
     const priority = formData.get("priority_id");
 
     if (!type) {
-        errors.createType = i18n.t("error_taskType");
+        errors.createType = i18n.t("errorSelectTaskType");
     }
     if (!priority) {
-        errors.createPriority = i18n.t("error_taskPriority");
+        errors.createPriority = i18n.t("errorSelectTaskPriority");
     }
     return errors;
 }

@@ -64,10 +64,10 @@ export function CreateTaskForm({ errors, setModalOpen }) {
                 className="w-2/5 md:w-1/3"
                 status={errors?.createType && "error"}
                 options={[
-                    {label: t("task_typeFeature"), value: 3},
-                    {label: t("task_typeMisc"), value: 4},
-                    {label: t("task_typeFix"), value: 2},
-                    {label: t("task_typeBug"), value: 1},
+                    {label: t("taskTypeFeature"), value: 3},
+                    {label: t("taskTypeMisc"), value: 4},
+                    {label: t("taskTypeFix"), value: 2},
+                    {label: t("taskTypeBug"), value: 1},
                 ]}
                 onChange={value => {setType(value); handleTypeChange}}
             />
@@ -78,10 +78,10 @@ export function CreateTaskForm({ errors, setModalOpen }) {
                 className="w-3/5 md:w-2/5"
                 status={errors?.createPriority && "error"}
                 options={[
-                    {label: t("task_priorityLow"), value: 1},
-                    {label: t("task_priorityMedium"), value:2},
-                    {label: t("task_priorityHigh"), value: 3},
-                    {label: t("task_priorityCritical"), value: 4}
+                    {label: t("taskPriorityLow"), value: 1},
+                    {label: t("taskPriorityMedium"), value:2},
+                    {label: t("taskPriorityHigh"), value: 3},
+                    {label: t("taskPriorityCritical"), value: 4}
                 ]}
                 onChange={value => {setPriority(value), handlePriorityChange}}
             />
@@ -96,7 +96,7 @@ export function CreateTaskForm({ errors, setModalOpen }) {
                 type="primary"
                 htmlType="submit"
             >
-                {t("btn_create")}
+                {t("createBtn")}
             </Button>
         </Form>
     );

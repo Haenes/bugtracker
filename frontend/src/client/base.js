@@ -29,13 +29,74 @@ export async function getProjectUsers(projectId) {
 }
 
 
-export async function getProjectinvites(projectId) {
+export async function createInvite(projectId, inviteData) {
+    const url = `${BACKEND_URL}/projects/${projectId}/invite-links`;
+
+    try {
+        let rawResponse = await fetch(url, {
+            method: "POST",
+            headers: {
+                "Accept": "application/json",
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(inviteData),
+            credentials: "include"
+        });
+
+        let response = await rawResponse.json();
+        return response;
+    } catch(err) {
+        throw new Response("Error", error503);
+    }
+}
+
+export async function getProjectInvites(projectId) {
     const url = `${BACKEND_URL}/projects/${projectId}/invite-links`;
 
     try {
         let rawResponse = await fetch(url, {credentials: "include"});
         let response = await rawResponse.json();
 
+        return response;
+    } catch(err) {
+        throw new Response("Error", error503);
+    }
+}
+
+export async function editInvite(projectId, inviteId, updateData) {
+    const url = `${BACKEND_URL}/projects/${projectId}/invite-links/${inviteId}`;
+
+    try {
+        let rawResponse = await fetch(url, {
+            method: "PATCH",
+            headers: {
+                "Accept": "application/json",
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(updateData),
+            credentials: "include",
+        });
+        let response = await rawResponse.json();
+
+        return response;
+    } catch(err) {
+        throw new Response("Error", error503);
+    }
+}
+export async function deleteInvite(projectId, inviteId) {
+    const url = `${BACKEND_URL}/projects/${projectId}/invite-links/${inviteId}`;
+
+    try {
+        let rawResponse = await fetch(url, {
+            method: "DELETE",
+            headers: {
+                "Accept": "application/json",
+                "Content-Type": "application/json",
+            },
+            credentials: "include",
+        });
+
+        let response = await rawResponse.json();
         return response;
     } catch(err) {
         throw new Response("Error", error503);

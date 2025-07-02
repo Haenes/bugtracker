@@ -59,7 +59,7 @@ export function ChangePasswordForm() {
                 type="primary"
                 htmlType="submit"
             >
-                {t("btn_change")}
+                {t("changeBtn")}
             </Button>
 
         </Form>

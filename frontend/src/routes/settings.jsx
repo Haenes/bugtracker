@@ -45,10 +45,10 @@ async function editUserAction(formData) {
     const result = await editMe(Object.fromEntries(formData));
 
     if (result["detail"] === "UPDATE_USER_EMAIL_ALREADY_EXISTS") {
-        errors.email = i18n.t("error_registerEmail");
+        errors.email = i18n.t("errorRegisteredEmail");
         return errors;
     } else if (result["detail"] === "USERNAME_ALREADY_EXISTS") {
-        errors.username = i18n.t("error_registerUsername");
+        errors.username = i18n.t("errorRegisteredUsername");
         return errors;
     }
 
