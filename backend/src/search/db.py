@@ -55,12 +55,22 @@ async def user_search(q: str, session: AsyncSession, user_id):
     if '@' in q:
         get_user_query = (
             select(User.id, User.first_name)
-            .where(User.email.ilike(f'%{q}%'), User.id != user_id)
+            .join(UserProjectRole, UserProjectRole.user_id == user_id)
+            .where(
+                User.email.ilike(f'%{q}%'),
+                User.id != user_id,
+                UserProjectRole.user_id != user_id
+            )
         )
     else:
         get_user_query = (
             select(User.id, User.first_name)
-            .where(User.username.ilike(f'%{q}%'), User.id != user_id)
+            .join(UserProjectRole, UserProjectRole.user_id == user_id)
+            .where(
+                User.username.ilike(f'%{q}%'),
+                User.id != user_id,
+                UserProjectRole.user_id != user_id
+            )
         )
     result = await session.execute(get_user_query)
 

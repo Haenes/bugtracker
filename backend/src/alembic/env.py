@@ -12,8 +12,8 @@ from alembic import context
 # sys.path.append(os.path.join(sys.path[0], 'src'))
 
 from src.config import settings
-from src.models import BaseClass
-from src.auth.models import User, Role, UserProjectRole
+from src.models import BaseClass, UserProjectRole
+from src.auth.models import User, Role
 from src.projects.models import Project, ProjectInvite
 from src.tasks.models import (
     Task, TaskPriority, TaskStatus,

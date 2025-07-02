@@ -123,10 +123,10 @@ function convertResultsToJsx(plainResults, handleClick, isSearchPage) {
     const fillResultsArray = (array, item) => {
         let url_part;
 
-        if (item?.name) {
-            url_part = item.name + "-" + item.id;
+        if (item?.key) {
+            url_part = item.name + "=" + item.id;
         } else {
-            url_part = item.project_name + "-" + item.project_id;
+            url_part = item.project_name + "=" + item.project_id;
         }
 
         array.push(
@@ -135,9 +135,7 @@ function convertResultsToJsx(plainResults, handleClick, isSearchPage) {
                     to={`/projects/${url_part}/tasks`}
                     onClick={handleClick}
                 >
-                    {/* TODO: Нужно разобраться с этим, ибо у задач теперь нет поля title! */}
-                    {/* {item?.name || item?.title} {item?.key && `[${item.key}]`} */}
-                    {item?.name && item?.key || item?.name} {item?.key && `[${item.key}]`}
+                    {item?.name} {item?.key && `[${item.key}]`}
                 </Link>
             </li>
         );
