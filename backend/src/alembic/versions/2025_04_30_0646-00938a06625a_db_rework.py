@@ -411,13 +411,16 @@ def upgrade() -> None:
         sa.Column("id", sa.BIGINT(), nullable=False),
         sa.Column("changed_by", sa.Uuid(), nullable=False),
         sa.Column("task_id", sa.Uuid(), nullable=False),
-        # sa.Column("changed_field", sa.VARCHAR(length=255), nullable=False),
-        # sa.Column("old_value", sa.VARCHAR(length=255), nullable=False),
-        # sa.Column("new_value", sa.VARCHAR(length=255), nullable=False),
         sa.Column(
             "operation_id",
             sa.Uuid(),
             server_default=sa.text("gen_random_uuid()"),
+            nullable=False,
+        ),
+        sa.Column(
+            "created_at",
+            sa.DateTime(timezone=True),
+            server_default=sa.text("CURRENT_TIMESTAMP"),
             nullable=False,
         ),
         sa.ForeignKeyConstraint(

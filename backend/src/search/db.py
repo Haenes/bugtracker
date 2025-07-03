@@ -51,25 +51,23 @@ async def fulltext_search(
     return results
 
 
-async def user_search(q: str, session: AsyncSession, user_id):
+async def user_search(q: str, session: AsyncSession, user_id: UUID):
     if '@' in q:
         get_user_query = (
             select(User.id, User.first_name)
-            .join(UserProjectRole, UserProjectRole.user_id == user_id)
+            .join(UserProjectRole, isouter=True)
             .where(
                 User.email.ilike(f'%{q}%'),
-                User.id != user_id,
-                UserProjectRole.user_id != user_id
+                UserProjectRole.user_id.is_(None),
             )
         )
     else:
         get_user_query = (
             select(User.id, User.first_name)
-            .join(UserProjectRole, UserProjectRole.user_id == user_id)
+            .join(UserProjectRole, isouter=True)
             .where(
                 User.username.ilike(f'%{q}%'),
-                User.id != user_id,
-                UserProjectRole.user_id != user_id
+                UserProjectRole.user_id.is_(None),
             )
         )
     result = await session.execute(get_user_query)

@@ -344,6 +344,7 @@ class TaskHistoryChanges(Base):
         task_changes_query = (
             select(
                 TaskHistory.operation_id,
+                TaskHistory.changed_by,
                 TaskHistoryChanges.field,
                 TaskHistoryChanges.old_value,
                 TaskHistoryChanges.new_value,
@@ -356,28 +357,30 @@ class TaskHistoryChanges(Base):
         task_changes_raw = await session.execute(task_changes_query)
         task_changes = task_changes_raw.all()
 
-        # Create a list with tuple's of unique operation_id and related created_at.
+        # Create a list with tuple's of unique operation_id
+        # and related changed_by + created_at.
         # It's necessary, for example, when there are
         # 2+ changes within the same operation_id,
         # because it allows you to get rid of the duplicate operation_id.
-        unique_pairs = [(task[0], task[4]) for task in task_changes]
+        unique_operations = [(task[0], task[1], task[5]) for task in task_changes]
 
         operations = {
-            unique_pair[0]:  {
-                'operation_id': unique_pair[0],
-                'created_at': unique_pair[1],
+            unique_operation[0]:  {
+                'operation_id': unique_operation[0],
+                'changed_by': unique_operation[1],
+                'created_at': unique_operation[2],
                 'changes': [],
             }
-            for unique_pair in unique_pairs
+            for unique_operation in unique_operations
         }
 
         for task in task_changes:
             if task[0] == operations[task[0]]['operation_id']:
                 operations[task[0]]['changes'].append(
                     {
-                        'field': task[1],
-                        'old_value': task[2],
-                        'new_value': task[3],
+                        'field': task[2],
+                        'old_value': task[3],
+                        'new_value': task[4],
                     }
                 )
 
