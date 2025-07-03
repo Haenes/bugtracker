@@ -1,19 +1,20 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
-import { Button, Select, Input, Popconfirm } from 'antd';
+import { Button, Empty, Table, Select, Input, Popconfirm, Tabs } from 'antd';
+import dayjs from 'dayjs';
 
 import { Form, useFetcher } from "react-router";
-
 import { useTranslation } from "react-i18next";
 
 import { SelectAssignee } from "./SelectAssignee.jsx";
-import { DeadlinePicker } from "./DeadlinePicker.jsx";
+import { DeadlinePicker, getDateTimeFormat } from "./DeadlinePicker.jsx";
 import { convertDate } from "../PageLayout.jsx";
+import { getTaskChanges } from "../../client/base.js";
 
 const { TextArea } = Input;
 
 
-export function EditTaskForm({ task, userId, roleId, errors, setModalOpen }) {
+function EditTaskForm({ task, userId, roleId, errors, setModalOpen }) {
     const fetcher = useFetcher();
     const { t } = useTranslation();
 
@@ -34,7 +35,7 @@ export function EditTaskForm({ task, userId, roleId, errors, setModalOpen }) {
     };
 
     return (
-        <Form method="post" name="editTask" className="mt-4">
+        <Form method="post" name="editTask">
             <input name="taskId" value={task.id} type="hidden" />
 
             {errors?.editName ?
@@ -133,7 +134,11 @@ export function EditTaskForm({ task, userId, roleId, errors, setModalOpen }) {
                 />
                 <input name="priority_id" type="hidden" value={priority} />
 
-                <DeadlinePicker deadline={deadline} setDeadline={setDeadline} value={task.deadline_at} />
+                <DeadlinePicker
+                    deadline={deadline}
+                    setDeadline={setDeadline}
+                    value={task.deadline_at}
+                />
             </div>
 
             <div className="my-3">
@@ -176,4 +181,115 @@ export function EditTaskForm({ task, userId, roleId, errors, setModalOpen }) {
             }
         </Form>
     );
+}
+
+
+function TaskChanges({ projectId, taskId }) {
+    const { t } = useTranslation();
+    const [changes, setChanges] = useState([]);
+    const [expandChanges, setExpandChanges] = useState([]);
+    const [loading, setLoading] = useState(false);
+
+    const columns = [
+        {
+            title: t("operationId"),
+            dataIndex: "operation_id",
+            key: "operationId",
+            align: "center"
+        },
+        {
+            title: t("changedBy"),
+            dataIndex: "changed_by",
+            key: "changedBy",
+            align: "center"
+        },
+        {
+            title: t("createdAt"),
+            dataIndex: "created_at",
+            key: "createdAt",
+            align: "center",
+            render: (createdAt) => dayjs(createdAt).format(getDateTimeFormat())
+        },
+    ];
+    const expandColumns = [
+        {title: t("field"), dataIndex: "field", key: "field", align: "center"},
+        {title: t("oldValue"), dataIndex: "old_value", key: "oldValue", align: "center"},
+        {title: t("newValue"), dataIndex: "new_value", key: "newValue", align: "center"},
+    ]
+    const expandedRowRender = () => (
+       <Table
+            bordered
+            columns={expandColumns}
+            dataSource={expandChanges}
+            pagination={false}
+        />
+    );
+
+    const fetchChanges = async () => {
+        setLoading(true);
+        const changes = await getTaskChanges(projectId, taskId);
+
+        if (!changes?.results) {
+            for (let change of changes) {
+                change.key = change.operation_id;
+ 
+                setExpandChanges(change.changes.map((change) => ({
+                    key: change.operation_id = change.field,
+                    field: change.field,
+                    old_value: change.old_value,
+                    new_value: change.new_value
+                })))
+            };
+        }
+
+        setChanges(changes);
+        setLoading(false);
+    }
+
+    useEffect(() => {fetchChanges()}, []);
+
+    return (
+        changes?.results ? <Empty description={t("noChanges")} />
+        : <Table
+            bordered
+            loading={loading}
+            rowClassName="text-center"
+            columns={columns}
+            expandable={{ expandedRowRender, defaultExpandedRowKeys: ['0'] }}
+            dataSource={changes}
+            pagination={false}
+            size="small"
+        />
+    )
+}
+
+export function TaskDetails({ task, userId, roleId, errors, setModalOpen }) {
+    const { t } = useTranslation();
+    const items = [
+        {
+            label: t("taskDetails"),
+            key: 1,
+            children: <EditTaskForm
+                task={task}
+                userId={userId}
+                roleId={roleId}
+                errors={errors}
+                setModalOpen={setModalOpen}
+            />
+        },
+        {
+            label: t("taskComments"),
+            key: 2,
+            children: "Work in Progress"
+        },
+        {
+            label: t("taskChanges"),
+            key: 3,
+            children: <TaskChanges projectId={task.project_id} taskId={task.id} />
+        },
+    ];
+
+    return (
+        <Tabs tabPosition="top" items={items.map((_, i) => {return items[i]})} />
+    )
 }

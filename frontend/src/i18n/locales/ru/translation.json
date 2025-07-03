@@ -92,6 +92,16 @@
     "editCreated": "Дата создания:",
     "editUpdated": "Последнее обновление:",
 
+    "taskDetails": "Детали",
+    "taskComments": "Комментарии",
+    "taskChanges": "Изменения",
+    "operationId": "Операция",
+    "changedBy": "Внёс изменения",
+    "createdAt": "Изменено в",
+    "field": "Поле",
+    "oldValue": "Старое значение",
+    "newValue": "Новое значение",
+
     "role": "Роль",
     "action": "Действие",
     "inviteUser": "Пригласить пользователя",

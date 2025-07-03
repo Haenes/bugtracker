@@ -10,11 +10,11 @@ import {
 
 import { useTranslation } from "react-i18next";
 
-import { Button, Card, Empty, Spin } from "antd";
+import { Card, Empty, Spin } from "antd";
 
 import { CreateModal } from "../ModalProvider.jsx";
 import { CreateTaskForm } from "./CreateForm.jsx";
-import { EditTaskForm } from "./EditForm.jsx";
+import { TaskDetails } from "./EditForm.jsx";
 
 export function TasksBoard() {
     const {tasks, userId} = useLoaderData();
@@ -85,7 +85,7 @@ export function TasksBoard() {
             }
 
             <CreateModal modalId={2} title={editModalTitle} errors={errors}>
-                <EditTaskForm
+                <TaskDetails
                     task={formData}
                     userId={userId}
                     roleId={roleId}

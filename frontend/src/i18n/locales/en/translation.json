@@ -92,6 +92,17 @@
     "editCreated": "Date of creation:",
     "editUpdated": "Last update:",
 
+    "taskDetails": "Details",
+    "taskComments": "Comments",
+    "taskChanges": "Changes",
+    "operationId": "Operation",
+    "changedBy": "Changed by",
+    "createdAt": "Changed at",
+    "field": "Field",
+    "oldValue": "Old value",
+    "newValue": "New value",
+
+
     "role": "Role",
     "action": "Action",
     "inviteUser": "Invite new user",

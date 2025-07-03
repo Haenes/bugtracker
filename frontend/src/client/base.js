@@ -169,6 +169,18 @@ export async function deleteUser(projectId, userId) {
     }
 }
 
+export async function getTaskChanges(projectId, taskId) {
+    const url = `${BACKEND_URL}/projects/${projectId}/tasks/${taskId}/changes`;
+
+    try {
+        let rawResponse = await fetch(url, {credentials: "include"});
+        let response = await rawResponse.json();
+
+        return response;
+    } catch(err) {
+        throw new Response("Error", error503);
+    }
+}
 
 export async function getItem(project_id) {
     const url = urlSingleHelper(project_id);

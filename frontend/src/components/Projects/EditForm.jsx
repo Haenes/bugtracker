@@ -290,10 +290,11 @@ function InviteNewUser({ projectId, roles, t }) {
 }
 
 
-function ProjectParticipants({ projectId, roles, t }) {
+function ProjectParticipants({ projectId, roles, setModalOpen }) {
+    const { t } = useTranslation();
+    const fetcher = useFetcher();
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(false);
-    const fetcher = useFetcher();
 
     const handleUserEdit = (userId, newRole) => {
         fetcher.submit(
@@ -307,6 +308,7 @@ function ProjectParticipants({ projectId, roles, t }) {
         );
     };
     const handleUserDelete = (userId) => {
+        setModalOpen({visible: false, modalId: 2});
         fetcher.submit(
             {intent: "deleteUser", projectId: projectId, userId: userId},
             {method: "DELETE"}
@@ -353,7 +355,15 @@ function ProjectParticipants({ projectId, roles, t }) {
 
     const fetchUsers = async () => {
         setLoading(true);
-        setUsers(await getProjectUsers(projectId));
+        const users = await getProjectUsers(projectId);
+
+        if (users) {
+            for (let i in users) {
+                users[i].key = users[i].username;
+            }
+        }
+
+        setUsers(users);
         setLoading(false);
     };
 
@@ -380,7 +390,7 @@ function ProjectParticipants({ projectId, roles, t }) {
 }
 
 
-function ProjectInvites2({ projectId, roles, setModalOpen }) {
+function ProjectInvites({ projectId, roles, setModalOpen }) {
     const { t } = useTranslation();
     const fetcher = useFetcher();
     const [invites, setInvites] = useState([]);
@@ -422,7 +432,6 @@ function ProjectInvites2({ projectId, roles, setModalOpen }) {
         setModalOpen({visible: false, modalId: 2});
     };
 
-    // TODO: fix error related with ununique keys
     const columns = [
         {
             title: t("inviteRole"),
@@ -520,6 +529,13 @@ function ProjectInvites2({ projectId, roles, setModalOpen }) {
     const fetchInvites = async () => {
         setLoading(true);
         const invites = await getProjectInvites(projectId);
+
+        if (invites) {
+            for (let i in invites) {
+                invites[i].key = invites[i].invite_token;
+            }
+        }
+
         setInvites(invites);
         setLoading(false);
     };
@@ -603,12 +619,12 @@ export function ProjectSettings({ project, errors, setModalOpen }) {
         {
             label: t("projectSettingsParticipants"),
             key: "tab2",
-            children: <ProjectParticipants projectId={project.id} t={t} roles={ROLES} />
+            children: <ProjectParticipants projectId={project.id} roles={ROLES} setModalOpen={setModalOpen} />
         },
         {
             label: t("projectSettingsInvites"),
             key: "tab3",
-            children: <ProjectInvites2 projectId={project.id} roles={ROLES} setModalOpen={setModalOpen} />
+            children: <ProjectInvites projectId={project.id} roles={ROLES} setModalOpen={setModalOpen} />
         }
     ];
 
