@@ -142,10 +142,10 @@ function TaskCard(taskStatus, userId, isPermitted, setModalOpen, setFormData, t,
         >
             <div className="flex flex-col">
                 <i>
-                    {t("type")}: {t("task_type" + task.type)}
+                    {t("type")}: {t("taskType" + task.type)}
                 </i>
                 <i>
-                    {t("priority")}: {t("task_priority" + task.priority)}
+                    {t("priority")}: {t("taskPriority" + task.priority)}
                 </i>
             </div>
         </Card>

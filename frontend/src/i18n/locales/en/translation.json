@@ -84,6 +84,7 @@
 
     "description": "Description",
     "name": "Name",
+    "assignee": "Assignee",
     "type": "Type",
     "priority": "Priority",
     "deadline": "Deadline",

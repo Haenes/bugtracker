@@ -143,22 +143,26 @@ class UserProjectRole(Base):
         session: AsyncSession,
         user_id: UUID,
         project_id: UUID,
+        is_assignee: bool | None = False
     ) -> UsersInProjectSchema | NoUsersInProjectSchema:
         await UserProjectRole.is_permitted(session, user_id, project_id)
 
-        users_query = (
-            select(
-                UserProjectRole.user_id,
-                UserProjectRole.role_id,
-                UserProjectRole.joined_at,
-                User.username,
+        select_with_join = select(
+            UserProjectRole.user_id,
+            UserProjectRole.role_id,
+            UserProjectRole.joined_at,
+            User.username,
+        ).join(User, User.id == UserProjectRole.user_id)
+
+        if is_assignee:
+            users_query = select_with_join.where(
+                UserProjectRole.project_id == project_id
             )
-            .join(User, User.id == UserProjectRole.user_id)
-            .where(
+        else:
+            users_query = select_with_join.where(
                 UserProjectRole.user_id != user_id,
                 UserProjectRole.project_id == project_id,
             )
-        )
         users_raw = await session.execute(users_query)
         users = users_raw.all()
 

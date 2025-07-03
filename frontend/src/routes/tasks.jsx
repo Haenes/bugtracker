@@ -71,6 +71,7 @@ export async function action({ request, params }) {
 async function createTaskAction(projectId, formData) {
     const errors = selectValidation(formData);
     if (Object.keys(errors).length) return errors;
+    removeIncorrectData(formData);
 
     const task = await createItem(Object.fromEntries(formData), projectId);
 
@@ -84,15 +85,9 @@ async function createTaskAction(projectId, formData) {
 
 async function editTaskAction(projectId, taskId, formData) {
     const errors = {};
-    let issueData = Object.fromEntries(formData);
-    // Prevents incorrect date input error on backend.
-    issueData.deadline_at === "" && delete issueData.deadline_at;
+    removeIncorrectData(formData);
 
-    const task = await updateItem(
-        issueData,
-        projectId,
-        taskId
-    );
+    const task = await updateItem(Object.fromEntries(formData), projectId, taskId);
 
     if (task.detail) {
         errors.editName = i18n.t("errorTaskNameAlreadyExist");
@@ -127,4 +122,11 @@ function selectValidation(formData) {
         errors.createPriority = i18n.t("errorSelectTaskPriority");
     }
     return errors;
+}
+
+
+function removeIncorrectData(formData) {
+    formData.get("assignee_id") === "" && formData.delete("assignee_id");
+    formData.get("deadline_at") === "" && formData.delete("deadline_at");
+    return formData;
 }

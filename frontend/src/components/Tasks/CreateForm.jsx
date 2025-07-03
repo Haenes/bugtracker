@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-
+import { useParams } from "react-router";
 import { useTranslation } from "react-i18next";
 
 import { Button, Select, Input } from 'antd';
@@ -7,12 +7,17 @@ import { Button, Select, Input } from 'antd';
 import { Form } from "react-router";
 
 import { DeadlinePicker } from "./DeadlinePicker.jsx";
+import { SelectAssignee } from "./SelectAssignee.jsx";
 
 const { TextArea } = Input;
 
 
 export function CreateTaskForm({ errors, setModalOpen }) {
     const { t } = useTranslation();
+    let params = useParams();
+
+    const [assignee, setAssignee] = useState("");
+    const [status, setStatus] = useState(1);
     const [type, setType] = useState("");
     const [priority, setPriority] = useState("");
     const [deadline, setDeadline] = useState("");
@@ -58,6 +63,16 @@ export function CreateTaskForm({ errors, setModalOpen }) {
                 name="description"
                 placeholder={t("description")}
             />
+
+            <SelectAssignee
+                projectId={params.projectId.split("=").at(-1)}
+                assignee={assignee}
+                setAssignee={setAssignee}
+                status={status}
+                setStatus={setStatus}
+                isCreating={true}
+            />
+            <input name="status_id" value={status} type="hidden" />
 
             <Select
                 placeholder={t("type")}

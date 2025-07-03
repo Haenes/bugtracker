@@ -20,11 +20,7 @@ export function DeadlinePicker({
                     disabled={!isPermitted}
                     showTime
                     showNow={false}
-                    format={{
-                        // format: localStorage.getItem("i18nextLng") === "ru" &&
-                        //         'DD-MM-YYYY HH:mm' || 'YYYY-MM-DD HH:mm'
-                        format: getDateTimeFormat()
-                    }}
+                    format={{format: getDateTimeFormat()}}
                     placeholder={t("deadline")}
                     minDate={dayjs(new Date().toLocaleDateString(), 'DD-MM-YYYY')}
                     onChange={(value, dateString) => {

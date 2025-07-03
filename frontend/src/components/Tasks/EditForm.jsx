@@ -6,6 +6,7 @@ import { Form, useFetcher } from "react-router";
 
 import { useTranslation } from "react-i18next";
 
+import { SelectAssignee } from "./SelectAssignee.jsx";
 import { DeadlinePicker } from "./DeadlinePicker.jsx";
 import { convertDate } from "../PageLayout.jsx";
 
@@ -17,9 +18,10 @@ export function EditTaskForm({ task, userId, roleId, errors, setModalOpen }) {
     const { t } = useTranslation();
 
     const isPermitted = task.assignee_id == userId || [1, 2].includes(roleId);
-
+    
+    const [assignee, setAssignee] = useState(task.assignee_id);
     const [type, setType] = useState(task.type_id);
-    const [taskStatus, setTaskStatus] = useState(task.status_id);
+    const [status, setStatus] = useState(task.status_id);
     const [priority, setPriority] = useState(task.priority_id);
     const [deadline, setDeadline] = useState("");
 
@@ -65,6 +67,14 @@ export function EditTaskForm({ task, userId, roleId, errors, setModalOpen }) {
                 placeholder={t("editEmptyDescription")}
             />
 
+            <SelectAssignee
+                projectId={task.project_id}
+                assignee={assignee}
+                setAssignee={setAssignee}
+                status={status}
+                setStatus={setStatus}
+            />
+
             <div className="grid grid-cols-2 justify-items-stretch">
                 <label>{t("type")}</label>
                 <label>{t("editTaskStatus")}</label>
@@ -72,7 +82,7 @@ export function EditTaskForm({ task, userId, roleId, errors, setModalOpen }) {
 
             <div className="grid grid-cols-2 justify-items-stretch mb-3">
                 <Select
-                    defaultValue={task.type_id}
+                    value={type}
                     disabled={!isPermitted}
                     className="w-5/6"
                     popupMatchSelectWidth={false}
@@ -87,7 +97,8 @@ export function EditTaskForm({ task, userId, roleId, errors, setModalOpen }) {
                 <input name="type_id" type="hidden" value={type} />
 
                 <Select
-                    defaultValue={task.status_id}
+                    value={status}
+                    className="md:w-4/5"
                     disabled={!isPermitted}
                     popupMatchSelectWidth={false}
                     options={[
@@ -96,9 +107,9 @@ export function EditTaskForm({ task, userId, roleId, errors, setModalOpen }) {
                         {label: t("taskStatusInProgress"), value: 3},
                         {label: t("taskStatusDone"), value: 4}
                     ]}
-                    onChange={value => setTaskStatus(value)}
+                    onChange={value => setStatus(value)}
                 />
-                <input name="status_id" type="hidden" value={taskStatus || 999} />
+                <input name="status_id" type="hidden" value={status} />
             </div>
 
             <div className="grid grid-cols-2 justify-items-stretch">
@@ -108,7 +119,7 @@ export function EditTaskForm({ task, userId, roleId, errors, setModalOpen }) {
 
             <div className="grid grid-cols-2 justify-items-stretch mb-3">
                 <Select
-                    defaultValue={task.priority_id}
+                    value={priority}
                     disabled={!isPermitted}
                     className="w-5/6"
                     popupMatchSelectWidth={false}
@@ -134,9 +145,8 @@ export function EditTaskForm({ task, userId, roleId, errors, setModalOpen }) {
                 <label className="mr-2">{t("editUpdated")}</label>
                 {/* Get updated datetime from PATCH response to synchronize data */}
                 {errors?.created_at == task.created_at ?
-                convertDate(errors.updated_at) :
-                convertDate(task.updated_at)
-            }
+                    convertDate(errors.updated_at) : convertDate(task.updated_at)
+                }
             </div>
 
             {isPermitted ? 

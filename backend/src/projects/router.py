@@ -182,10 +182,11 @@ async def join_to_project(
 @router.get("/{project_id}/users")
 async def get_users_in_project(
     project_id: UUID,
+    is_assignee: bool | None = False,
     session: AsyncSession = Depends(get_async_session),
     user: User = Depends(current_active_user)
 ) -> list[UsersInProjectSchema] | NoUsersInProjectSchema:
-    return await UserProjectRole.read_all_users(session, user.id, project_id)
+    return await UserProjectRole.read_all_users(session, user.id, project_id, is_assignee)
 
 
 @router.patch("/{project_id}/users/{user_id}")

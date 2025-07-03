@@ -171,19 +171,19 @@ function SelectProjectInvites({ projectId, roles, value, setValue }) {
     const [invites, setInvites] = useState([]);
     const [loading, setLoading] = useState(false);
 
-    const generateInviteLabel = (role, useCount, maxUses, expiresAt) => {
-        maxUses = maxUses || "∞";
-        expiresAt = expiresAt && dayjs(
-            new Date(expiresAt).toLocaleDateString(),
+    const generateInviteLabel = (invite) => {
+        invite.max_uses = invite.max_uses || "∞";
+        invite.expires_at = invite.expires_at && dayjs(
+            new Date(invite.expires_at).toLocaleDateString(),
             'DD-MM-YYYY'
         )
 
         // The only reason it's not a single string is
         // because of the incorrect tooltip formatting with new lines.
         return (
-            `${roles[role]}, `
-            + `${useCount}/${maxUses}, `
-            + `${expiresAt ? expiresAt.format(getDateTimeFormat()) : "-"}`
+            `${roles[invite.role_id]}, `
+            + `${invite.use_count}/${invite.max_uses}, `
+            + `${invite.expires_at ? invite.expires_at.format(getDateTimeFormat()) : "-"}`
         )
     };
 
@@ -193,12 +193,7 @@ function SelectProjectInvites({ projectId, roles, value, setValue }) {
 
         setInvites(
             invites.map(invite => ({
-                label: generateInviteLabel(
-                    invite.role_id,
-                    invite.use_count,
-                    invite.max_uses,
-                    invite.expires_at
-                ),
+                label: generateInviteLabel(invite),
                 value: invite.invite_token
             }))
         );
@@ -216,7 +211,6 @@ function SelectProjectInvites({ projectId, roles, value, setValue }) {
             value={value}
             onSelect={setValue}
             options={invites}
-            optionRender={(invite) => <>{invite.data.label}</>}
         />
     );
 }

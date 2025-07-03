@@ -15,8 +15,9 @@ export async function getItems(page, limit, project_id = null) {
 }
 
 
-export async function getProjectUsers(projectId) {
-    const url = `${BACKEND_URL}/projects/${projectId}/users`;
+export async function getProjectUsers(projectId, isSelectAssignee = false) {
+    let url = `${BACKEND_URL}/projects/${projectId}/users`;
+    url = isSelectAssignee ? url + "?is_assignee=true" : url;
 
     try {
         let rawResponse = await fetch(url, {credentials: "include"});

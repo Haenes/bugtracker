@@ -84,6 +84,7 @@
 
     "name": "Название",
     "description": "Описание",
+    "assignee": "Исполнитель",
     "type": "Тип",
     "priority": "Приоритет",
     "deadline": "Сделать до",
